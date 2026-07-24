@@ -32,6 +32,7 @@ export default function App() {
 
   const [health, setHealth] = useState<Health | null>(null)
   const [connErr, setConnErr] = useState(false)
+  const [apiInput, setApiInput] = useState('')
   const [games, setGames] = useState<GameInfo[]>([])
   const [replays, setReplays] = useState<any[]>([])
   const [mode, setMode] = useState<'live' | 'offline'>('offline')
@@ -99,6 +100,16 @@ export default function App() {
     }).catch(() => {})
   }
   useEffect(() => { loadBackend() }, [])
+
+  // Remote viewer path: paste the presenter's public tunnel URL and reconnect.
+  // Writing ?api=<url> makes resolveApiBase pick it up and persist it.
+  function connectTo(u: string) {
+    const url = u.trim().replace(/\/+$/, '')
+    if (!url) return
+    const base = window.location.origin + window.location.pathname
+    window.location.href = `${base}?api=${encodeURIComponent(url)}#/demo`
+    window.location.reload()
+  }
 
   // Never drag the page while a run is in progress -- the room animation is the
   // thing to watch. We only stick to the newest card if the reader is ALREADY at
@@ -420,7 +431,8 @@ export default function App() {
         </div>
       </header>
 
-      {/* backend unreachable: explain instead of showing a silent empty page */}
+      {/* backend unreachable: explain + let a remote viewer paste the presenter's
+          public URL, instead of showing a silent empty page */}
       {connErr && (
         <div className="mx-3 mt-3 rounded-xl bg-amber-50 ring-1 ring-amber-200 px-4 py-3
                         flex items-start gap-3">
@@ -428,14 +440,33 @@ export default function App() {
           <div className="flex-1 min-w-0">
             <div className="text-[13px] font-semibold text-amber-900">{t('connErrTitle')}</div>
             <div className="text-[12.5px] text-amber-800/90 mt-0.5 break-words">
-              {t('connErrBody', { api: API_BASE || '/api' })}
+              {t('connErrBody')}
+            </div>
+            <div className="text-[11px] text-amber-700/80 mt-1 mono break-all">
+              {t('connErrTrying', { api: API_BASE || '/api' })}
+            </div>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <input
+                value={apiInput}
+                onChange={(e) => setApiInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') connectTo(apiInput) }}
+                placeholder={t('connErrPlaceholder')}
+                spellCheck={false}
+                className="flex-1 min-w-[240px] rounded-lg bg-white ring-1 ring-amber-300
+                           px-3 py-1.5 text-[12px] text-slate-700 placeholder:text-slate-400
+                           outline-none focus:ring-2 focus:ring-amber-500" />
+              <button onClick={() => connectTo(apiInput)}
+                className="rounded-full bg-amber-600 text-white px-3.5 py-1.5 text-[12px]
+                           font-semibold hover:bg-amber-700 transition-colors active:scale-[0.97]">
+                {t('connErrConnect')}
+              </button>
+              <button onClick={loadBackend}
+                className="rounded-full bg-white ring-1 ring-amber-300 text-amber-800 px-3 py-1.5
+                           text-[12px] font-semibold hover:bg-amber-100 transition-colors active:scale-[0.97]">
+                {t('connErrRetry')}
+              </button>
             </div>
           </div>
-          <button onClick={loadBackend}
-            className="shrink-0 rounded-full bg-amber-600 text-white px-3 py-1 text-[12px]
-                       font-semibold hover:bg-amber-700 transition-colors active:scale-[0.97]">
-            {t('connErrRetry')}
-          </button>
         </div>
       )}
 

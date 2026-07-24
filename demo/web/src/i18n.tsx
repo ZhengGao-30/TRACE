@@ -26,9 +26,15 @@ const DICT = {
   // --- backend connection ------------------------------------------------
   connErrTitle: { zh: '连接不上后端', en: 'Backend not reachable' },
   connErrBody: {
-    zh: '正在尝试连接 {api}。如果后端在你这台机子上,请打开 TRACE Backend 启动器点 Start,再点重试。要连别人的后端,在网址后加 ?api=公开隧道地址。',
-    en: 'Trying to reach {api}. If the backend runs on this machine, open the TRACE Backend launcher, click Start, then Retry. To use a remote backend, add ?api=your-tunnel-url to the page URL.',
+    zh: '这个 demo 需要连到一台正在运行的后端。如果你就是演示者,请打开 TRACE Backend 启动器点 Start,再点重试。如果是别人把 demo 发给你,把对方给的后端地址粘贴到下面,再点连接。',
+    en: 'This demo needs a running backend. If you are the presenter, open the TRACE Backend launcher, click Start, then Retry. If someone shared this demo with you, paste the backend URL they gave you below and click Connect.',
   },
+  connErrTrying: { zh: '当前尝试连接:{api}', en: 'Currently trying: {api}' },
+  connErrPlaceholder: {
+    zh: '粘贴后端地址,如 https://xxxx.trycloudflare.com',
+    en: 'Paste backend URL, e.g. https://xxxx.trycloudflare.com',
+  },
+  connErrConnect: { zh: '连接', en: 'Connect' },
   connErrRetry: { zh: '重试', en: 'Retry' },
 
   // --- channels ----------------------------------------------------------
