@@ -3,6 +3,10 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Play, KeyRound, Radio, ShieldCheck, Loader2, WifiOff, Gauge, Languages, ArrowDown } from 'lucide-react'
 import { api, subscribe, API_BASE } from './api'
 import type { DetectResult, GameInfo, Health, MatrixRow } from './api'
+import {
+  loadStaticManifest, loadStaticGame, staticHealth, staticAttack, staticMatrix,
+} from './lib/staticSource'
+import type { StaticGame } from './lib/staticSource'
 import VoxelRoom from './three/VoxelRoom'
 import type { SceneState } from './three/VoxelRoom'
 import GroupCard from './components/GroupCard'
@@ -33,6 +37,9 @@ export default function App() {
   const [health, setHealth] = useState<Health | null>(null)
   const [connErr, setConnErr] = useState(false)
   const [apiInput, setApiInput] = useState('')
+  // Static mode: no live backend, the offline demo is served from bundled JSON.
+  const [staticMode, setStaticMode] = useState(false)
+  const staticGame = useRef<StaticGame | null>(null)
   const [games, setGames] = useState<GameInfo[]>([])
   const [replays, setReplays] = useState<any[]>([])
   const [mode, setMode] = useState<'live' | 'offline'>('offline')
@@ -83,21 +90,39 @@ export default function App() {
   const [busy, setBusy] = useState<string | null>(null)
   const feedRef = useRef<HTMLDivElement>(null)
 
-  // Probe the backend. On the deployed site API_BASE defaults to
-  // http://localhost:8000, so this "just works" whenever the local launcher
-  // backend is running; otherwise connErr drives a helpful banner (with Retry).
+  // Probe for a live backend first (local launcher, or a URL passed via ?api=).
+  // If none answers, fall back to the static offline demo baked into the site,
+  // so a public visitor can use offline mode with no backend at all.
   function loadBackend() {
-    api.health().then((h) => {
+    // Probe with a timeout so a hung localhost:8000 (rare, but possible on a
+    // stranger's machine) still falls back to the static bundle quickly.
+    const timeout = new Promise<never>((_, rej) =>
+      setTimeout(() => rej(new Error('probe timeout')), 3500))
+    Promise.race([api.health(), timeout]).then((h) => {
       setHealth(h)
       setConnErr(false)
+      setStaticMode(false)
       // default to live only when the WSL/ALFWorld backend is actually up
       if (h.live) setMode('live')
-    }).catch(() => setConnErr(true))
-    api.games().then((g) => setGames(g.games)).catch(() => {})
-    api.replayList().then((r) => {
-      setReplays(r.records)
-      if (r.records.length) setGameId(r.records[0].game_id)
-    }).catch(() => {})
+      api.games().then((g) => setGames(g.games)).catch(() => {})
+      api.replayList().then((r) => {
+        setReplays(r.records)
+        if (r.records.length) setGameId(r.records[0].game_id)
+      }).catch(() => {})
+    }).catch(async () => {
+      try {
+        const m = await loadStaticManifest()
+        setHealth(staticHealth(m))
+        setStaticMode(true)
+        setConnErr(false)
+        setMode('offline')
+        setGames([])
+        setReplays(m.games)
+        if (m.games.length) setGameId(m.games[0].game_id)
+      } catch {
+        setConnErr(true) // neither a live backend nor a static bundle
+      }
+    })
   }
   useEffect(() => { loadBackend() }, [])
 
@@ -213,6 +238,22 @@ export default function App() {
     if (timer.current != null) { window.clearInterval(timer.current); timer.current = null }
     if (watchdog.current != null) { window.clearTimeout(watchdog.current); watchdog.current = null }
 
+    // Static offline: no backend. Feed the baked event stream through the same
+    // pacing pipeline the SSE replay uses, so the room and z-meters animate
+    // identically.
+    if (staticMode) {
+      try {
+        const g = await loadStaticGame(gameId)
+        staticGame.current = g
+        setSid('static:' + gameId)
+        g.events.forEach((e) => queue.current.push(e))
+        drain()
+      } catch {
+        setRunning(false)
+      }
+      return
+    }
+
     const { session_id } = await api.run(
       mode === 'live'
         ? { task_id: taskId, arm: 'wm', mode: 'live' }
@@ -315,6 +356,11 @@ export default function App() {
   async function switchKey(mode: 'right' | 'wrong') {
     setKeyMode(mode)
     if (!sid || !health) return
+    if (staticMode) {
+      const g = staticGame.current
+      if (g) setDetect(mode === 'right' ? g.detect.right : g.detect.wrong)
+      return
+    }
     const k = health.keys
     setDetect(await api.detect(sid,
       mode === 'right' ? k.key1 : k.wrong_key1,
@@ -325,7 +371,9 @@ export default function App() {
     if (!sid) return
     setBusy(kind)
     try {
-      const r = await api.attack(sid, kind, rate)
+      const r = staticMode && staticGame.current
+        ? staticAttack(staticGame.current, kind, rate)
+        : await api.attack(sid, kind, rate)
       setDetect(r.after)
       setRows((rs) => {
         const base = rs.length ? rs : [{
@@ -348,7 +396,12 @@ export default function App() {
   async function runMatrix() {
     if (!sid) return
     setBusy('__matrix')
-    try { setRows((await api.matrix(sid, rate)).rows) } finally { setBusy(null) }
+    try {
+      const rows = staticMode && staticGame.current
+        ? staticMatrix(staticGame.current, rate)
+        : (await api.matrix(sid, rate)).rows
+      setRows(rows)
+    } finally { setBusy(null) }
   }
 
   const activeKeys = health
@@ -501,6 +554,13 @@ export default function App() {
                 <WifiOff size={11} /> {t('modeOffline')}
               </button>
             </div>
+
+            {staticMode && (
+              <div className="mb-2 rounded-lg bg-slate-50 ring-1 ring-slate-200 px-2 py-1.5
+                              text-[10px] leading-snug text-slate-500">
+                {t('staticNote')}
+              </div>
+            )}
 
             {mode === 'live' ? (
               <>

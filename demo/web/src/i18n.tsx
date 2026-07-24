@@ -36,6 +36,10 @@ const DICT = {
   },
   connErrConnect: { zh: '连接', en: 'Connect' },
   connErrRetry: { zh: '重试', en: 'Retry' },
+  staticNote: {
+    zh: '离线演示 · 真实轨迹与检测已预先算好,无需后端。实时(现场调 LLM)模式需要在本机启动后端。',
+    en: 'Offline demo · real trajectories and detection are precomputed, no backend needed. Live mode (real-time LLM) needs a local backend.',
+  },
 
   // --- channels ----------------------------------------------------------
   selChannel: { zh: '选择信道', en: 'selection channel' },
