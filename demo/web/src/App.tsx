@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Play, KeyRound, Radio, ShieldCheck, Loader2, WifiOff, Gauge, Languages, ArrowDown } from 'lucide-react'
-import { api, subscribe } from './api'
+import { api, subscribe, API_BASE } from './api'
 import type { DetectResult, GameInfo, Health, MatrixRow } from './api'
 import VoxelRoom from './three/VoxelRoom'
 import type { SceneState } from './three/VoxelRoom'
@@ -31,6 +31,7 @@ export default function App() {
   }, [])
 
   const [health, setHealth] = useState<Health | null>(null)
+  const [connErr, setConnErr] = useState(false)
   const [games, setGames] = useState<GameInfo[]>([])
   const [replays, setReplays] = useState<any[]>([])
   const [mode, setMode] = useState<'live' | 'offline'>('offline')
@@ -81,18 +82,23 @@ export default function App() {
   const [busy, setBusy] = useState<string | null>(null)
   const feedRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
+  // Probe the backend. On the deployed site API_BASE defaults to
+  // http://localhost:8000, so this "just works" whenever the local launcher
+  // backend is running; otherwise connErr drives a helpful banner (with Retry).
+  function loadBackend() {
     api.health().then((h) => {
       setHealth(h)
+      setConnErr(false)
       // default to live only when the WSL/ALFWorld backend is actually up
       if (h.live) setMode('live')
-    }).catch(() => {})
+    }).catch(() => setConnErr(true))
     api.games().then((g) => setGames(g.games)).catch(() => {})
     api.replayList().then((r) => {
       setReplays(r.records)
       if (r.records.length) setGameId(r.records[0].game_id)
     }).catch(() => {})
-  }, [])
+  }
+  useEffect(() => { loadBackend() }, [])
 
   // Never drag the page while a run is in progress -- the room animation is the
   // thing to watch. We only stick to the newest card if the reader is ALREADY at
@@ -413,6 +419,25 @@ export default function App() {
           </button>
         </div>
       </header>
+
+      {/* backend unreachable: explain instead of showing a silent empty page */}
+      {connErr && (
+        <div className="mx-3 mt-3 rounded-xl bg-amber-50 ring-1 ring-amber-200 px-4 py-3
+                        flex items-start gap-3">
+          <WifiOff size={16} className="mt-0.5 shrink-0 text-amber-600" />
+          <div className="flex-1 min-w-0">
+            <div className="text-[13px] font-semibold text-amber-900">{t('connErrTitle')}</div>
+            <div className="text-[12.5px] text-amber-800/90 mt-0.5 break-words">
+              {t('connErrBody', { api: API_BASE || '/api' })}
+            </div>
+          </div>
+          <button onClick={loadBackend}
+            className="shrink-0 rounded-full bg-amber-600 text-white px-3 py-1 text-[12px]
+                       font-semibold hover:bg-amber-700 transition-colors active:scale-[0.97]">
+            {t('connErrRetry')}
+          </button>
+        </div>
+      )}
 
       {/* ---------- body ----------
           The 3D room is the centrepiece, so it gets the whole main area; the

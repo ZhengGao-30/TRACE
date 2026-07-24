@@ -23,6 +23,14 @@ const DICT = {
   offline: { zh: '离线 · 回放真实轨迹', en: 'OFFLINE · replaying a logged run' },
   realtimeNote: { zh: '检测与攻击均为实时计算', en: 'detection & attacks computed live' },
 
+  // --- backend connection ------------------------------------------------
+  connErrTitle: { zh: '连接不上后端', en: 'Backend not reachable' },
+  connErrBody: {
+    zh: '正在尝试连接 {api}。如果后端在你这台机子上,请打开 TRACE Backend 启动器点 Start,再点重试。要连别人的后端,在网址后加 ?api=公开隧道地址。',
+    en: 'Trying to reach {api}. If the backend runs on this machine, open the TRACE Backend launcher, click Start, then Retry. To use a remote backend, add ?api=your-tunnel-url to the page URL.',
+  },
+  connErrRetry: { zh: '重试', en: 'Retry' },
+
   // --- channels ----------------------------------------------------------
   selChannel: { zh: '选择信道', en: 'selection channel' },
   tallyChannel: { zh: '计数信道', en: 'tally channel' },

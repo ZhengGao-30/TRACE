@@ -28,12 +28,18 @@ const J = { 'Content-Type': 'application/json' }
 
 /**
  * Backend base URL. Resolution order:
- *   1. ?api=<url> in the page URL (the launcher opens the demo with this),
- *      persisted to localStorage so it survives navigation.
+ *   1. ?api=<url> in the page URL (the launcher's "Open demo" uses this to inject
+ *      the public tunnel URL), persisted to localStorage so it survives navigation.
  *   2. a previously saved value in localStorage.
  *   3. VITE_API_BASE baked in at build time.
- *   4. '' — dev: the Vite proxy forwards /api to localhost:8000.
+ *   4. http://localhost:8000 — the default. On the deployed site this makes the
+ *      "Try the live demo" button just work whenever the local launcher backend
+ *      is running on THIS machine (Chrome/Edge exempt http://localhost from
+ *      mixed-content blocking). Remote visitors with no backend get a graceful
+ *      "backend not reachable" banner instead of a silent blank page.
  */
+export const DEFAULT_API_BASE = 'http://localhost:8000'
+
 function resolveApiBase(): string {
   try {
     const q = new URLSearchParams(window.location.search).get('api')
@@ -42,7 +48,7 @@ function resolveApiBase(): string {
     if (saved) return saved.replace(/\/+$/, '')
   } catch { /* ignore */ }
   const env = (import.meta as any).env?.VITE_API_BASE
-  return env ? String(env).replace(/\/+$/, '') : ''
+  return env ? String(env).replace(/\/+$/, '') : DEFAULT_API_BASE
 }
 
 export const API_BASE = resolveApiBase()
