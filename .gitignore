@@ -1,0 +1,61 @@
+# ─────────────────────────────────────────────────────────────
+#  SECRETS — never commit. The relay API key lives here.
+# ─────────────────────────────────────────────────────────────
+chatgpt.txt
+robust_api.txt
+*.key
+.env
+.env.*
+
+# ─────────────────────────────────────────────────────────────
+#  Not published: the paper's core implementation and the local
+#  demo backend (runs on your own machine, not on GitHub).
+# ─────────────────────────────────────────────────────────────
+two_layer_watermark/
+experiments/
+demo/server/
+demo/launcher/
+bundle/
+PROMPT_FOR_SERVER.md
+
+# ─────────────────────────────────────────────────────────────
+#  Large data / generated artefacts (not for GitHub)
+# ─────────────────────────────────────────────────────────────
+data/
+demo/records/
+demo/server/_live_record.json
+demo/server/_smoke_record.json
+demo/server/_test_records.json
+demo/server/__pycache__/
+demo/launcher/cloudflared.exe
+demo/launcher/launcher_config.json
+**/results/
+*.pptx
+*.pdf
+
+# ─────────────────────────────────────────────────────────────
+#  Node / Vite build
+# ─────────────────────────────────────────────────────────────
+node_modules/
+demo/web/dist/
+demo/web/node_modules/
+.vite/
+*.log
+
+# ─────────────────────────────────────────────────────────────
+#  Local tooling / scratch — not part of the published site
+# ─────────────────────────────────────────────────────────────
+.agents/
+.claude/
+skills-lock.json
+start.ps1
+twolayer_demo_bundle.tar.gz
+demo/_legacy_toolbench/
+
+# ─────────────────────────────────────────────────────────────
+#  Python / OS
+# ─────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
