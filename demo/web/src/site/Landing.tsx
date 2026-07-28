@@ -576,24 +576,25 @@ function TeamCard({ m, delay }: {
  * The two PROJECT partners: CSIRO's Data61 and UNSW. (The paper's author list is
  * broader; this row is the project's institutional attribution only.)
  *
- * The CSIRO mark is the official asset from the project slide deck. To use the
- * official UNSW mark, drop it in as `public/paper/logos/unsw.png` and swap the
- * wordmark below for an <img>; an institution's logo is a trademark, so only a
- * genuine asset should be used, never a redrawn approximation.
+ * Both are the official marks taken from the group's own slide/poster assets,
+ * transparent PNGs of near-square aspect, so equal height reads as balanced.
  */
 function PartnerLogos() {
+  // Optical, not mathematical, sizing: the CSIRO mark is a dense filled disc, so
+  // at equal height it outweighs UNSW's airy vertical crest-over-wordmark
+  // lockup. Giving UNSW the extra height balances the pair and keeps its
+  // wordmark legible (the crest alone eats 60% of that lockup's height).
+  const partners = [
+    { src: 'paper/logos/csiro.png', alt: 'CSIRO', h: 'h-16' },
+    { src: 'paper/logos/unsw.png', alt: 'UNSW Sydney', h: 'h-20' },
+  ]
   return (
     <Reveal delay={0.08}>
-      <div className="mt-8 flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
-        <img src={asset('paper/logos/csiro.png')} alt="CSIRO"
-             className="h-12 w-auto object-contain" loading="lazy" />
-        <span className="font-display font-extrabold tracking-[-0.03em] text-[30px]
-                         leading-none text-slate-900">
-          UNSW
-          <span className="ml-2 align-middle font-semibold text-[14px] tracking-normal text-slate-500">
-            Sydney
-          </span>
-        </span>
+      <div className="mt-9 flex flex-wrap items-center justify-center gap-x-14 gap-y-8">
+        {partners.map((p) => (
+          <img key={p.alt} src={asset(p.src)} alt={p.alt}
+               className={`${p.h} w-auto object-contain`} loading="lazy" />
+        ))}
       </div>
     </Reveal>
   )
