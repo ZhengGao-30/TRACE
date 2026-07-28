@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Play, KeyRound, Radio, ShieldCheck, Loader2, WifiOff, Gauge, Languages, ArrowDown } from 'lucide-react'
+import { Play, KeyRound, Radio, ShieldCheck, Loader2, WifiOff, Gauge, ArrowDown } from 'lucide-react'
 import { api, subscribe, API_BASE } from './api'
 import type { DetectResult, GameInfo, Health, MatrixRow } from './api'
 import {
@@ -20,7 +20,7 @@ import { useI18n } from './i18n'
 import { asset } from './lib/asset'
 
 export default function App() {
-  const { t, locale, setLocale } = useI18n()
+  const { t } = useI18n()
 
   // The dashboard is a wide, drag-and-drop, 3D layout. On phones/tablets we show
   // a friendly gate instead of a broken 3-column squeeze. (Rendered below, after
@@ -479,14 +479,6 @@ export default function App() {
           <span className="mono text-slate-400 tabular-nums">
             {activeKeys[0]} · {activeKeys[1]}
           </span>
-
-          <button onClick={() => setLocale(locale === 'zh' ? 'en' : 'zh')}
-            className="ml-1 flex items-center gap-1 rounded-full bg-slate-100/80
-                       ring-1 ring-slate-900/[0.04] px-3 py-1 text-[11px] font-semibold
-                       text-slate-600 transition-all duration-500 ease-fluid
-                       hover:bg-white hover:shadow-sm active:scale-[0.97]">
-            <Languages size={11} />{locale === 'zh' ? 'EN' : '中文'}
-          </button>
         </div>
       </header>
 
@@ -722,17 +714,10 @@ export default function App() {
 
 /** Shown instead of the dashboard on phones/tablets. */
 function MobileGate() {
-  const { t, locale, setLocale } = useI18n()
+  const { t } = useI18n()
   return (
     <div className="min-h-[100dvh] flex flex-col items-center justify-center text-center
                     px-6 py-10 bg-canvas">
-      <button onClick={() => setLocale(locale === 'en' ? 'zh' : 'en')}
-        className="absolute top-4 right-4 flex items-center gap-1 rounded-full
-                   bg-slate-100 ring-1 ring-slate-900/[0.05] px-3 py-1.5 text-[12px]
-                   font-semibold text-slate-600">
-        <Languages size={12} />{locale === 'en' ? '中文' : 'EN'}
-      </button>
-
       <motion.img src={asset("paper/mascot.png")} alt="TRACE mascot"
         className="w-40 drop-shadow-[0_16px_28px_rgba(99,102,241,0.25)]"
         animate={{ y: [0, -10, 0] }}

@@ -314,13 +314,13 @@ export const CAT_COLOR: Record<Category, string> = {
   water: '#22d3ee', comfort: '#fb7185', misc: '#94a3b8',
 }
 
-export const CAT_LABEL: Record<Category, { zh: string; en: string }> = {
-  storage: { zh: '储物', en: 'storage' },
-  appliance: { zh: '电器', en: 'appliance' },
-  surface: { zh: '台面', en: 'surface' },
-  water: { zh: '水槽', en: 'water' },
-  comfort: { zh: '家具', en: 'furniture' },
-  misc: { zh: '其他', en: 'misc' },
+export const CAT_LABEL: Record<Category, string> = {
+  storage: 'storage',
+  appliance: 'appliance',
+  surface: 'surface',
+  water: 'water',
+  comfort: 'furniture',
+  misc: 'misc',
 }
 
 export function categoryOf(kind: string): Category {

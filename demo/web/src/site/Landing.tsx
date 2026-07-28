@@ -2,12 +2,10 @@ import { useState, useRef } from 'react'
 import { motion, useSpring, useMotionValue } from 'framer-motion'
 import type { ReactNode } from 'react'
 import {
-  ArrowRight, ArrowUpRight, Languages, FileText, PlayCircle, Check,
+  ArrowRight, ArrowUpRight, FileText, PlayCircle, Check,
   HardHat, ClipboardList, Wind, ShieldCheck, Wrench, Cpu, ExternalLink, AlertTriangle,
   Menu, X,
 } from 'lucide-react'
-import { useI18n } from '../i18n'
-import type { Locale } from '../i18n'
 import { navigate } from '../Router'
 import Logo from '../components/Logo'
 import { SITE, BIBTEX } from './content'
@@ -80,8 +78,8 @@ function Head({ eyebrow, title, lede }: { eyebrow: string; title: string; lede?:
 const DOMAIN_ICONS = [ClipboardList, ShieldCheck, Wind, HardHat, Wrench, Cpu]
 
 export default function Landing() {
-  const { locale, setLocale } = useI18n()
-  const L = (o: Record<Locale, string>) => o[locale]
+  // Copy is English-only; L() stays so the call sites below read unchanged.
+  const L = (s: string) => s
   const [copied, setCopied] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -109,12 +107,6 @@ export default function Landing() {
             ))}
           </nav>
           <div className="flex-1" />
-          <button onClick={() => setLocale(locale === 'en' ? 'zh' : 'en')}
-            className="flex items-center gap-1 rounded-full bg-slate-100/80 ring-1 ring-slate-900/[0.04]
-                       px-3 py-1.5 text-[12px] font-semibold text-slate-600 hover:bg-white
-                       hover:shadow-sm transition-all duration-500 ease-fluid">
-            <Languages size={12} />{locale === 'en' ? '中文' : 'EN'}
-          </button>
           <button onClick={() => navigate('/demo')}
             className="group flex items-center gap-1.5 rounded-full bg-l1-500 text-white
                        pl-3.5 pr-1.5 py-1.5 text-[12px] font-semibold
@@ -416,6 +408,7 @@ export default function Landing() {
           ))}
         </div>
         <Reveal><p className="mt-6 text-center text-[13px] text-slate-500">{L(SITE.team.affiliations)}</p></Reveal>
+        <PartnerLogos />
       </Section>
 
       {/* ---------------- citation ---------------- */}
@@ -579,11 +572,38 @@ function TeamCard({ m, delay }: {
   )
 }
 
+/**
+ * The two PROJECT partners: CSIRO's Data61 and UNSW. (The paper's author list is
+ * broader; this row is the project's institutional attribution only.)
+ *
+ * The CSIRO mark is the official asset from the project slide deck. To use the
+ * official UNSW mark, drop it in as `public/paper/logos/unsw.png` and swap the
+ * wordmark below for an <img>; an institution's logo is a trademark, so only a
+ * genuine asset should be used, never a redrawn approximation.
+ */
+function PartnerLogos() {
+  return (
+    <Reveal delay={0.08}>
+      <div className="mt-8 flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
+        <img src={asset('paper/logos/csiro.png')} alt="CSIRO"
+             className="h-12 w-auto object-contain" loading="lazy" />
+        <span className="font-display font-extrabold tracking-[-0.03em] text-[30px]
+                         leading-none text-slate-900">
+          UNSW
+          <span className="ml-2 align-middle font-semibold text-[14px] tracking-normal text-slate-500">
+            Sydney
+          </span>
+        </span>
+      </div>
+    </Reveal>
+  )
+}
+
 type Scn = {
   badge: LStr; title: LStr; lead: LStr; workLabel: LStr; steps: LStr[]
   how: LStr; attackLabel: LStr; attack: LStr; takeaway: LStr; caption: LStr
 }
-type LStr = Record<Locale, string>
+type LStr = string
 
 function ChannelBlock({ s, tone, img, flip, L }: {
   s: Scn; tone: 'l1' | 'l2'; img: string; flip?: boolean

@@ -148,8 +148,8 @@ export function layoutRoom(ids: string[]): Recep[] {
 
 type Translate = (k: any, vars?: Record<string, string | number>) => string
 
-/** Human-readable one-liner for the action banner, in the active locale. */
-export function describe(p: ParsedCmd, _zh: boolean, t: Translate): string {
+/** Human-readable one-liner for the action banner. */
+export function describe(p: ParsedCmd, t: Translate): string {
   const vars = { t: p.target ?? '', o: p.object ?? '' }
   return p.verb === 'unknown' ? p.raw : t(`v_${p.verb}`, vars)
 }

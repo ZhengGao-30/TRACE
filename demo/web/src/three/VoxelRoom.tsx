@@ -493,7 +493,7 @@ const FX_COLOR: Record<string, string> = {
 export default function VoxelRoom({ s, expanded, onToggleExpand, onArrive, speed = 1 }:
   { s: SceneState; expanded?: boolean; onToggleExpand?: () => void
     onArrive?: () => void; speed?: number }) {
-  const { t, locale } = useI18n()
+  const { t } = useI18n()
   const bodyRef = useRef(new THREE.Vector3())
   const layout = useMemo(() => layoutRoom3D(s.receptacles), [s.receptacles.join('|')])
   const ROOM = layout.room
@@ -577,7 +577,7 @@ export default function VoxelRoom({ s, expanded, onToggleExpand, onArrive, speed
         </span>
         <div className="flex-1 truncate rounded-lg bg-slate-900/55 backdrop-blur px-2.5 py-1
                         text-xs text-white shadow-sm">
-          {cmd ? describe(cmd, locale === 'zh', t) : t('standby')}
+          {cmd ? describe(cmd, t) : t('standby')}
           <span className="ml-2 font-mono text-[10px] text-white/55">{cmd?.raw}</span>
         </div>
       </div>
