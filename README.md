@@ -8,7 +8,7 @@ Watermark via Complementary Embeddings for LLM-Agent Trajectories**
 
 TRACE hides two complementary watermarks in an AI agent's behaviour trajectory,
 so provenance survives even when the party holding the log deletes or rewrites
-records. A Tech4HSE project (CSIRO's Data61 × UNSW, with Griffith University).
+records. A Tech4HSE project (CSIRO's Data61 × UNSW).
 
 ## What's in this repo
 
@@ -34,4 +34,4 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173. The site is bilingual (English default, 中文 toggle).
+Open http://localhost:5173.
