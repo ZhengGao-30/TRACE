@@ -1,1 +1,174 @@
-{"keys": {"key1": 20250001, "key2": 20250002, "wrong_key1": 99990001, "wrong_key2": 99990002}, "tau": 2.0, "window_mode": "A", "scheme": "exp", "attacks": ["deletion", "strip_redundant", "semantic_rewrite", "llm_substitute", "combined"], "games": [{"game_id": "pick_heat_then_place_in_recep-Plate-None-Cabinet-1_trial_T20190908_070946_578973__5c55ee3c", "task_type": "pick_heat_then_place_in_recep", "query": "put a hot plate in cabinet", "success": true, "groups": 35, "k2": 14, "z1": 14.541508277098083, "z2": 5.578018081208209, "detected": true, "source": "bundle", "slug": "pick_heat_then_place_in_recep-Plate-None-Cabinet-1_trial_T20190908_070946_578973__5c55ee3c"}, {"game_id": "pick_clean_then_place_in_recep-Ladle-None-DiningTable-27_trial_T20190911_131350___391e4f02", "task_type": "pick_clean_then_place_in_recep", "query": "clean some ladle and put it in diningtable", "success": true, "groups": 29, "k2": 11, "z1": 11.584688700351808, "z2": 5.385164807134505, "detected": true, "source": "local", "slug": "pick_clean_then_place_in_recep-Ladle-None-DiningTable-27_trial_T20190911_131350___391e4f02"}, {"game_id": "pick_cool_then_place_in_recep-Lettuce-None-CounterTop-1_trial_T20190908_042713_0__ce84dbb8", "task_type": "pick_cool_then_place_in_recep", "query": "cool some lettuce and put it in countertop", "success": true, "groups": 35, "k2": 14, "z1": 11.144220304652237, "z2": 5.578018081208209, "detected": true, "source": "bundle", "slug": "pick_cool_then_place_in_recep-Lettuce-None-CounterTop-1_trial_T20190908_042713_0__ce84dbb8"}, {"game_id": "pick_two_obj_and_place-CreditCard-None-Safe-323_trial_T20190907_001129_214240__171fedbd", "task_type": "pick_two_obj_and_place", "query": "put two creditcard in safe", "success": true, "groups": 34, "k2": 13, "z1": 11.00126530016639, "z2": 5.487954724560282, "detected": true, "source": "bundle", "slug": "pick_two_obj_and_place-CreditCard-None-Safe-323_trial_T20190907_001129_214240__171fedbd"}, {"game_id": "pick_cool_then_place_in_recep-Pan-None-DiningTable-7_trial_T20190908_232648_2418__029ef5c8", "task_type": "pick_cool_then_place_in_recep", "query": "cool some pan and put it in diningtable", "success": true, "groups": 28, "k2": 16, "z1": 10.99157122430992, "z2": 5.2915026221291805, "detected": true, "source": "local", "slug": "pick_cool_then_place_in_recep-Pan-None-DiningTable-7_trial_T20190908_232648_2418__029ef5c8"}, {"game_id": "pick_and_place_simple-Tomato-None-Microwave-13_trial_T20190908_124829_632660__19093cbd", "task_type": "pick_and_place_simple", "query": "put some tomato on microwave", "success": true, "groups": 13, "k2": 5, "z1": 9.410488042298185, "z2": 3.05085107923876, "detected": true, "source": "local", "slug": "pick_and_place_simple-Tomato-None-Microwave-13_trial_T20190908_124829_632660__19093cbd"}, {"game_id": "pick_clean_then_place_in_recep-Ladle-None-DiningTable-27_trial_T20190911_131350___b228d818", "task_type": "pick_clean_then_place_in_recep", "query": "clean some ladle and put it in diningtable", "success": true, "groups": 27, "k2": 13, "z1": 9.40563211686679, "z2": 5.196152422706632, "detected": true, "source": "bundle", "slug": "pick_clean_then_place_in_recep-Ladle-None-DiningTable-27_trial_T20190911_131350___b228d818"}, {"game_id": "pick_two_obj_and_place-SprayBottle-None-Toilet-402_trial_T20190910_222914_814642__f377461a", "task_type": "pick_two_obj_and_place", "query": "find two spraybottle and put them in toilet", "success": true, "groups": 11, "k2": 5, "z1": 4.110366122783171, "z2": 2.7136021011998728, "detected": true, "source": "local", "slug": "pick_two_obj_and_place-SprayBottle-None-Toilet-402_trial_T20190910_222914_814642__f377461a"}]}
+{
+ "keys": {
+  "key1": 20250001,
+  "key2": 20250002,
+  "wrong_key1": 99990001,
+  "wrong_key2": 99990002
+ },
+ "tau": 2.0,
+ "window_mode": "A",
+ "scheme": "exp",
+ "attacks": [
+  "deletion",
+  "strip_redundant",
+  "semantic_rewrite",
+  "llm_substitute",
+  "combined"
+ ],
+ "games": [
+  {
+   "game_id": "pick_heat_then_place_in_recep-Plate-None-Cabinet-1_trial_T20190908_070946_578973__5c55ee3c",
+   "task_type": "pick_heat_then_place_in_recep",
+   "query": "put a hot plate in cabinet",
+   "success": true,
+   "groups": 35,
+   "k2": 14,
+   "z1": 14.541508277098083,
+   "z2": 5.578018081208209,
+   "detected": true,
+   "source": "bundle",
+   "slug": "pick_heat_then_place_in_recep-Plate-None-Cabinet-1_trial_T20190908_070946_578973__5c55ee3c",
+   "scenario": "alfworld"
+  },
+  {
+   "game_id": "pick_clean_then_place_in_recep-Ladle-None-DiningTable-27_trial_T20190911_131350___391e4f02",
+   "task_type": "pick_clean_then_place_in_recep",
+   "query": "clean some ladle and put it in diningtable",
+   "success": true,
+   "groups": 29,
+   "k2": 11,
+   "z1": 11.584688700351808,
+   "z2": 5.385164807134505,
+   "detected": true,
+   "source": "local",
+   "slug": "pick_clean_then_place_in_recep-Ladle-None-DiningTable-27_trial_T20190911_131350___391e4f02",
+   "scenario": "alfworld"
+  },
+  {
+   "game_id": "pick_cool_then_place_in_recep-Lettuce-None-CounterTop-1_trial_T20190908_042713_0__ce84dbb8",
+   "task_type": "pick_cool_then_place_in_recep",
+   "query": "cool some lettuce and put it in countertop",
+   "success": true,
+   "groups": 35,
+   "k2": 14,
+   "z1": 11.144220304652237,
+   "z2": 5.578018081208209,
+   "detected": true,
+   "source": "bundle",
+   "slug": "pick_cool_then_place_in_recep-Lettuce-None-CounterTop-1_trial_T20190908_042713_0__ce84dbb8",
+   "scenario": "alfworld"
+  },
+  {
+   "game_id": "pick_two_obj_and_place-CreditCard-None-Safe-323_trial_T20190907_001129_214240__171fedbd",
+   "task_type": "pick_two_obj_and_place",
+   "query": "put two creditcard in safe",
+   "success": true,
+   "groups": 34,
+   "k2": 13,
+   "z1": 11.00126530016639,
+   "z2": 5.487954724560282,
+   "detected": true,
+   "source": "bundle",
+   "slug": "pick_two_obj_and_place-CreditCard-None-Safe-323_trial_T20190907_001129_214240__171fedbd",
+   "scenario": "alfworld"
+  },
+  {
+   "game_id": "pick_cool_then_place_in_recep-Pan-None-DiningTable-7_trial_T20190908_232648_2418__029ef5c8",
+   "task_type": "pick_cool_then_place_in_recep",
+   "query": "cool some pan and put it in diningtable",
+   "success": true,
+   "groups": 28,
+   "k2": 16,
+   "z1": 10.99157122430992,
+   "z2": 5.2915026221291805,
+   "detected": true,
+   "source": "local",
+   "slug": "pick_cool_then_place_in_recep-Pan-None-DiningTable-7_trial_T20190908_232648_2418__029ef5c8",
+   "scenario": "alfworld"
+  },
+  {
+   "game_id": "pick_and_place_simple-Tomato-None-Microwave-13_trial_T20190908_124829_632660__19093cbd",
+   "task_type": "pick_and_place_simple",
+   "query": "put some tomato on microwave",
+   "success": true,
+   "groups": 13,
+   "k2": 5,
+   "z1": 9.410488042298185,
+   "z2": 3.05085107923876,
+   "detected": true,
+   "source": "local",
+   "slug": "pick_and_place_simple-Tomato-None-Microwave-13_trial_T20190908_124829_632660__19093cbd",
+   "scenario": "alfworld"
+  },
+  {
+   "game_id": "pick_clean_then_place_in_recep-Ladle-None-DiningTable-27_trial_T20190911_131350___b228d818",
+   "task_type": "pick_clean_then_place_in_recep",
+   "query": "clean some ladle and put it in diningtable",
+   "success": true,
+   "groups": 27,
+   "k2": 13,
+   "z1": 9.40563211686679,
+   "z2": 5.196152422706632,
+   "detected": true,
+   "source": "bundle",
+   "slug": "pick_clean_then_place_in_recep-Ladle-None-DiningTable-27_trial_T20190911_131350___b228d818",
+   "scenario": "alfworld"
+  },
+  {
+   "game_id": "pick_two_obj_and_place-SprayBottle-None-Toilet-402_trial_T20190910_222914_814642__f377461a",
+   "task_type": "pick_two_obj_and_place",
+   "query": "find two spraybottle and put them in toilet",
+   "success": true,
+   "groups": 11,
+   "k2": 5,
+   "z1": 4.110366122783171,
+   "z2": 2.7136021011998728,
+   "detected": true,
+   "source": "local",
+   "slug": "pick_two_obj_and_place-SprayBottle-None-Toilet-402_trial_T20190910_222914_814642__f377461a",
+   "scenario": "alfworld"
+  },
+  {
+   "game_id": "hse_confined_space-T114-digester-sludge_rake__ptw4471",
+   "task_type": "confined_space_entry_permit",
+   "query": "Issue a confined-space entry permit for digester tank T-114 (sludge-rake repair, 2 entrants).",
+   "success": true,
+   "groups": 43,
+   "k2": 22,
+   "z1": 9.857221433750452,
+   "z2": 6.557438524302001,
+   "detected": true,
+   "source": "live",
+   "slug": "hse_confined_space-T114-digester-sludge_rake__ptw4471",
+   "scenario": "hse",
+   "model": "gpt-5.4-mini",
+   "mean_entropy_bits": 2.600109772601049
+  },
+  {
+   "game_id": "hse_spill_response-B7-bund-acid_release__spillb7",
+   "task_type": "environmental_compliance_record",
+   "query": "Document the acid release at bund B-7 and file the compliance report.",
+   "success": true,
+   "groups": 42,
+   "k2": 23,
+   "z1": 7.690899086568314,
+   "z2": 6.48074069840786,
+   "detected": true,
+   "source": "live",
+   "slug": "hse_spill_response-B7-bund-acid_release__spillb7",
+   "scenario": "hse",
+   "model": "gpt-5.4-mini",
+   "mean_entropy_bits": 2.1171077682686072
+  }
+ ],
+ "scenarios": {
+  "alfworld": {
+   "label": "ALFWorld",
+   "sub": "household benchmark from the paper"
+  },
+  "hse": {
+   "label": "HSE",
+   "sub": "permit-to-work & environmental compliance"
+  }
+ }
+}

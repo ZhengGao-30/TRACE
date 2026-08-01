@@ -9,6 +9,9 @@ import {
 import type { StaticGame } from './lib/staticSource'
 import VoxelRoom from './three/VoxelRoom'
 import type { SceneState } from './three/VoxelRoom'
+import HseSite from './three/HseSite'
+import type { HseSceneState } from './three/HseSite'
+import { siteFor, stationFor } from './lib/hseSite'
 import GroupCard from './components/GroupCard'
 import type { GroupView } from './components/GroupCard'
 import DetectPanel from './components/DetectPanel'
@@ -48,6 +51,10 @@ export default function App() {
   const [mode, setMode] = useState<'live' | 'offline'>('offline')
   const [taskId, setTaskId] = useState(0)
   const [gameId, setGameId] = useState<string>('')
+  // Which domain the offline bundle is replaying. ALFWorld is the paper's
+  // benchmark; HSE are permit-to-work / compliance records, which need a
+  // different centre view (a record, not a room).
+  const [scenario, setScenario] = useState<'alfworld' | 'hse'>('alfworld')
   const [speed, setSpeed] = useState(1)
   // presentation mode: collapse the timeline strip so the room fills the height
   const [roomFocus, setRoomFocus] = useState(false)
@@ -81,6 +88,8 @@ export default function App() {
     receptacles: [], visited: [], opened: [], step: 0,
   })
   const [task, setTask] = useState<{ desc: string; type: string } | null>(null)
+  // HSE centre view: the plant site the robot works, plus the record it builds.
+  const [hse, setHse] = useState<HseSceneState>({ visited: [], step: 0, lines: [] })
   const [detect, setDetect] = useState<DetectResult | null>(null)
   const [curve, setCurve] = useState<{ groups: number; z1: number; z2: number }[]>([])
 
@@ -92,6 +101,19 @@ export default function App() {
   const [rows, setRows] = useState<MatrixRow[]>([])
   const [busy, setBusy] = useState<string | null>(null)
   const feedRef = useRef<HTMLDivElement>(null)
+
+  // The picker only ever lists jobs from the selected scenario; rows baked
+  // before scenarios existed are ALFWorld by default.
+  const scenarioReplays = useMemo(
+    () => replays.filter((r) => (r.scenario ?? 'alfworld') === scenario),
+    [replays, scenario])
+
+  useEffect(() => {
+    if (!scenarioReplays.length) return
+    if (!scenarioReplays.some((r) => r.game_id === gameId)) {
+      setGameId(scenarioReplays[0].game_id)
+    }
+  }, [scenarioReplays, gameId])
 
   // OFFLINE mode always runs from the static bundle baked into the site, so it
   // never needs a backend and closing the backend can never break it. The
@@ -182,6 +204,8 @@ export default function App() {
     setFollow(false); setUnseen(0)
     moveQ.current = []; walking.current = false
     setScene({ receptacles: [], visited: [], opened: [], step: 0 })
+    setHse((h) => ({ ...h, command: undefined, confirm: false, step: 0,
+                     visited: [], lines: [], done: false, success: false }))
   }
 
   // Offline replay arrives as one instant burst; pace it out so the room
@@ -276,23 +300,33 @@ export default function App() {
       case 'task_start':
         setTask({ desc: e.query, type: e.task_type })
         setScene((s) => ({ ...s, receptacles: e.receptacles ?? [] }))
+        setHse((h) => ({ ...h, taskType: e.task_type, visited: [], lines: [] }))
         break
       case 'group': {
         setGroups((g) => [...g, {
           i: e.i, window: e.window, chosen: e.chosen, race: e.race, phi: e.phi,
           nCandidates: e.n_candidates, k: e.k, green: e.green, l2hit: e.l2_hit,
-          roundNum: e.round_num,
+          roundNum: e.round_num, phase: e.phase, result: e.result,
           observations: (e.observations ?? []).map((o: any) => ({
             command: o.cmd, text: o.text, confirm: o.confirm,
           })),
         }])
-        // hand the group's commands to the room; it walks them at its own pace
+        // Both scenes pace the replay the same way: every executed action is
+        // queued, and the next one is released once the character has walked to
+        // its station and finished the beat.
+        if (scenario === 'hse') {
+          setHse((h) => ({
+            ...h,
+            lines: [...h.lines, { i: e.i, chosen: e.chosen, k: e.k, phase: e.phase }],
+          }))
+        }
         ;(e.observations ?? []).forEach((o: any) =>
           enqueueMove(o.cmd, e.i, o.confirm))
         break
       }
       case 'task_done':
         setScene((s) => ({ ...s, done: true, success: !!e.success }))
+        setHse((h) => ({ ...h, done: true, success: !!e.success }))
         setRunning(false)
         break
       case 'eof':
@@ -342,8 +376,20 @@ export default function App() {
     }
   }
 
-  /** Drive the 3D room from one executed ALFWorld command. */
+  /** Drive the 3D scene from one executed command (room or HSE site). */
   function applyCommand(command: string, step: number, confirm: boolean, done = false) {
+    if (scenario === 'hse') {
+      setHse((h) => {
+        const site = siteFor(h.taskType)
+        const st = site ? stationFor(site, command) : undefined
+        return {
+          ...h, command, confirm, step,
+          visited: st && !h.visited.includes(st.id) ? [...h.visited, st.id] : h.visited,
+          done: done || h.done,
+        }
+      })
+      return
+    }
     const p = parseCommand(command)
     setScene((s) => {
       const visited = p.target && !s.visited.includes(p.target)
@@ -577,17 +623,43 @@ export default function App() {
               </>
             ) : (
               <>
+                {/* scenario switch: which domain the bundle replays */}
+                <div className="mb-2">
+                  <div className="text-[9px] font-semibold text-slate-400 mb-1 tracking-wide">
+                    {t('scenario')}
+                  </div>
+                  <div className="flex gap-1">
+                    {(['alfworld', 'hse'] as const).map((s) => (
+                      <button key={s} onClick={() => { if (!running) setScenario(s) }}
+                        disabled={running}
+                        title={t(s === 'hse' ? 'sc_hse_h' : 'sc_alfworld_h')}
+                        className={[
+                          'flex-1 rounded-lg px-2 py-1.5 text-[11px] font-semibold',
+                          'ring-1 transition-colors disabled:opacity-50',
+                          scenario === s
+                            ? 'bg-l1-50 text-l1-700 ring-l1-200'
+                            : 'bg-white text-slate-500 ring-slate-200 hover:text-slate-700',
+                        ].join(' ')}>
+                        {t(s === 'hse' ? 'sc_hse' : 'sc_alfworld')}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="text-[9px] text-slate-400 mt-1 leading-snug">
+                    {t(scenario === 'hse' ? 'sc_hse_h' : 'sc_alfworld_h')}
+                  </div>
+                </div>
+
                 <div className="text-[10px] font-semibold text-slate-500 mb-1.5 tracking-wide">
-                  {t('offlineHint', { n: replays.length })}
+                  {t('offlineHint', { n: scenarioReplays.length })}
                 </div>
                 <select value={gameId} onChange={(e) => setGameId(e.target.value)}
                   className="w-full rounded-lg bg-slate-50 px-2 py-1.5 text-[11px]
                              ring-1 ring-slate-200 outline-none focus:ring-l1-400">
-                  {replays.map((r) => (
+                  {scenarioReplays.map((r) => (
                     <option key={r.game_id} value={r.game_id}>
                       {r.success ? '✓' : '✗'} {r.task_type} · {r.groups}{t('groupsUnit')}
-                      {' '}· z₁{r.z1 >= 0 ? '+' : ''}{r.z1.toFixed(1)}
-                      {' '}· z₂{r.z2 >= 0 ? '+' : ''}{r.z2.toFixed(1)}
+                      {' '}· z₁={r.z1.toFixed(1)}
+                      {' '}· z₂={r.z2.toFixed(1)}
                     </option>
                   ))}
                 </select>
@@ -627,7 +699,8 @@ export default function App() {
             )}
           </div>
 
-          <RoomLegend />
+          {/* the room legend describes kitchen receptacles -- ALFWorld only */}
+          {scenario === 'alfworld' && <RoomLegend />}
 
           <div className="card p-2 flex items-start gap-1.5 text-[10px] text-slate-400">
             <ShieldCheck size={12} className="text-emerald-500 shrink-0 mt-0.5" />
@@ -642,9 +715,15 @@ export default function App() {
             <div className="bezel shadow-lift"
                  style={{ height: roomFocus ? 'calc(100vh - 6rem)' : roomH }}>
               <div className="bezel-core h-full overflow-hidden">
-                <VoxelRoom s={scene} expanded={roomFocus} onArrive={onArrive}
+                {scenario === 'hse' ? (
+                  <HseSite s={hse} expanded={roomFocus} onArrive={onArrive}
                            speed={mode === 'offline' ? speed : 1}
                            onToggleExpand={() => setRoomFocus((v) => !v)} />
+                ) : (
+                  <VoxelRoom s={scene} expanded={roomFocus} onArrive={onArrive}
+                             speed={mode === 'offline' ? speed : 1}
+                             onToggleExpand={() => setRoomFocus((v) => !v)} />
+                )}
               </div>
             </div>
             {!roomFocus && (

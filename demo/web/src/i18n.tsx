@@ -103,6 +103,26 @@ const DICT = {
   mobileBack: '← Back to the project site',
   menu: 'Menu',
 
+  // --- HSE permit / compliance record ------------------------------------
+  permitStamped: 'steps stamped',
+  permitClosed: 'record closed',
+  permitIncomplete: 'not closed',
+  permitEmpty: 'Pick a job to begin. Each decision the agent takes is stamped into the record below.',
+  permitK1: 'one record',
+  permitK2: 'two records',
+  permitTallyNote: 'record count per step = the tally channel · rewriting words cannot change it',
+  thisStep: 'this step',
+  docketTitle: 'RECORD BEING BUILT',
+  docketHide: 'hide record',
+  docketShow: 'show record',
+  docketLegend: 'blocks = records in that step · the tally channel',
+  recordClosed: 'record closed',
+  scenario: 'Scenario',
+  sc_alfworld: 'ALFWorld',
+  sc_alfworld_h: 'household benchmark, as run in the paper',
+  sc_hse: 'HSE',
+  sc_hse_h: 'permit-to-work & environmental compliance',
+
   // --- room HUD ----------------------------------------------------------
   standby: 'standby…',
   step: 'STEP {n}',

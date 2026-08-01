@@ -1,0 +1,6941 @@
+{
+ "summary": {
+  "game_id": "hse_confined_space-T114-digester-sludge_rake__ptw4471",
+  "task_type": "confined_space_entry_permit",
+  "query": "Issue a confined-space entry permit for digester tank T-114 (sludge-rake repair, 2 entrants).",
+  "success": true,
+  "groups": 43,
+  "k2": 22,
+  "z1": 9.857221433750452,
+  "z2": 6.557438524302001,
+  "detected": true,
+  "source": "live",
+  "slug": "hse_confined_space-T114-digester-sludge_rake__ptw4471",
+  "scenario": "hse",
+  "model": "gpt-5.4-mini",
+  "mean_entropy_bits": 2.600109772601049
+ },
+ "events": [
+  {
+   "kind": "task_start",
+   "game_id": "hse_confined_space-T114-digester-sludge_rake__ptw4471",
+   "task_type": "confined_space_entry_permit",
+   "query": "Issue a confined-space entry permit for digester tank T-114 (sludge-rake repair, 2 entrants).",
+   "success": true,
+   "total_groups": 43,
+   "mode": "replay",
+   "scene": "SITE: Kembla Grange wastewater treatment plant, digester tank T-114.\nJOB: replace the sludge-rake bearing. Two entrants, one standby attendant.\nHAZARDS: oxygen deficiency, hydrogen sulphide, stored rotational energy, engulfment.\nYou are the HSE permit agent. Every check you run becomes part of the permit record, which is the evidence a regulator will read after an incident.",
+   "record_ref": "issue permit space=T-114 validity=8h",
+   "phases": [
+    "worker competency",
+    "isolation / LOTO",
+    "ventilation",
+    "atmospheric test",
+    "rescue standby",
+    "permit assembly",
+    "further diligence",
+    "issue / file"
+   ]
+  },
+  {
+   "kind": "group",
+   "i": 0,
+   "round_num": 224831438109764,
+   "window": "TWO_LAYER_WM_LAYER1_BOOTSTRAP",
+   "chosen": "query competency_register worker=W-1043",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 28,
+   "race": [
+    {
+     "cmd": "query competency_register worker=W-1043",
+     "p": 0.0599250936329588,
+     "r": 0.974038923358044,
+     "score": 0.4389482295892054,
+     "win": true
+    },
+    {
+     "cmd": "check scba_pressure unit=SCBA-5",
+     "p": 0.0149812734082397,
+     "r": 0.9917939247878738,
+     "score": 0.5500153533058475,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.0599250936329588,
+     "r": 0.7737621937194616,
+     "score": 4.280188487127017,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-103",
+     "p": 0.0599250936329588,
+     "r": 0.7642718739709797,
+     "score": 4.48612894593,
+     "win": false
+    },
+    {
+     "cmd": "check communication_link channel=radio-2",
+     "p": 0.0149812734082397,
+     "r": 0.8902919857394764,
+     "score": 7.75673689607192,
+     "win": false
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-1043",
+     "p": 0.03745318352059925,
+     "r": 0.7147656780907772,
+     "score": 8.965873695791512,
+     "win": false
+    },
+    {
+     "cmd": "query competency_register worker=W-2291",
+     "p": 0.0599250936329588,
+     "r": 0.5805121594222624,
+     "score": 9.075405621070315,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-3 status",
+     "p": 0.052434456928838954,
+     "r": 0.5603530389119253,
+     "score": 11.045947668456511,
+     "win": false
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-2291",
+     "p": 0.03745318352059925,
+     "r": 0.6297002783413506,
+     "score": 12.349052283125737,
+     "win": false
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.04868913857677903,
+     "r": 0.5404136123960583,
+     "score": 12.63978993509813,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-8",
+     "p": 0.0749063670411985,
+     "r": 0.37074059122276304,
+     "score": 13.246573224233218,
+     "win": false
+    },
+    {
+     "cmd": "confirm rescue_team status site=T-114",
+     "p": 0.056179775280898875,
+     "r": 0.4137272434624082,
+     "score": 15.709360710074085,
+     "win": false
+    },
+    {
+     "cmd": "verify harness_inspection id=HARN-9",
+     "p": 0.0149812734082397,
+     "r": 0.7708189195405819,
+     "score": 17.37514497730939,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-7",
+     "p": 0.0749063670411985,
+     "r": 0.26080596383068344,
+     "score": 17.942114066257776,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.02247191011235955,
+     "r": 0.6661857766833683,
+     "score": 18.07530829998111,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.0599250936329588,
+     "r": 0.32642193552620524,
+     "score": 18.682731821444584,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.0149812734082397,
+     "r": 0.7295952619878427,
+     "score": 21.04396105978993,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.011235955056179775,
+     "r": 0.7821489707407736,
+     "score": 21.8681950650857,
+     "win": false
+    },
+    {
+     "cmd": "check lighting space=T-114",
+     "p": 0.00749063670411985,
+     "r": 0.8307900705796907,
+     "score": 24.747981514974814,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.04868913857677903,
+     "r": 0.16426899405892015,
+     "score": 37.09759588999143,
+     "win": false
+    },
+    {
+     "cmd": "confirm gas_detector_count entrants=2",
+     "p": 0.011235955056179775,
+     "r": 0.6239307000800367,
+     "score": 41.982721716624994,
+     "win": false
+    },
+    {
+     "cmd": "verify retrieval_equipment id=TRIPOD-1",
+     "p": 0.0449438202247191,
+     "r": 0.14468562536012697,
+     "score": 43.013521805530644,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "p": 0.052434456928838954,
+     "r": 0.1039705718989854,
+     "score": 43.170989364189616,
+     "win": false
+    },
+    {
+     "cmd": "review previous_permit space=T-114",
+     "p": 0.011235955056179775,
+     "r": 0.49754804232615,
+     "score": 62.127621200491184,
+     "win": false
+    },
+    {
+     "cmd": "query incident_history space=T-114",
+     "p": 0.00749063670411985,
+     "r": 0.5220785093576765,
+     "score": 86.76662972892461,
+     "win": false
+    },
+    {
+     "cmd": "verify signage_posted space=T-114",
+     "p": 0.0149812734082397,
+     "r": 0.2511524950264703,
+     "score": 92.2281395430572,
+     "win": false
+    },
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.003745318352059925,
+     "r": 0.6903541103999287,
+     "score": 98.93701275159654,
+     "win": false
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.02247191011235955,
+     "r": 0.052353718971578145,
+     "score": 131.26308751296108,
+     "win": false
+    }
+   ],
+   "phi": 0.0599250936329588,
+   "phase": "worker competency",
+   "result": "W-1043 Sam Ozturk: confined-space entry cert VALID to 2026-11-02.",
+   "observations": [
+    {
+     "cmd": "query competency_register worker=W-1043",
+     "text": "W-1043 Sam Ozturk: confined-space entry cert VALID to 2026-11-02.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 2.6511569148954472,
+    "z_wrong": -0.5165493767072691,
+    "X": 3.6511569148954472,
+    "expected": 1.0,
+    "n": 1,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 1.0,
+    "z_wrong": -1.0,
+    "X": 1,
+    "expected": 0.5,
+    "n": 1,
+    "detected": false
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 1,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 0
+  },
+  {
+   "kind": "group",
+   "i": 1,
+   "round_num": 30232804052569,
+   "window": "query competency_register worker=W-1043||review last_record",
+   "chosen": "check scba_pressure unit=SCBA-5",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 27,
+   "race": [
+    {
+     "cmd": "check scba_pressure unit=SCBA-5",
+     "p": 0.017167381974248927,
+     "r": 0.9845842372994882,
+     "score": 0.9049615749414557,
+     "win": true
+    },
+    {
+     "cmd": "verify retrieval_equipment id=TRIPOD-1",
+     "p": 0.06866952789699571,
+     "r": 0.9302867948621687,
+     "score": 1.0523206000604555,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.047210300429184546,
+     "r": 0.9426343054132331,
+     "score": 1.2513555339144031,
+     "win": false
+    },
+    {
+     "cmd": "query incident_history space=T-114",
+     "p": 0.017167381974248927,
+     "r": 0.9486533297823001,
+     "score": 3.070465125975312,
+     "win": false
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.02575107296137339,
+     "r": 0.9052661272299534,
+     "score": 3.864938576427568,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-8",
+     "p": 0.06008583690987125,
+     "r": 0.7375146995462538,
+     "score": 5.067238388230437,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.02575107296137339,
+     "r": 0.8692200659612186,
+     "score": 5.4428390430657085,
+     "win": false
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.06866952789699571,
+     "r": 0.6605701369637742,
+     "score": 6.038369356456485,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.012875536480686695,
+     "r": 0.9115994985468567,
+     "score": 7.188401961333968,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "p": 0.047210300429184546,
+     "r": 0.6744208036804835,
+     "score": 8.343539894934016,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-103",
+     "p": 0.04291845493562232,
+     "r": 0.6961708256324586,
+     "score": 8.438332884515928,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-3 status",
+     "p": 0.03862660944206008,
+     "r": 0.6946034428670953,
+     "score": 9.434278269044919,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.04291845493562232,
+     "r": 0.6662233136285713,
+     "score": 9.462837362266358,
+     "win": false
+    },
+    {
+     "cmd": "check communication_link channel=radio-2",
+     "p": 0.02145922746781116,
+     "r": 0.8140654820939079,
+     "score": 9.586294366415089,
+     "win": false
+    },
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.008583690987124463,
+     "r": 0.9116406196895293,
+     "score": 10.777347887470016,
+     "win": false
+    },
+    {
+     "cmd": "confirm rescue_team status site=T-114",
+     "p": 0.07296137339055794,
+     "r": 0.3893604847697518,
+     "score": 12.928068984749546,
+     "win": false
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-2291",
+     "p": 0.02575107296137339,
+     "r": 0.7045074897219608,
+     "score": 13.601620288455738,
+     "win": false
+    },
+    {
+     "cmd": "verify harness_inspection id=HARN-9",
+     "p": 0.02145922746781116,
+     "r": 0.6950818442666662,
+     "score": 16.949616632821808,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-7",
+     "p": 0.06866952789699571,
+     "r": 0.2252674407522055,
+     "score": 21.704925062309297,
+     "win": false
+    },
+    {
+     "cmd": "confirm gas_detector_count entrants=2",
+     "p": 0.030042918454935626,
+     "r": 0.37878367665302837,
+     "score": 32.31343893277045,
+     "win": false
+    },
+    {
+     "cmd": "query competency_register worker=W-2291",
+     "p": 0.09442060085836909,
+     "r": 0.047186001094584595,
+     "score": 32.34101445658952,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.017167381974248927,
+     "r": 0.5596552514704809,
+     "score": 33.81029839442009,
+     "win": false
+    },
+    {
+     "cmd": "review previous_permit space=T-114",
+     "p": 0.02575107296137339,
+     "r": 0.41708184650202074,
+     "score": 33.95869380546588,
+     "win": false
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-1043",
+     "p": 0.017167381974248927,
+     "r": 0.4479770387785704,
+     "score": 46.77552476035909,
+     "win": false
+    },
+    {
+     "cmd": "verify signage_posted space=T-114",
+     "p": 0.02145922746781116,
+     "r": 0.25360167138234013,
+     "score": 63.93475570704492,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.047210300429184546,
+     "r": 0.024503946502560492,
+     "score": 78.56169223557357,
+     "win": false
+    },
+    {
+     "cmd": "check lighting space=T-114",
+     "p": 0.012875536480686695,
+     "r": 0.2297981625692893,
+     "score": 114.21302029529487,
+     "win": false
+    }
+   ],
+   "phi": 0.017167381974248927,
+   "phase": "rescue standby",
+   "result": "SCBA-5 at 295 bar, above the 270 bar minimum.",
+   "observations": [
+    {
+     "cmd": "check scba_pressure unit=SCBA-5",
+     "text": "SCBA-5 at 295 bar, above the 270 bar minimum.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 4.11785165330816,
+    "z_wrong": -0.8844216780438566,
+    "X": 7.823521655948873,
+    "expected": 2.0,
+    "n": 2,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 1.414213562373095,
+    "z_wrong": -1.414213562373095,
+    "X": 2,
+    "expected": 1.0,
+    "n": 2,
+    "detected": false
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 2,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 1
+  },
+  {
+   "kind": "group",
+   "i": 2,
+   "round_num": 168571938839407,
+   "window": "check scba_pressure unit=SCBA-5",
+   "chosen": "confirm gas_detector_count entrants=2",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 26,
+   "race": [
+    {
+     "cmd": "confirm gas_detector_count entrants=2",
+     "p": 0.020408163265306124,
+     "r": 0.946423852500077,
+     "score": 2.6981733984224987,
+     "win": true
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.0326530612244898,
+     "r": 0.910547093567845,
+     "score": 2.869858288429246,
+     "win": false
+    },
+    {
+     "cmd": "check lighting space=T-114",
+     "p": 0.0163265306122449,
+     "r": 0.9396850198959814,
+     "score": 3.8103958866843675,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-3 status",
+     "p": 0.0489795918367347,
+     "r": 0.8252422341342158,
+     "score": 3.921599004998014,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "p": 0.0489795918367347,
+     "r": 0.8181826123532452,
+     "score": 4.097006881510058,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.05306122448979592,
+     "r": 0.6875568341156681,
+     "score": 7.059972487548561,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-7",
+     "p": 0.08979591836734695,
+     "r": 0.5193444878776621,
+     "score": 7.296410291016449,
+     "win": false
+    },
+    {
+     "cmd": "check communication_link channel=radio-2",
+     "p": 0.028571428571428574,
+     "r": 0.7565760475099532,
+     "score": 9.763327887137347,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-8",
+     "p": 0.08979591836734695,
+     "r": 0.3995775557712953,
+     "score": 10.215914233104275,
+     "win": false
+    },
+    {
+     "cmd": "confirm rescue_team status site=T-114",
+     "p": 0.05714285714285715,
+     "r": 0.5567775913842627,
+     "score": 10.247814782284044,
+     "win": false
+    },
+    {
+     "cmd": "query competency_register worker=W-2291",
+     "p": 0.02448979591836735,
+     "r": 0.7453590370185392,
+     "score": 12.000477618869954,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-103",
+     "p": 0.05306122448979592,
+     "r": 0.5253303623635641,
+     "score": 12.131796030668587,
+     "win": false
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-1043",
+     "p": 0.02448979591836735,
+     "r": 0.6971181904883714,
+     "score": 14.732679419423869,
+     "win": false
+    },
+    {
+     "cmd": "verify signage_posted space=T-114",
+     "p": 0.02448979591836735,
+     "r": 0.651284270084691,
+     "score": 17.509703499260322,
+     "win": false
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-2291",
+     "p": 0.02448979591836735,
+     "r": 0.6427267861046757,
+     "score": 18.049784958807564,
+     "win": false
+    },
+    {
+     "cmd": "verify retrieval_equipment id=TRIPOD-1",
+     "p": 0.0653061224489796,
+     "r": 0.24964317371922773,
+     "score": 21.24950362651479,
+     "win": false
+    },
+    {
+     "cmd": "review previous_permit space=T-114",
+     "p": 0.02448979591836735,
+     "r": 0.5723751806162232,
+     "score": 22.78339085834135,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.028571428571428574,
+     "r": 0.495562850178336,
+     "score": 24.57213819626207,
+     "win": false
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.04489795918367347,
+     "r": 0.31686716753552613,
+     "score": 25.597435689163827,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.0163265306122449,
+     "r": 0.6235311781028972,
+     "score": 28.93183624581002,
+     "win": false
+    },
+    {
+     "cmd": "query incident_history space=T-114",
+     "p": 0.020408163265306124,
+     "r": 0.4412818253803876,
+     "score": 40.08550584355187,
+     "win": false
+    },
+    {
+     "cmd": "verify harness_inspection id=HARN-9",
+     "p": 0.04081632653061225,
+     "r": 0.059588526922313534,
+     "score": 69.09715950625375,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.02448979591836735,
+     "r": 0.1756345279345719,
+     "score": 71.02345787522171,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.05306122448979592,
+     "r": 0.021795284594146702,
+     "score": 72.10654620947432,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.036734693877551024,
+     "r": 0.048217180654598346,
+     "score": 82.53886329984678,
+     "win": false
+    },
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.00816326530612245,
+     "r": 0.18923009923577672,
+     "score": 203.93696464806598,
+     "win": false
+    }
+   ],
+   "phi": 0.020408163265306124,
+   "phase": "further diligence",
+   "result": "Two personal H2S monitors issued, both bump-tested.",
+   "observations": [
+    {
+     "cmd": "confirm gas_detector_count entrants=2",
+     "text": "Two personal H2S monitors issued, both bump-tested.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 4.474564453515253,
+    "z_wrong": -1.2824259371548246,
+    "X": 10.750172975230086,
+    "expected": 3.0,
+    "n": 3,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 1.7320508075688774,
+    "z_wrong": -0.5773502691896258,
+    "X": 3,
+    "expected": 1.5,
+    "n": 3,
+    "detected": false
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 3,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 2
+  },
+  {
+   "kind": "group",
+   "i": 3,
+   "round_num": 32341378604099,
+   "window": "confirm gas_detector_count entrants=2||review last_record",
+   "chosen": "confirm rescue_team status site=T-114",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 25,
+   "race": [
+    {
+     "cmd": "confirm rescue_team status site=T-114",
+     "p": 0.06201550387596899,
+     "r": 0.9029392807370775,
+     "score": 1.646362008746061,
+     "win": true
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-2291",
+     "p": 0.054263565891472874,
+     "r": 0.8419259365777232,
+     "score": 3.1708795227699733,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-8",
+     "p": 0.09302325581395349,
+     "r": 0.6910969479648803,
+     "score": 3.9718580140054103,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-103",
+     "p": 0.06201550387596899,
+     "r": 0.7672639316094807,
+     "score": 4.271906398248518,
+     "win": false
+    },
+    {
+     "cmd": "verify harness_inspection id=HARN-9",
+     "p": 0.023255813953488372,
+     "r": 0.8620099623122455,
+     "score": 6.385003400673207,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-7",
+     "p": 0.11627906976744186,
+     "r": 0.45715224308507696,
+     "score": 6.73155374632148,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.023255813953488372,
+     "r": 0.8397985603865761,
+     "score": 7.5075086735882675,
+     "win": false
+    },
+    {
+     "cmd": "verify retrieval_equipment id=TRIPOD-1",
+     "p": 0.054263565891472874,
+     "r": 0.6354102601587719,
+     "score": 8.357069836239688,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-3 status",
+     "p": 0.03875968992248062,
+     "r": 0.6792921402485077,
+     "score": 9.97696302509067,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.06201550387596899,
+     "r": 0.5257635253888711,
+     "score": 10.366822788731174,
+     "win": false
+    },
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.007751937984496124,
+     "r": 0.8632005362868231,
+     "score": 18.97696344514404,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "p": 0.03875968992248062,
+     "r": 0.4773472581363114,
+     "score": 19.07938505083236,
+     "win": false
+    },
+    {
+     "cmd": "query competency_register worker=W-2291",
+     "p": 0.06201550387596899,
+     "r": 0.2815916799077385,
+     "score": 20.435167364785233,
+     "win": false
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.023255813953488372,
+     "r": 0.5451334991336958,
+     "score": 26.089156156366986,
+     "win": false
+    },
+    {
+     "cmd": "verify signage_posted space=T-114",
+     "p": 0.023255813953488372,
+     "r": 0.31512531651117515,
+     "score": 49.65575023025713,
+     "win": false
+    },
+    {
+     "cmd": "query incident_history space=T-114",
+     "p": 0.023255813953488372,
+     "r": 0.2420698610973946,
+     "score": 60.99674322741678,
+     "win": false
+    },
+    {
+     "cmd": "review previous_permit space=T-114",
+     "p": 0.023255813953488372,
+     "r": 0.22825603006145267,
+     "score": 63.52335567099438,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.06201550387596899,
+     "r": 0.014690596818242252,
+     "score": 68.05633105141786,
+     "win": false
+    },
+    {
+     "cmd": "check communication_link channel=radio-2",
+     "p": 0.03875968992248062,
+     "r": 0.06804392974717222,
+     "score": 69.34012532278494,
+     "win": false
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-1043",
+     "p": 0.015503875968992248,
+     "r": 0.2961370154937413,
+     "score": 78.49218118172483,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.015503875968992248,
+     "r": 0.2651528922386486,
+     "score": 85.62043905534209,
+     "win": false
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.023255813953488372,
+     "r": 0.12983611594205402,
+     "score": 87.78373762760913,
+     "win": false
+    },
+    {
+     "cmd": "check lighting space=T-114",
+     "p": 0.015503875968992248,
+     "r": 0.23414617479641175,
+     "score": 93.64172436243565,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.023255813953488372,
+     "r": 0.06596256681358015,
+     "score": 116.9027182959803,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.015503875968992248,
+     "r": 0.0750453842865737,
+     "score": 167.03321348917916,
+     "win": false
+    }
+   ],
+   "phi": 0.06201550387596899,
+   "phase": "rescue standby",
+   "result": "Rescue crew on site, 2 members, SCBA-ready.",
+   "observations": [
+    {
+     "cmd": "confirm rescue_team status site=T-114",
+     "text": "Rescue crew on site, 2 members, SCBA-ready.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 4.541295749882375,
+    "z_wrong": -1.5807068913494131,
+    "X": 13.08259149976475,
+    "expected": 4.0,
+    "n": 4,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 2.0,
+    "z_wrong": -1.0,
+    "X": 4,
+    "expected": 2.0,
+    "n": 4,
+    "detected": false
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 4,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 3
+  },
+  {
+   "kind": "group",
+   "i": 4,
+   "round_num": 194373285383,
+   "window": "confirm rescue_team status site=T-114",
+   "chosen": "check ventilation_fan id=FAN-3 status",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 24,
+   "race": [
+    {
+     "cmd": "check ventilation_fan id=FAN-3 status",
+     "p": 0.07142857142857144,
+     "r": 0.9156331487598979,
+     "score": 1.233952820055112,
+     "win": true
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.05357142857142857,
+     "r": 0.9247745156186926,
+     "score": 1.4598329775755092,
+     "win": false
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.026785714285714284,
+     "r": 0.9076472645128246,
+     "score": 3.617579506352919,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.07142857142857144,
+     "r": 0.6927967112869624,
+     "score": 5.138261362259472,
+     "win": false
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.07142857142857144,
+     "r": 0.6653317360889228,
+     "score": 5.704573160295389,
+     "win": false
+    },
+    {
+     "cmd": "verify retrieval_equipment id=TRIPOD-1",
+     "p": 0.03571428571428572,
+     "r": 0.80188913793159,
+     "score": 6.181977554929274,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-7",
+     "p": 0.12500000000000003,
+     "r": 0.31496865861492673,
+     "score": 9.24225713253724,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.07142857142857144,
+     "r": 0.3804495860735251,
+     "score": 13.52962246092776,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "p": 0.0892857142857143,
+     "r": 0.2581860048084861,
+     "score": 15.165640055431195,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.00892857142857143,
+     "r": 0.8656400872475183,
+     "score": 16.160038770076312,
+     "win": false
+    },
+    {
+     "cmd": "review previous_permit space=T-114",
+     "p": 0.026785714285714284,
+     "r": 0.5636454592969415,
+     "score": 21.40431415416808,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-8",
+     "p": 0.10714285714285714,
+     "r": 0.05558634126257389,
+     "score": 26.971632507402035,
+     "win": false
+    },
+    {
+     "cmd": "query incident_history space=T-114",
+     "p": 0.01785714285714286,
+     "r": 0.6082771239432341,
+     "score": 27.838983474407197,
+     "win": false
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-2291",
+     "p": 0.026785714285714284,
+     "r": 0.4302707116419606,
+     "score": 31.484719706625715,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-103",
+     "p": 0.05357142857142857,
+     "r": 0.14644156177424095,
+     "score": 35.86107141575567,
+     "win": false
+    },
+    {
+     "cmd": "verify signage_posted space=T-114",
+     "p": 0.01785714285714286,
+     "r": 0.498035899819931,
+     "score": 39.03665452757667,
+     "win": false
+    },
+    {
+     "cmd": "verify harness_inspection id=HARN-9",
+     "p": 0.026785714285714284,
+     "r": 0.2885015329990188,
+     "score": 46.4073821627731,
+     "win": false
+    },
+    {
+     "cmd": "check lighting space=T-114",
+     "p": 0.00892857142857143,
+     "r": 0.6564642244648315,
+     "score": 47.139353079349064,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.00892857142857143,
+     "r": 0.6320601218904776,
+     "score": 51.382325096062246,
+     "win": false
+    },
+    {
+     "cmd": "query competency_register worker=W-2291",
+     "p": 0.01785714285714286,
+     "r": 0.29999948623723083,
+     "score": 67.4225729447181,
+     "win": false
+    },
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.00892857142857143,
+     "r": 0.4680053210987378,
+     "score": 85.03886868512322,
+     "win": false
+    },
+    {
+     "cmd": "check communication_link channel=radio-2",
+     "p": 0.01785714285714286,
+     "r": 0.12479152738083688,
+     "score": 116.54220003597015,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.026785714285714284,
+     "r": 0.000922044438672831,
+     "score": 260.91957313118513,
+     "win": false
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-1043",
+     "p": 0.00892857142857143,
+     "r": 0.012511333768538746,
+     "score": 490.68547852758235,
+     "win": false
+    }
+   ],
+   "phi": 0.07142857142857144,
+   "phase": "ventilation",
+   "result": "FAN-3 running, 1380 rpm, no alarms.",
+   "observations": [
+    {
+     "cmd": "check ventilation_fan id=FAN-3 status",
+     "text": "FAN-3 running, 1380 rpm, no alarms.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 4.720416516100399,
+    "z_wrong": -1.240392688273856,
+    "X": 15.555172212113224,
+    "expected": 5.0,
+    "n": 5,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 2.23606797749979,
+    "z_wrong": -0.4472135954999579,
+    "X": 5,
+    "expected": 2.5,
+    "n": 5,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 5,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 4
+  },
+  {
+   "kind": "group",
+   "i": 5,
+   "round_num": 99980039148716,
+   "window": "check ventilation_fan id=FAN-3 status||review last_record",
+   "chosen": "verify energy_isolation source=ISO-7",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 23,
+   "race": [
+    {
+     "cmd": "verify energy_isolation source=ISO-7",
+     "p": 0.12612612612612614,
+     "r": 0.9200952355639196,
+     "score": 0.6602763435069385,
+     "win": true
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.00900900900900901,
+     "r": 0.9896168303391075,
+     "score": 1.1585570426123406,
+     "win": false
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.10810810810810811,
+     "r": 0.7996355734710601,
+     "score": 2.0682924914247507,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-8",
+     "p": 0.12612612612612614,
+     "r": 0.7221487311145176,
+     "score": 2.5809415743495556,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "p": 0.00900900900900901,
+     "r": 0.9507512099422859,
+     "score": 5.605817410695794,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.06306306306306307,
+     "r": 0.6830068556345668,
+     "score": 6.045541770594995,
+     "win": false
+    },
+    {
+     "cmd": "check lighting space=T-114",
+     "p": 0.01801801801801802,
+     "r": 0.8340003183410896,
+     "score": 10.074442968033294,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-103",
+     "p": 0.06306306306306307,
+     "r": 0.49572246735979153,
+     "score": 11.127576371776012,
+     "win": false
+    },
+    {
+     "cmd": "verify retrieval_equipment id=TRIPOD-1",
+     "p": 0.01801801801801802,
+     "r": 0.7771274809849109,
+     "score": 13.994373500370791,
+     "win": false
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.03603603603603604,
+     "r": 0.551728487182751,
+     "score": 16.502903487063005,
+     "win": false
+    },
+    {
+     "cmd": "verify harness_inspection id=HARN-9",
+     "p": 0.04504504504504505,
+     "r": 0.4587454973997387,
+     "score": 17.29956521998621,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.06306306306306307,
+     "r": 0.33450576770977225,
+     "score": 17.36517548612917,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.02702702702702703,
+     "r": 0.5420305692961116,
+     "score": 22.66001649405222,
+     "win": false
+    },
+    {
+     "cmd": "review previous_permit space=T-114",
+     "p": 0.03603603603603604,
+     "r": 0.42244051010148387,
+     "score": 23.912359442936907,
+     "win": false
+    },
+    {
+     "cmd": "verify signage_posted space=T-114",
+     "p": 0.01801801801801802,
+     "r": 0.5299115490931399,
+     "score": 35.24500720511379,
+     "win": false
+    },
+    {
+     "cmd": "query competency_register worker=W-2291",
+     "p": 0.02702702702702703,
+     "r": 0.3361010247484617,
+     "score": 40.3427093267118,
+     "win": false
+    },
+    {
+     "cmd": "check communication_link channel=radio-2",
+     "p": 0.07207207207207209,
+     "r": 0.05405306161066559,
+     "score": 40.48432365782028,
+     "win": false
+    },
+    {
+     "cmd": "query incident_history space=T-114",
+     "p": 0.02702702702702703,
+     "r": 0.3179430409238253,
+     "score": 42.39767206696889,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.01801801801801802,
+     "r": 0.4006261169239189,
+     "score": 50.767329816339526,
+     "win": false
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-1043",
+     "p": 0.02702702702702703,
+     "r": 0.24659146665341058,
+     "score": 51.80082483550156,
+     "win": false
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-2291",
+     "p": 0.02702702702702703,
+     "r": 0.23126196529464993,
+     "score": 54.175553998198076,
+     "win": false
+    },
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.00900900900900901,
+     "r": 0.35155831662168446,
+     "score": 116.03714377041075,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.02702702702702703,
+     "r": 0.014418327325545155,
+     "score": 156.8524405757156,
+     "win": false
+    }
+   ],
+   "phi": 0.12612612612612614,
+   "phase": "isolation / LOTO",
+   "result": "Sludge-rake drive isolated and proved dead.",
+   "observations": [
+    {
+     "cmd": "verify energy_isolation source=ISO-7",
+     "text": "Sludge-rake drive isolated and proved dead.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 4.932493408355502,
+    "z_wrong": -1.5084746304021843,
+    "X": 18.08209201011244,
+    "expected": 6.0,
+    "n": 6,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 2.4494897427831783,
+    "z_wrong": 0.0,
+    "X": 6,
+    "expected": 3.0,
+    "n": 6,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 6,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 5
+  },
+  {
+   "kind": "group",
+   "i": 6,
+   "round_num": 90066057238654,
+   "window": "verify energy_isolation source=ISO-7",
+   "chosen": "verify signage_posted space=T-114",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 22,
+   "race": [
+    {
+     "cmd": "verify signage_posted space=T-114",
+     "p": 0.034782608695652174,
+     "r": 0.9959331299911995,
+     "score": 0.11716091366646378,
+     "win": true
+    },
+    {
+     "cmd": "verify retrieval_equipment id=TRIPOD-1",
+     "p": 0.034782608695652174,
+     "r": 0.9902350621818954,
+     "score": 0.28212166532968735,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-103",
+     "p": 0.0782608695652174,
+     "r": 0.8586929223331936,
+     "score": 1.946616546537779,
+     "win": false
+    },
+    {
+     "cmd": "review previous_permit space=T-114",
+     "p": 0.034782608695652174,
+     "r": 0.832711149577277,
+     "score": 5.2632181146323,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.0782608695652174,
+     "r": 0.5553422008560349,
+     "score": 7.515515485459414,
+     "win": false
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-1043",
+     "p": 0.026086956521739132,
+     "r": 0.802924808838418,
+     "score": 8.413944610477895,
+     "win": false
+    },
+    {
+     "cmd": "verify harness_inspection id=HARN-9",
+     "p": 0.04347826086956522,
+     "r": 0.6494850005255635,
+     "score": 9.926237351395384,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.026086956521739132,
+     "r": 0.7482017164954662,
+     "score": 11.119835411323885,
+     "win": false
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.10434782608695653,
+     "r": 0.28457403638117706,
+     "score": 12.043967498637818,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.0782608695652174,
+     "r": 0.37819091562029783,
+     "score": 12.424550717232794,
+     "win": false
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.06956521739130435,
+     "r": 0.40986886638514175,
+     "score": 12.821321372588745,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.034782608695652174,
+     "r": 0.6297794874111255,
+     "score": 13.29358429944299,
+     "win": false
+    },
+    {
+     "cmd": "check lighting space=T-114",
+     "p": 0.026086956521739132,
+     "r": 0.7056384007585546,
+     "score": 13.36500686218895,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-8",
+     "p": 0.10434782608695653,
+     "r": 0.22922825596756402,
+     "score": 14.116604783665403,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.026086956521739132,
+     "r": 0.6885372343453755,
+     "score": 14.305458805794018,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.026086956521739132,
+     "r": 0.4897735867277324,
+     "score": 27.362795731708978,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "p": 0.026086956521739132,
+     "r": 0.39910189633339477,
+     "score": 35.21064309088228,
+     "win": false
+    },
+    {
+     "cmd": "query competency_register worker=W-2291",
+     "p": 0.026086956521739132,
+     "r": 0.3833258822286909,
+     "score": 36.75667505893573,
+     "win": false
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-2291",
+     "p": 0.026086956521739132,
+     "r": 0.20298250012763286,
+     "score": 61.127694547092105,
+     "win": false
+    },
+    {
+     "cmd": "check communication_link channel=radio-2",
+     "p": 0.052173913043478265,
+     "r": 0.03681988882553178,
+     "score": 63.28291151623387,
+     "win": false
+    },
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.017391304347826087,
+     "r": 0.3268777276063646,
+     "score": 64.29472323298613,
+     "win": false
+    },
+    {
+     "cmd": "query incident_history space=T-114",
+     "p": 0.026086956521739132,
+     "r": 0.11503398507994822,
+     "score": 82.8968940873038,
+     "win": false
+    }
+   ],
+   "phi": 0.034782608695652174,
+   "phase": "further diligence",
+   "result": "Confined-space warning signage posted at both approaches.",
+   "observations": [
+    {
+     "cmd": "verify signage_posted space=T-114",
+     "text": "Confined-space warning signage posted at both approaches.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 6.269286745032461,
+    "z_wrong": -0.3333959525458847,
+    "X": 23.586973625109493,
+    "expected": 7.0,
+    "n": 7,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 2.6457513110645903,
+    "z_wrong": -0.3779644730092272,
+    "X": 7,
+    "expected": 3.5,
+    "n": 7,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 7,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 6
+  },
+  {
+   "kind": "group",
+   "i": 7,
+   "round_num": 52777698411877,
+   "window": "verify signage_posted space=T-114",
+   "chosen": "query incident_history space=T-114",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 21,
+   "race": [
+    {
+     "cmd": "query incident_history space=T-114",
+     "p": 0.027272727272727268,
+     "r": 0.9792297176751952,
+     "score": 0.7695973542250898,
+     "win": true
+    },
+    {
+     "cmd": "verify loto_tag valve=V-103",
+     "p": 0.045454545454545456,
+     "r": 0.9174211531409775,
+     "score": 1.8961500662997808,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-8",
+     "p": 0.09090909090909091,
+     "r": 0.829104611112095,
+     "score": 2.061498365168569,
+     "win": false
+    },
+    {
+     "cmd": "check communication_link channel=radio-2",
+     "p": 0.03636363636363636,
+     "r": 0.8583451483480995,
+     "score": 4.200597213488524,
+     "win": false
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-1043",
+     "p": 0.03636363636363636,
+     "r": 0.8440558114029257,
+     "score": 4.662258131240576,
+     "win": false
+    },
+    {
+     "cmd": "review previous_permit space=T-114",
+     "p": 0.03636363636363636,
+     "r": 0.8314490906975351,
+     "score": 5.076093222293051,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.045454545454545456,
+     "r": 0.7190686817485235,
+     "score": 7.255564840339522,
+     "win": false
+    },
+    {
+     "cmd": "check lighting space=T-114",
+     "p": 0.027272727272727268,
+     "r": 0.7997139070592634,
+     "score": 8.195045153168294,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.045454545454545456,
+     "r": 0.6846555326652739,
+     "score": 8.334467662926889,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.027272727272727268,
+     "r": 0.7866547907258739,
+     "score": 8.798744763579869,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.027272727272727268,
+     "r": 0.7792727156721946,
+     "score": 9.144454369357925,
+     "win": false
+    },
+    {
+     "cmd": "query competency_register worker=W-2291",
+     "p": 0.09999999999999999,
+     "r": 0.3835969390836824,
+     "score": 9.581629154528589,
+     "win": false
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.045454545454545456,
+     "r": 0.6426378128645185,
+     "score": 9.727827790619397,
+     "win": false
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.14545454545454545,
+     "r": 0.21681430144279457,
+     "score": 10.509909063003354,
+     "win": false
+    },
+    {
+     "cmd": "verify retrieval_equipment id=TRIPOD-1",
+     "p": 0.09090909090909091,
+     "r": 0.2740193412569487,
+     "score": 14.24012245211941,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.027272727272727268,
+     "r": 0.39063892054648575,
+     "score": 34.46562615933933,
+     "win": false
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-2291",
+     "p": 0.045454545454545456,
+     "r": 0.1625033416458781,
+     "score": 39.97524769588121,
+     "win": false
+    },
+    {
+     "cmd": "verify harness_inspection id=HARN-9",
+     "p": 0.045454545454545456,
+     "r": 0.11908128268241658,
+     "score": 46.81487736838333,
+     "win": false
+    },
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.01818181818181818,
+     "r": 0.41633711419931174,
+     "score": 48.19429869223647,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "p": 0.00909090909090909,
+     "r": 0.6031714776254333,
+     "score": 55.61091233611002,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.027272727272727268,
+     "r": 0.14235667459212875,
+     "score": 71.47871785112291,
+     "win": false
+    }
+   ],
+   "phi": 0.027272727272727268,
+   "phase": "further diligence",
+   "result": "Two prior entries logged for T-114, no incidents. One near-miss in 2024 at the adjacent T-113 (H2S spike during de-sludging).",
+   "observations": [
+    {
+     "cmd": "query incident_history space=T-114",
+     "text": "Two prior entries logged for T-114, no incidents. One near-miss in 2024 at the adjacent T-113 (H2S spike during de-sludging).",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 6.880575250857581,
+    "z_wrong": -0.2871717475621656,
+    "X": 27.461205673382906,
+    "expected": 8.0,
+    "n": 8,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 2.82842712474619,
+    "z_wrong": 0.0,
+    "X": 8,
+    "expected": 4.0,
+    "n": 8,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 8,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 7
+  },
+  {
+   "kind": "group",
+   "i": 8,
+   "round_num": 256965552778014,
+   "window": "query incident_history space=T-114",
+   "chosen": "check communication_link channel=radio-2",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 20,
+   "race": [
+    {
+     "cmd": "check communication_link channel=radio-2",
+     "p": 0.03603603603603604,
+     "r": 0.9953025800479525,
+     "score": 0.13066052818157597,
+     "win": true
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "p": 0.01801801801801802,
+     "r": 0.9946838068337396,
+     "score": 0.2958357794004498,
+     "win": false
+    },
+    {
+     "cmd": "query competency_register worker=W-2291",
+     "p": 0.16216216216216217,
+     "r": 0.8896036677192298,
+     "score": 0.721371934419042,
+     "win": false
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-1043",
+     "p": 0.06306306306306307,
+     "r": 0.947963672568898,
+     "score": 0.8473914037906954,
+     "win": false
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.03603603603603604,
+     "r": 0.9646980929391527,
+     "score": 0.9973373213153383,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.07207207207207209,
+     "r": 0.9292629184417889,
+     "score": 1.0179195045082654,
+     "win": false
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.13513513513513514,
+     "r": 0.8353948813296108,
+     "score": 1.3308955806864846,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.02702702702702703,
+     "r": 0.9026943068180471,
+     "score": 3.7877386007998037,
+     "win": false
+    },
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.00900900900900901,
+     "r": 0.9648883503832677,
+     "score": 3.9674600597868555,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-103",
+     "p": 0.05405405405405406,
+     "r": 0.8002947694382008,
+     "score": 4.121340411563984,
+     "win": false
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-2291",
+     "p": 0.07207207207207209,
+     "r": 0.6650356817428524,
+     "score": 5.659814839258006,
+     "win": false
+    },
+    {
+     "cmd": "check lighting space=T-114",
+     "p": 0.02702702702702703,
+     "r": 0.5730339476406023,
+     "score": 20.601981787321705,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.02702702702702703,
+     "r": 0.5684835078316675,
+     "score": 20.896970118771936,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.02702702702702703,
+     "r": 0.5254193581595761,
+     "score": 23.81166663847504,
+     "win": false
+    },
+    {
+     "cmd": "verify harness_inspection id=HARN-9",
+     "p": 0.04504504504504505,
+     "r": 0.14289042734519009,
+     "score": 43.19403350205533,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-8",
+     "p": 0.03603603603603604,
+     "r": 0.16349551096053472,
+     "score": 50.25441042154718,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.07207207207207209,
+     "r": 0.01947041074136302,
+     "score": 54.65167367141165,
+     "win": false
+    },
+    {
+     "cmd": "review previous_permit space=T-114",
+     "p": 0.03603603603603604,
+     "r": 0.07284639613967969,
+     "score": 72.68841152630208,
+     "win": false
+    },
+    {
+     "cmd": "verify retrieval_equipment id=TRIPOD-1",
+     "p": 0.01801801801801802,
+     "r": 0.21426222765752656,
+     "score": 85.50078314265511,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.02702702702702703,
+     "r": 0.024779321373781693,
+     "score": 136.81659420047703,
+     "win": false
+    }
+   ],
+   "phi": 0.03603603603603604,
+   "phase": "rescue standby",
+   "result": "Radio check with attendant PASS.",
+   "observations": [
+    {
+     "cmd": "check communication_link channel=radio-2",
+     "text": "Radio check with attendant PASS.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.940649180249373,
+    "z_wrong": -0.5387027864416973,
+    "X": 32.82194754074812,
+    "expected": 9.0,
+    "n": 9,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 3.0,
+    "z_wrong": -0.3333333333333333,
+    "X": 9,
+    "expected": 4.5,
+    "n": 9,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 9,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 8
+  },
+  {
+   "kind": "group",
+   "i": 9,
+   "round_num": 281148766226298,
+   "window": "check communication_link channel=radio-2",
+   "chosen": "review previous_permit space=T-114",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 19,
+   "race": [
+    {
+     "cmd": "review previous_permit space=T-114",
+     "p": 0.044642857142857144,
+     "r": 0.8480946178270501,
+     "score": 3.6906928080582784,
+     "win": true
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-1043",
+     "p": 0.07142857142857142,
+     "r": 0.7551111534169088,
+     "score": 3.9324644450085597,
+     "win": false
+    },
+    {
+     "cmd": "query competency_register worker=W-2291",
+     "p": 0.11607142857142856,
+     "r": 0.5829782971773441,
+     "score": 4.648907367443926,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-8",
+     "p": 0.0625,
+     "r": 0.6819378070337383,
+     "score": 6.125069077273007,
+     "win": false
+    },
+    {
+     "cmd": "verify retrieval_equipment id=TRIPOD-1",
+     "p": 0.03571428571428571,
+     "r": 0.7260013093337916,
+     "score": 8.965696898729094,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.07142857142857142,
+     "r": 0.4129428982230836,
+     "score": 12.382243391575242,
+     "win": false
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.08035714285714285,
+     "r": 0.2771599131581548,
+     "score": 15.96822124240608,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.044642857142857144,
+     "r": 0.4266774335291945,
+     "score": 19.07868426734877,
+     "win": false
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.0625,
+     "r": 0.2996779383399413,
+     "score": 19.280750717574286,
+     "win": false
+    },
+    {
+     "cmd": "check lighting space=T-114",
+     "p": 0.02678571428571428,
+     "r": 0.5954952165858041,
+     "score": 19.352178451967138,
+     "win": false
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-2291",
+     "p": 0.07142857142857142,
+     "r": 0.2492299603810606,
+     "score": 19.45130982266078,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.02678571428571428,
+     "r": 0.5431298274312877,
+     "score": 22.78852407070581,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.07142857142857142,
+     "r": 0.06452475626374343,
+     "score": 38.36988835088051,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.017857142857142856,
+     "r": 0.49971086312703905,
+     "score": 38.848634807954504,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "p": 0.017857142857142856,
+     "r": 0.49440265611927203,
+     "score": 39.44668002483917,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-103",
+     "p": 0.07142857142857142,
+     "r": 0.04968099648998847,
+     "score": 42.02985896740408,
+     "win": false
+    },
+    {
+     "cmd": "verify harness_inspection id=HARN-9",
+     "p": 0.07142857142857142,
+     "r": 0.03445415355114845,
+     "score": 47.15376009774777,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.017857142857142856,
+     "r": 0.4003603950792143,
+     "score": 51.26184839002635,
+     "win": false
+    },
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.017857142857142856,
+     "r": 0.3283323490682688,
+     "score": 62.36881975767906,
+     "win": false
+    }
+   ],
+   "phi": 0.044642857142857144,
+   "phase": "further diligence",
+   "result": "Previous permit PTW-4102 closed clean on 2026-05-19.",
+   "observations": [
+    {
+     "cmd": "review previous_permit space=T-114",
+     "text": "Previous permit PTW-4102 closed clean on 2026-05-19.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.8128639017414425,
+    "z_wrong": -0.3732060197841684,
+    "X": 34.706444978412925,
+    "expected": 10.0,
+    "n": 10,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 3.162277660168379,
+    "z_wrong": 0.0,
+    "X": 10,
+    "expected": 5.0,
+    "n": 10,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 10,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 9
+  },
+  {
+   "kind": "group",
+   "i": 10,
+   "round_num": 110782456718949,
+   "window": "review previous_permit space=T-114",
+   "chosen": "verify medical_clearance worker=W-1043",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 18,
+   "race": [
+    {
+     "cmd": "verify medical_clearance worker=W-1043",
+     "p": 0.06306306306306306,
+     "r": 0.95197509589382,
+     "score": 0.7804315540323086,
+     "win": true
+    },
+    {
+     "cmd": "verify harness_inspection id=HARN-9",
+     "p": 0.07207207207207207,
+     "r": 0.8898650168046423,
+     "score": 1.6190112329978854,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.027027027027027025,
+     "r": 0.9120600591302916,
+     "score": 3.405829160363283,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.07207207207207207,
+     "r": 0.7135517190698584,
+     "score": 4.682817470848933,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.07207207207207207,
+     "r": 0.6863969450072278,
+     "score": 5.2211511442190215,
+     "win": false
+    },
+    {
+     "cmd": "query competency_register worker=W-2291",
+     "p": 0.13513513513513511,
+     "r": 0.3450678984739304,
+     "score": 7.8737041486652695,
+     "win": false
+    },
+    {
+     "cmd": "verify retrieval_equipment id=TRIPOD-1",
+     "p": 0.036036036036036036,
+     "r": 0.7413858264203903,
+     "score": 8.30374643501492,
+     "win": false
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.14414414414414414,
+     "r": 0.27761018693490724,
+     "score": 8.890665397339024,
+     "win": false
+    },
+    {
+     "cmd": "verify medical_clearance worker=W-2291",
+     "p": 0.06306306306306306,
+     "r": 0.5560580712576941,
+     "score": 9.306280363999413,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-8",
+     "p": 0.036036036036036036,
+     "r": 0.6738036714956226,
+     "score": 10.95615784960186,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-103",
+     "p": 0.07207207207207207,
+     "r": 0.09406579177992236,
+     "score": 32.79718150215754,
+     "win": false
+    },
+    {
+     "cmd": "check lighting space=T-114",
+     "p": 0.027027027027027025,
+     "r": 0.38039543952758526,
+     "score": 35.76212566923528,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.027027027027027025,
+     "r": 0.36668859729303116,
+     "score": 37.119965094568535,
+     "win": false
+    },
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.018018018018018018,
+     "r": 0.4435572904863765,
+     "score": 45.11752106499958,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.07207207207207207,
+     "r": 0.025858969457268177,
+     "score": 50.714481382160876,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.018018018018018018,
+     "r": 0.39532968351730857,
+     "score": 51.505954731358315,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "p": 0.018018018018018018,
+     "r": 0.34530574618592524,
+     "score": 59.0145393639027,
+     "win": false
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.027027027027027025,
+     "r": 0.08065320113418384,
+     "score": 93.1510809901007,
+     "win": false
+    }
+   ],
+   "phi": 0.06306306306306306,
+   "phase": "worker competency",
+   "result": "Fitness-for-duty current, respirator-cleared.",
+   "observations": [
+    {
+     "cmd": "verify medical_clearance worker=W-1043",
+     "text": "Fitness-for-duty current, respirator-cleared.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 8.06316126661549,
+    "z_wrong": -0.2726292764421234,
+    "X": 37.74248054549038,
+    "expected": 11.0,
+    "n": 11,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 3.3166247903554,
+    "z_wrong": -0.30151134457776363,
+    "X": 11,
+    "expected": 5.5,
+    "n": 11,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 11,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 10
+  },
+  {
+   "kind": "group",
+   "i": 11,
+   "round_num": 142825869966419,
+   "window": "verify medical_clearance worker=W-1043",
+   "chosen": "verify medical_clearance worker=W-2291",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 17,
+   "race": [
+    {
+     "cmd": "verify medical_clearance worker=W-2291",
+     "p": 0.04166666666666667,
+     "r": 0.9393290862372945,
+     "score": 1.502145518298731,
+     "win": true
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "p": 0.09166666666666667,
+     "r": 0.7935362154690482,
+     "score": 2.5227938170311512,
+     "win": false
+    },
+    {
+     "cmd": "query competency_register worker=W-2291",
+     "p": 0.09166666666666667,
+     "r": 0.7492370417958985,
+     "score": 3.149453103657731,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.06666666666666667,
+     "r": 0.7837092596687836,
+     "score": 3.655757545048936,
+     "win": false
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.11666666666666668,
+     "r": 0.630398435260594,
+     "score": 3.954884764962263,
+     "win": false
+    },
+    {
+     "cmd": "check lighting space=T-114",
+     "p": 0.03333333333333333,
+     "r": 0.8287945720382681,
+     "score": 5.633488700399722,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-8",
+     "p": 0.08333333333333334,
+     "r": 0.5806114941691218,
+     "score": 6.5240811664116976,
+     "win": false
+    },
+    {
+     "cmd": "verify retrieval_equipment id=TRIPOD-1",
+     "p": 0.10833333333333334,
+     "r": 0.36091080211276094,
+     "score": 9.40730249298592,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.05833333333333334,
+     "r": 0.46012041888082633,
+     "score": 13.307435032829801,
+     "win": false
+    },
+    {
+     "cmd": "verify harness_inspection id=HARN-9",
+     "p": 0.05,
+     "r": 0.48777374104632143,
+     "score": 14.358072520852671,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.025,
+     "r": 0.6836415224303323,
+     "score": 15.2128635502758,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.06666666666666667,
+     "r": 0.27752348347273625,
+     "score": 19.227745863737617,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-103",
+     "p": 0.06666666666666667,
+     "r": 0.2255700679614714,
+     "score": 22.336866684546234,
+     "win": false
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.03333333333333333,
+     "r": 0.4160075619191872,
+     "score": 26.311555235871964,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.025,
+     "r": 0.48757708394282795,
+     "score": 28.732275205426532,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.025,
+     "r": 0.42456200297680335,
+     "score": 34.26788890810998,
+     "win": false
+    },
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.016666666666666666,
+     "r": 0.5539085829747254,
+     "score": 35.44533711191668,
+     "win": false
+    }
+   ],
+   "phi": 0.04166666666666667,
+   "phase": "worker competency",
+   "result": "Fitness-for-duty current, no restrictions.",
+   "observations": [
+    {
+     "cmd": "verify medical_clearance worker=W-2291",
+     "text": "Fitness-for-duty current, no restrictions.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 8.240165732061394,
+    "z_wrong": -0.20868003790411224,
+    "X": 40.54477142143665,
+    "expected": 12.0,
+    "n": 12,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 3.464101615137755,
+    "z_wrong": -0.5773502691896258,
+    "X": 12,
+    "expected": 6.0,
+    "n": 12,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 12,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 11
+  },
+  {
+   "kind": "group",
+   "i": 12,
+   "round_num": 109546197162739,
+   "window": "verify medical_clearance worker=W-2291",
+   "chosen": "verify retrieval_equipment id=TRIPOD-1",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 16,
+   "race": [
+    {
+     "cmd": "verify retrieval_equipment id=TRIPOD-1",
+     "p": 0.045454545454545456,
+     "r": 0.94401139535913,
+     "score": 1.267574914198647,
+     "win": true
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-8",
+     "p": 0.10909090909090907,
+     "r": 0.8154427577454579,
+     "score": 1.870220478653607,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.03636363636363636,
+     "r": 0.931993240656289,
+     "score": 1.9368172130328145,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.07272727272727272,
+     "r": 0.8528599233557232,
+     "score": 2.18844946980036,
+     "win": false
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.045454545454545456,
+     "r": 0.8961286841942175,
+     "score": 2.4127676224785,
+     "win": false
+    },
+    {
+     "cmd": "query competency_register worker=W-2291",
+     "p": 0.1272727272727273,
+     "r": 0.6444471590308878,
+     "score": 3.452133516098211,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "p": 0.07272727272727272,
+     "r": 0.679715740097558,
+     "score": 5.308608215334517,
+     "win": false
+    },
+    {
+     "cmd": "check lighting space=T-114",
+     "p": 0.03636363636363636,
+     "r": 0.8055188373174909,
+     "score": 5.947388996162324,
+     "win": false
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.13636363636363635,
+     "r": 0.2720808547051867,
+     "score": 9.545477310699617,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-103",
+     "p": 0.054545454545454536,
+     "r": 0.5481132942727811,
+     "score": 11.023343320522248,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.054545454545454536,
+     "r": 0.512896554285303,
+     "score": 12.240820216383627,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.054545454545454536,
+     "r": 0.27503999617934505,
+     "score": 23.66537710604592,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.00909090909090909,
+     "r": 0.7600823546313382,
+     "score": 30.176133923694447,
+     "win": false
+    },
+    {
+     "cmd": "verify harness_inspection id=HARN-9",
+     "p": 0.06363636363636364,
+     "r": 0.05524658950537442,
+     "score": 45.50776479698529,
+     "win": false
+    },
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.03636363636363636,
+     "r": 0.17089650301842374,
+     "score": 48.58417165857121,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.045454545454545456,
+     "r": 0.08500082637632489,
+     "score": 54.232074610222725,
+     "win": false
+    }
+   ],
+   "phi": 0.045454545454545456,
+   "phase": "rescue standby",
+   "result": "Tripod and winch rigged over the hatch, load-tested.",
+   "observations": [
+    {
+     "cmd": "verify retrieval_equipment id=TRIPOD-1",
+     "text": "Tripod and winch rigged over the hatch, load-tested.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 8.439036417539372,
+    "z_wrong": -0.3074245815434915,
+    "X": 43.427378518946135,
+    "expected": 13.0,
+    "n": 13,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 3.6055512754639896,
+    "z_wrong": -0.8320502943378437,
+    "X": 13,
+    "expected": 6.5,
+    "n": 13,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 13,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 12
+  },
+  {
+   "kind": "group",
+   "i": 13,
+   "round_num": 24757107619078,
+   "window": "verify retrieval_equipment id=TRIPOD-1||review last_record",
+   "chosen": "query competency_register worker=W-2291",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 15,
+   "race": [
+    {
+     "cmd": "query competency_register worker=W-2291",
+     "p": 0.10909090909090907,
+     "r": 0.8978239356695608,
+     "score": 0.9879951824556102,
+     "win": true
+    },
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.01818181818181818,
+     "r": 0.9680033862250557,
+     "score": 1.7885831449914333,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-8",
+     "p": 0.1636363636363636,
+     "r": 0.6138174228202415,
+     "score": 2.9825751512616607,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.09090909090909091,
+     "r": 0.7553232620014418,
+     "score": 3.0867040575449907,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.09090909090909091,
+     "r": 0.5803739527033189,
+     "score": 5.9849090087698835,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.09090909090909091,
+     "r": 0.5200877923095042,
+     "score": 7.191334153219081,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.01818181818181818,
+     "r": 0.8651920165694049,
+     "score": 7.964209671652565,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-103",
+     "p": 0.09090909090909091,
+     "r": 0.26628790729938223,
+     "score": 14.55494916985424,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "p": 0.07272727272727272,
+     "r": 0.27334060687506945,
+     "score": 17.834253486877504,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.027272727272727268,
+     "r": 0.5801733259389705,
+     "score": 19.962374016162972,
+     "win": false
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.045454545454545456,
+     "r": 0.3269146701349688,
+     "score": 24.597233974216564,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.03636363636363636,
+     "r": 0.19087644251019542,
+     "score": 45.54354634820606,
+     "win": false
+    },
+    {
+     "cmd": "check lighting space=T-114",
+     "p": 0.027272727272727268,
+     "r": 0.2584343454954099,
+     "score": 49.61416532975216,
+     "win": false
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.06363636363636364,
+     "r": 0.04239004866571405,
+     "score": 49.67036871611901,
+     "win": false
+    },
+    {
+     "cmd": "verify harness_inspection id=HARN-9",
+     "p": 0.054545454545454536,
+     "r": 0.002521856622661245,
+     "score": 109.68393138459632,
+     "win": false
+    }
+   ],
+   "phi": 0.10909090909090907,
+   "phase": "worker competency",
+   "result": "W-2291 Ana Petrou: confined-space entry cert VALID to 2027-03-11.",
+   "observations": [
+    {
+     "cmd": "query competency_register worker=W-2291",
+     "text": "W-2291 Ana Petrou: confined-space entry cert VALID to 2027-03-11.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 8.474436078480965,
+    "z_wrong": -0.5133922152691065,
+    "X": 45.708436351791896,
+    "expected": 14.0,
+    "n": 14,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 3.7416573867739413,
+    "z_wrong": -0.5345224838248488,
+    "X": 14,
+    "expected": 7.0,
+    "n": 14,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 14,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 13
+  },
+  {
+   "kind": "group",
+   "i": 14,
+   "round_num": 200749448196510,
+   "window": "query competency_register worker=W-2291||review last_record",
+   "chosen": "check lighting space=T-114",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 14,
+   "race": [
+    {
+     "cmd": "check lighting space=T-114",
+     "p": 0.03448275862068966,
+     "r": 0.9774800855046963,
+     "score": 0.6605434462456544,
+     "win": true
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.05172413793103448,
+     "r": 0.9487245671347777,
+     "score": 1.017643975252863,
+     "win": false
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.08620689655172414,
+     "r": 0.7964039562370175,
+     "score": 2.6407253741833197,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.08620689655172414,
+     "r": 0.755631293626509,
+     "score": 3.2503400519167274,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-8",
+     "p": 0.15517241379310345,
+     "r": 0.5947969884725284,
+     "score": 3.3481152661210545,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.1120689655172414,
+     "r": 0.6615366095502535,
+     "score": 3.6869257409133867,
+     "win": false
+    },
+    {
+     "cmd": "verify harness_inspection id=HARN-9",
+     "p": 0.04310344827586207,
+     "r": 0.8233547060722537,
+     "score": 4.509341766092127,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.03448275862068966,
+     "r": 0.8417508230585729,
+     "score": 4.995866051259197,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-103",
+     "p": 0.08620689655172414,
+     "r": 0.6257978946157732,
+     "score": 5.437242619912967,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.08620689655172414,
+     "r": 0.5515117757009418,
+     "score": 6.903068225257563,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "p": 0.13793103448275865,
+     "r": 0.16288924712818997,
+     "score": 13.156464615762143,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.02586206896551724,
+     "r": 0.6725423089315559,
+     "score": 15.338689920927076,
+     "win": false
+    },
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.02586206896551724,
+     "r": 0.5606056668781985,
+     "score": 22.37785122603584,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.03448275862068966,
+     "r": 0.44517333708767026,
+     "score": 23.46945498231739,
+     "win": false
+    }
+   ],
+   "phi": 0.03448275862068966,
+   "phase": "further diligence",
+   "result": "Intrinsically-safe lighting rigged, 24 V, RCD-protected.",
+   "observations": [
+    {
+     "cmd": "check lighting space=T-114",
+     "text": "Intrinsically-safe lighting rigged, 24 V, RCD-protected.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 8.908324291693397,
+    "z_wrong": -0.5572197696893094,
+    "X": 49.50179162434351,
+    "expected": 15.0,
+    "n": 15,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 3.8729833462074166,
+    "z_wrong": -0.7745966692414834,
+    "X": 15,
+    "expected": 7.5,
+    "n": 15,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 15,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 14
+  },
+  {
+   "kind": "group",
+   "i": 15,
+   "round_num": 152158810850105,
+   "window": "check lighting space=T-114||review last_record",
+   "chosen": "verify loto_tag valve=V-103",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 13,
+   "race": [
+    {
+     "cmd": "verify loto_tag valve=V-103",
+     "p": 0.07142857142857144,
+     "r": 0.9833040553647199,
+     "score": 0.23571650151015822,
+     "win": true
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.07142857142857144,
+     "r": 0.9599300852381891,
+     "score": 0.5725275506890806,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.04464285714285715,
+     "r": 0.9704674186964894,
+     "score": 0.6714948487367923,
+     "win": false
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.12500000000000003,
+     "r": 0.606975396797137,
+     "score": 3.9941361696281033,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.07142857142857144,
+     "r": 0.7121066494293495,
+     "score": 4.753386263681647,
+     "win": false
+    },
+    {
+     "cmd": "verify energy_isolation source=ISO-8",
+     "p": 0.16071428571428573,
+     "r": 0.34660299897151536,
+     "score": 6.592912661656175,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.07142857142857144,
+     "r": 0.26287611072966977,
+     "score": 18.705013875145376,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.07142857142857144,
+     "r": 0.20084426650829101,
+     "score": 22.47315650610457,
+     "win": false
+    },
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.026785714285714284,
+     "r": 0.4258225457664533,
+     "score": 31.87268293930349,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "p": 0.16071428571428573,
+     "r": 0.005951970723959921,
+     "score": 31.882871378729604,
+     "win": false
+    },
+    {
+     "cmd": "verify harness_inspection id=HARN-9",
+     "p": 0.06250000000000001,
+     "r": 0.03682631323321939,
+     "score": 52.82468249296835,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.03571428571428572,
+     "r": 0.14087402226030932,
+     "score": 54.876898919450554,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.026785714285714284,
+     "r": 0.02826949103129639,
+     "score": 133.12962548793237,
+     "win": false
+    }
+   ],
+   "phi": 0.07142857142857144,
+   "phase": "isolation / LOTO",
+   "result": "LOTO tag 8843 in place, padlocked, signed W-3310.",
+   "observations": [
+    {
+     "cmd": "verify loto_tag valve=V-103",
+     "text": "LOTO tag 8843 in place, padlocked, signed W-3310.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.3985952624008,
+    "z_wrong": -0.6166650859078135,
+    "X": 53.5943810496032,
+    "expected": 16.0,
+    "n": 16,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 4.0,
+    "z_wrong": -0.5,
+    "X": 16,
+    "expected": 8.0,
+    "n": 16,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 16,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 15
+  },
+  {
+   "kind": "group",
+   "i": 16,
+   "round_num": 203101188821964,
+   "window": "verify loto_tag valve=V-103",
+   "chosen": "verify energy_isolation source=ISO-8",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 12,
+   "race": [
+    {
+     "cmd": "verify energy_isolation source=ISO-8",
+     "p": 0.15454545454545457,
+     "r": 0.7273242692468209,
+     "score": 2.0601244103344936,
+     "win": true
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.05454545454545454,
+     "r": 0.760670699048762,
+     "score": 5.015170162318496,
+     "win": false
+    },
+    {
+     "cmd": "verify harness_inspection id=HARN-9",
+     "p": 0.05454545454545454,
+     "r": 0.7282928363440031,
+     "score": 5.812621172235165,
+     "win": false
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.07272727272727274,
+     "r": 0.512437122305452,
+     "score": 9.192937375611942,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.06363636363636366,
+     "r": 0.4850570192867798,
+     "score": 11.36911017652438,
+     "win": false
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.1181818181818182,
+     "r": 0.23842071994734493,
+     "score": 12.131463681080684,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.10909090909090909,
+     "r": 0.26342169708401597,
+     "score": 12.228325266020061,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "p": 0.16363636363636364,
+     "r": 0.08973513609747008,
+     "score": 14.733234265702423,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.07272727272727274,
+     "r": 0.22961140700903715,
+     "score": 20.231295338041296,
+     "win": false
+    },
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.02727272727272727,
+     "r": 0.5511145726003173,
+     "score": 21.846460375340815,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.07272727272727274,
+     "r": 0.11078143760547454,
+     "score": 30.252695678428978,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.03636363636363637,
+     "r": 0.16072499855940925,
+     "score": 50.27166259273027,
+     "win": false
+    }
+   ],
+   "phi": 0.15454545454545457,
+   "phase": "isolation / LOTO",
+   "result": "Recirculation pump isolated and proved dead.",
+   "observations": [
+    {
+     "cmd": "verify energy_isolation source=ISO-8",
+     "text": "Recirculation pump isolated and proved dead.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.1906093318081,
+    "z_wrong": -0.7077959370744107,
+    "X": 54.89385303883214,
+    "expected": 17.0,
+    "n": 17,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 4.123105625617661,
+    "z_wrong": -0.7276068751089989,
+    "X": 17,
+    "expected": 8.5,
+    "n": 17,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 17,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 16
+  },
+  {
+   "kind": "group",
+   "i": 17,
+   "round_num": 236057664554200,
+   "window": "verify energy_isolation source=ISO-8||review last_record",
+   "chosen": "verify harness_inspection id=HARN-9",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 11,
+   "race": [
+    {
+     "cmd": "verify harness_inspection id=HARN-9",
+     "p": 0.08,
+     "r": 0.9029535335710286,
+     "score": 1.276052309106802,
+     "win": true
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.1,
+     "r": 0.7683312860298106,
+     "score": 2.6353427682633126,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.12,
+     "r": 0.6334551444924925,
+     "score": 3.804717396501793,
+     "win": false
+    },
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "p": 0.19,
+     "r": 0.45692871926246736,
+     "score": 4.122251976889497,
+     "win": false
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.14,
+     "r": 0.43955384118353,
+     "score": 5.871393313021812,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.04,
+     "r": 0.6690486430418185,
+     "score": 10.047462785492536,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.12,
+     "r": 0.1898679207663383,
+     "score": 13.84522168678756,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.07,
+     "r": 0.36949623196400583,
+     "score": 14.22306766153666,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.06,
+     "r": 0.293316067569126,
+     "score": 20.441742041169054,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.05,
+     "r": 0.0763489635838952,
+     "score": 51.44881643898626,
+     "win": false
+    },
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.03,
+     "r": 0.14340549632640376,
+     "score": 64.73596743050437,
+     "win": false
+    }
+   ],
+   "phi": 0.08,
+   "phase": "further diligence",
+   "result": "Full-body harness HARN-9 inspected, tag current to 2026-12.",
+   "observations": [
+    {
+     "cmd": "verify harness_inspection id=HARN-9",
+     "text": "Full-body harness HARN-9 inspected, tag current to 2026-12.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.245755488498808,
+    "z_wrong": -0.8475025764853312,
+    "X": 57.22641841866148,
+    "expected": 18.0,
+    "n": 18,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 4.242640687119286,
+    "z_wrong": -0.9428090415820635,
+    "X": 18,
+    "expected": 9.0,
+    "n": 18,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 18,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 17
+  },
+  {
+   "kind": "group",
+   "i": 18,
+   "round_num": 65918179206592,
+   "window": "verify harness_inspection id=HARN-9",
+   "chosen": "check ventilation_fan id=FAN-2 status",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 10,
+   "race": [
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "p": 0.2,
+     "r": 0.9198698066528086,
+     "score": 0.41761566730495264,
+     "win": true
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.06,
+     "r": 0.9171722208021289,
+     "score": 1.4410002569173295,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.1,
+     "r": 0.8343858122325585,
+     "score": 1.8105937899651414,
+     "win": false
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.16,
+     "r": 0.45104670274758063,
+     "score": 4.976152444229642,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.07,
+     "r": 0.6705980655842625,
+     "score": 5.708361850837277,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.03,
+     "r": 0.8322230447866217,
+     "score": 6.1218263804146735,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.12,
+     "r": 0.4647416746017152,
+     "score": 6.3856130521199805,
+     "win": false
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.1,
+     "r": 0.36952680930897164,
+     "score": 9.955319855859363,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.12,
+     "r": 0.08772643256681434,
+     "score": 20.279433562049785,
+     "win": false
+    },
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.04,
+     "r": 0.2125339153896486,
+     "score": 38.71634253797607,
+     "win": false
+    }
+   ],
+   "phi": 0.2,
+   "phase": "ventilation",
+   "result": "FAN-2 running, 1400 rpm, no alarms.",
+   "observations": [
+    {
+     "cmd": "check ventilation_fan id=FAN-2 status",
+     "text": "FAN-2 running, 1400 rpm, no alarms.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.348810673696546,
+    "z_wrong": -0.8809899933440178,
+    "X": 59.75052096893765,
+    "expected": 19.0,
+    "n": 19,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 4.358898943540673,
+    "z_wrong": -1.1470786693528088,
+    "X": 19,
+    "expected": 9.5,
+    "n": 19,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 19,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 18
+  },
+  {
+   "kind": "group",
+   "i": 19,
+   "round_num": 26573158641094,
+   "window": "check ventilation_fan id=FAN-2 status",
+   "chosen": "check weather_forecast site=T-114",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 9,
+   "race": [
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "p": 0.06,
+     "r": 0.9474325942498201,
+     "score": 0.8999914198267635,
+     "win": true
+    },
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.22,
+     "r": 0.5942996963662972,
+     "score": 2.3653252159975784,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.08,
+     "r": 0.8173331478827368,
+     "score": 2.5213562186413925,
+     "win": false
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.13,
+     "r": 0.711426281927837,
+     "score": 2.619103663058871,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.09,
+     "r": 0.646310774202655,
+     "score": 4.849720180685745,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.14,
+     "r": 0.416942033981194,
+     "score": 6.248629100607715,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.16,
+     "r": 0.30376642087694106,
+     "score": 7.44685140805236,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.07,
+     "r": 0.523492313778374,
+     "score": 9.246184730730155,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.05,
+     "r": 0.18988551684764188,
+     "score": 33.22667862661457,
+     "win": false
+    }
+   ],
+   "phi": 0.06,
+   "phase": "further diligence",
+   "result": "No rain forecast in the 8 h permit window, 16-21 C.",
+   "observations": [
+    {
+     "cmd": "check weather_forecast site=T-114",
+     "text": "No rain forecast in the 8 h permit window, 16-21 C.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.547156082108515,
+    "z_wrong": -0.7751841262460976,
+    "X": 62.69617998279041,
+    "expected": 20.0,
+    "n": 20,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 4.47213595499958,
+    "z_wrong": -0.8944271909999159,
+    "X": 20,
+    "expected": 10.0,
+    "n": 20,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 20,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 19
+  },
+  {
+   "kind": "group",
+   "i": 20,
+   "round_num": 190853973493782,
+   "window": "check weather_forecast site=T-114||review last_record",
+   "chosen": "confirm attendant_assigned worker=W-0876",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 8,
+   "race": [
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "p": 0.16,
+     "r": 0.949452797795898,
+     "score": 0.3241841416295225,
+     "win": true
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.05,
+     "r": 0.936607728728529,
+     "score": 1.3098146073564358,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.2,
+     "r": 0.6080434137584676,
+     "score": 2.487544976785616,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.2,
+     "r": 0.3753685342295219,
+     "score": 4.899234888283852,
+     "win": false
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.12,
+     "r": 0.46184965447605375,
+     "score": 6.437632200616891,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.11,
+     "r": 0.3634892588940515,
+     "score": 9.200050286976602,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.07,
+     "r": 0.4529780066028397,
+     "score": 11.313024360333237,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.09,
+     "r": 0.008620031761749747,
+     "score": 52.8185167739509,
+     "win": false
+    }
+   ],
+   "phi": 0.16,
+   "phase": "worker competency",
+   "result": "W-0876 Jo Whelan assigned as standby attendant, remains outside.",
+   "observations": [
+    {
+     "cmd": "confirm attendant_assigned worker=W-0876",
+     "text": "W-0876 Jo Whelan assigned as standby attendant, remains outside.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.7501995906187,
+    "z_wrong": -0.8891275789788377,
+    "X": 65.68102766493763,
+    "expected": 21.0,
+    "n": 21,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 4.58257569495584,
+    "z_wrong": -1.091089451179962,
+    "X": 21,
+    "expected": 10.5,
+    "n": 21,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 21,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 20
+  },
+  {
+   "kind": "group",
+   "i": 21,
+   "round_num": 207201093899512,
+   "window": "confirm attendant_assigned worker=W-0876",
+   "chosen": "verify loto_tag valve=V-101",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 7,
+   "race": [
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "p": 0.26,
+     "r": 0.9324161540951386,
+     "score": 0.2691386411009792,
+     "win": true
+    },
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.1,
+     "r": 0.8278947892384814,
+     "score": 1.8886919880756265,
+     "win": false
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.26,
+     "r": 0.5016298482101103,
+     "score": 2.6534337901262335,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.07,
+     "r": 0.8228612223832255,
+     "score": 2.785253094320157,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.08,
+     "r": 0.7817495004734103,
+     "score": 3.077761520368436,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.18,
+     "r": 0.31326950845889323,
+     "score": 6.448285608571754,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.05,
+     "r": 0.37477238662957846,
+     "score": 19.628728125595302,
+     "win": false
+    }
+   ],
+   "phi": 0.26,
+   "phase": "isolation / LOTO",
+   "result": "LOTO tag 8841 in place, padlocked, signed W-3310.",
+   "observations": [
+    {
+     "cmd": "verify loto_tag valve=V-101",
+     "text": "LOTO tag 8841 in place, padlocked, signed W-3310.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.88727147656479,
+    "z_wrong": -0.8955072182033246,
+    "X": 68.37541395533216,
+    "expected": 22.0,
+    "n": 22,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 4.69041575982343,
+    "z_wrong": -1.2792042981336627,
+    "X": 22,
+    "expected": 11.0,
+    "n": 22,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 22,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 21
+  },
+  {
+   "kind": "group",
+   "i": 22,
+   "round_num": 43544412646487,
+   "window": "verify loto_tag valve=V-101||review last_record",
+   "chosen": "verify barrier_setup space=T-114",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 6,
+   "race": [
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "p": 0.24,
+     "r": 0.9714713866340068,
+     "score": 0.12059776403466677,
+     "win": true
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.26,
+     "r": 0.3614821565965094,
+     "score": 3.9136253767203293,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.1,
+     "r": 0.5049278351814301,
+     "score": 6.8333976054887655,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.2,
+     "r": 0.13879755257196114,
+     "score": 9.873694319158712,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.12,
+     "r": 0.24270017355525852,
+     "score": 11.799403759565202,
+     "win": false
+    },
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.08,
+     "r": 0.009140617091470293,
+     "score": 58.68784225396244,
+     "win": false
+    }
+   ],
+   "phi": 0.24,
+   "phase": "further diligence",
+   "result": "Hard barriers and exclusion zone established around the hatch.",
+   "observations": [
+    {
+     "cmd": "verify barrier_setup space=T-114",
+     "text": "Hard barriers and exclusion zone established around the hatch.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 10.203081871219322,
+    "z_wrong": -0.8449695194334811,
+    "X": 71.93226167293415,
+    "expected": 23.0,
+    "n": 23,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 4.79583152331272,
+    "z_wrong": -1.0425720702853738,
+    "X": 23,
+    "expected": 11.5,
+    "n": 23,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 23,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 22
+  },
+  {
+   "kind": "group",
+   "i": 23,
+   "round_num": 193088126447245,
+   "window": "verify barrier_setup space=T-114",
+   "chosen": "confirm standby_vehicle site=T-114",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 5,
+   "race": [
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "p": 0.07,
+     "r": 0.8869483497135053,
+     "score": 1.713836123996098,
+     "win": true
+    },
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.42,
+     "r": 0.48373480859053997,
+     "score": 1.7290915203848856,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.08,
+     "r": 0.7117028377139045,
+     "score": 4.251185218145124,
+     "win": false
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.28,
+     "r": 0.3039188658158749,
+     "score": 4.253551792716531,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.15,
+     "r": 0.31564714290937346,
+     "score": 7.687535504405614,
+     "win": false
+    }
+   ],
+   "phi": 0.07,
+   "phase": "further diligence",
+   "result": "Emergency vehicle stationed with clear egress route.",
+   "observations": [
+    {
+     "cmd": "confirm standby_vehicle site=T-114",
+     "text": "Emergency vehicle stationed with clear egress route.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 10.229104306947205,
+    "z_wrong": -1.0298101428930315,
+    "X": 74.11217215545281,
+    "expected": 24.0,
+    "n": 24,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 4.898979485566357,
+    "z_wrong": -0.8164965809277261,
+    "X": 24,
+    "expected": 12.0,
+    "n": 24,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 24,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 23
+  },
+  {
+   "kind": "group",
+   "i": 24,
+   "round_num": 142310164652129,
+   "window": "confirm standby_vehicle site=T-114||review last_record",
+   "chosen": "verify loto_tag valve=V-102",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 4,
+   "race": [
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "p": 0.48,
+     "r": 0.12434501597849268,
+     "score": 4.343114979431467,
+     "win": true
+    },
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.2,
+     "r": 0.40101724295991037,
+     "score": 4.568754263500056,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.2,
+     "r": 0.2723368825415593,
+     "score": 6.50357720143411,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.12,
+     "r": 0.12896646924672983,
+     "score": 17.06835697273008,
+     "win": false
+    }
+   ],
+   "phi": 0.48,
+   "phase": "isolation / LOTO",
+   "result": "LOTO tag 8842 in place, padlocked, signed W-3310.",
+   "observations": [
+    {
+     "cmd": "verify loto_tag valve=V-102",
+     "text": "LOTO tag 8842 in place, padlocked, signed W-3310.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.848991054987218,
+    "z_wrong": -1.0893709394105862,
+    "X": 74.24495527493609,
+    "expected": 25.0,
+    "n": 25,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.0,
+    "z_wrong": -1.0,
+    "X": 25,
+    "expected": 12.5,
+    "n": 25,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 25,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 24
+  },
+  {
+   "kind": "group",
+   "i": 25,
+   "round_num": 54700494187237,
+   "window": "verify loto_tag valve=V-102||review last_record",
+   "chosen": "verify purge_duration space=T-114",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 3,
+   "race": [
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "p": 0.6,
+     "r": 0.1132093940040717,
+     "score": 3.6308602179241674,
+     "win": true
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.25,
+     "r": 0.28223047000354207,
+     "score": 5.0601250892432,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.15,
+     "r": 0.3526691512694613,
+     "score": 6.9481660671287395,
+     "win": false
+    }
+   ],
+   "phi": 0.6,
+   "phase": "ventilation",
+   "result": "Continuous purge 47 min, exceeds the 30 min minimum for this volume.",
+   "observations": [
+    {
+     "cmd": "verify purge_duration space=T-114",
+     "text": "Continuous purge 47 min, exceeds the 30 min minimum for this volume.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.48517681496427,
+    "z_wrong": -1.2147939171951276,
+    "X": 74.36510166938066,
+    "expected": 26.0,
+    "n": 26,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.099019513592785,
+    "z_wrong": -0.7844645405527362,
+    "X": 26,
+    "expected": 13.0,
+    "n": 26,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 26,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 25
+  },
+  {
+   "kind": "group",
+   "i": 26,
+   "round_num": 143212935974003,
+   "window": "verify purge_duration space=T-114",
+   "chosen": "verify meter_calibration serial=GM-4471",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 3,
+   "race": [
+    {
+     "cmd": "verify meter_calibration serial=GM-4471",
+     "p": 0.6,
+     "r": 0.3446133089512651,
+     "score": 1.7755538903087864,
+     "win": true
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.25,
+     "r": 0.5710936926876384,
+     "score": 2.2408079900772964,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.15,
+     "r": 0.4088400282669271,
+     "score": 5.96287552254617,
+     "win": false
+    }
+   ],
+   "phi": 0.6,
+   "phase": "atmospheric test",
+   "result": "Calibration cert valid to 2026-09-01. Last bump test 2026-07-30 PASS.",
+   "observations": [
+    {
+     "cmd": "verify meter_calibration serial=GM-4471",
+     "text": "Calibration cert valid to 2026-09-01. Last bump test 2026-07-30 PASS.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.196733973792991,
+    "z_wrong": -1.257997434269769,
+    "X": 74.78763151891285,
+    "expected": 27.0,
+    "n": 27,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.196152422706632,
+    "z_wrong": -0.9622504486493763,
+    "X": 27,
+    "expected": 13.5,
+    "n": 27,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 27,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 26
+  },
+  {
+   "kind": "group",
+   "i": 27,
+   "round_num": 32183477858650,
+   "window": "verify meter_calibration serial=GM-4471||review last_record",
+   "chosen": "read gas_meter serial=GM-4471 channel=O2",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 6,
+   "race": [
+    {
+     "cmd": "read gas_meter serial=GM-4471 channel=O2",
+     "p": 0.3,
+     "r": 0.8966056024735447,
+     "score": 0.36379732901327383,
+     "win": true
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.05,
+     "r": 0.9660788215033564,
+     "score": 0.6901970467840755,
+     "win": false
+    },
+    {
+     "cmd": "read gas_meter serial=GM-4471 channel=CO",
+     "p": 0.15,
+     "r": 0.6804055963901166,
+     "score": 2.5671079556474203,
+     "win": false
+    },
+    {
+     "cmd": "read gas_meter serial=GM-4471 channel=LEL",
+     "p": 0.2,
+     "r": 0.43633433028270874,
+     "score": 4.14673258454318,
+     "win": false
+    },
+    {
+     "cmd": "read gas_meter serial=GM-4471 channel=H2S",
+     "p": 0.25,
+     "r": 0.21981490854268615,
+     "score": 6.059877646192367,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.05,
+     "r": 0.6698133436454003,
+     "score": 8.015123939699922,
+     "win": false
+    }
+   ],
+   "phi": 0.3,
+   "phase": "atmospheric test",
+   "result": "O2 = 20.6 % vol. Permit range 19.5-23.5. WITHIN LIMIT.",
+   "observations": [
+    {
+     "cmd": "read gas_meter serial=GM-4471 channel=O2",
+     "text": "O2 = 20.6 % vol. Permit range 19.5-23.5. WITHIN LIMIT.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.270870586865296,
+    "z_wrong": -1.3228218647092058,
+    "X": 77.05683601981802,
+    "expected": 28.0,
+    "n": 28,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.2915026221291805,
+    "z_wrong": -1.1338934190276817,
+    "X": 28,
+    "expected": 14.0,
+    "n": 28,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 28,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 27
+  },
+  {
+   "kind": "group",
+   "i": 28,
+   "round_num": 205665996136296,
+   "window": "read gas_meter serial=GM-4471 channel=O2||review last_record",
+   "chosen": "read gas_meter serial=GM-4471 channel=CO",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 5,
+   "race": [
+    {
+     "cmd": "read gas_meter serial=GM-4471 channel=CO",
+     "p": 0.15,
+     "r": 0.8719660496922808,
+     "score": 0.9133652644681772,
+     "win": true
+    },
+    {
+     "cmd": "read gas_meter serial=GM-4471 channel=H2S",
+     "p": 0.38,
+     "r": 0.6304335479794971,
+     "score": 1.214072433899705,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.12,
+     "r": 0.7634959506912087,
+     "score": 2.2487288162571857,
+     "win": false
+    },
+    {
+     "cmd": "read gas_meter serial=GM-4471 channel=LEL",
+     "p": 0.28,
+     "r": 0.04278443987771485,
+     "score": 11.255645702697342,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.07,
+     "r": 0.23998094123238145,
+     "score": 20.388511004645032,
+     "win": false
+    }
+   ],
+   "phi": 0.15,
+   "phase": "atmospheric test",
+   "result": "CO = 3 ppm. Permit limit 30 ppm. WITHIN LIMIT.",
+   "observations": [
+    {
+     "cmd": "read gas_meter serial=GM-4471 channel=CO",
+     "text": "CO = 3 ppm. Permit limit 30 ppm. WITHIN LIMIT.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.30561972158764,
+    "z_wrong": -1.345776407496602,
+    "X": 79.11229583327054,
+    "expected": 29.0,
+    "n": 29,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.385164807134505,
+    "z_wrong": -1.299867367239363,
+    "X": 29,
+    "expected": 14.5,
+    "n": 29,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 29,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 28
+  },
+  {
+   "kind": "group",
+   "i": 29,
+   "round_num": 260058082756668,
+   "window": "read gas_meter serial=GM-4471 channel=CO",
+   "chosen": "read gas_meter serial=GM-4471 channel=LEL",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 4,
+   "race": [
+    {
+     "cmd": "read gas_meter serial=GM-4471 channel=LEL",
+     "p": 0.33,
+     "r": 0.6774065962168816,
+     "score": 1.1802533366518793,
+     "win": true
+    },
+    {
+     "cmd": "read gas_meter serial=GM-4471 channel=H2S",
+     "p": 0.42,
+     "r": 0.5138228407567369,
+     "score": 1.5854208112547992,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.13,
+     "r": 0.18628672356808185,
+     "score": 12.926678981836226,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.12,
+     "r": 0.17008730770042702,
+     "score": 14.762028325481966,
+     "win": false
+    }
+   ],
+   "phi": 0.33,
+   "phase": "atmospheric test",
+   "result": "LEL = 2 %. Permit limit <10 %. WITHIN LIMIT.",
+   "observations": [
+    {
+     "cmd": "read gas_meter serial=GM-4471 channel=LEL",
+     "text": "LEL = 2 %. Permit limit <10 %. WITHIN LIMIT.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.173195024625624,
+    "z_wrong": -1.394153991848823,
+    "X": 80.24365839381612,
+    "expected": 30.0,
+    "n": 30,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.477225575051661,
+    "z_wrong": -1.0954451150103321,
+    "X": 30,
+    "expected": 15.0,
+    "n": 30,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 30,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 29
+  },
+  {
+   "kind": "group",
+   "i": 30,
+   "round_num": 61226758570160,
+   "window": "read gas_meter serial=GM-4471 channel=LEL",
+   "chosen": "review msds substance=digester_gas",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 3,
+   "race": [
+    {
+     "cmd": "review msds substance=digester_gas",
+     "p": 0.1,
+     "r": 0.9351841097334441,
+     "score": 0.6701186027162181,
+     "win": true
+    },
+    {
+     "cmd": "read gas_meter serial=GM-4471 channel=H2S",
+     "p": 0.75,
+     "r": 0.17695503137656465,
+     "score": 2.3091461849419077,
+     "win": false
+    },
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.15,
+     "r": 0.4898119058209287,
+     "score": 4.758225514962172,
+     "win": false
+    }
+   ],
+   "phi": 0.1,
+   "phase": "further diligence",
+   "result": "Digester-gas MSDS reviewed: H2S, CH4, CO2 asphyxiant risk.",
+   "observations": [
+    {
+     "cmd": "review msds substance=digester_gas",
+     "text": "Digester-gas MSDS reviewed: H2S, CH4, CO2 asphyxiant risk.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.33585897175397,
+    "z_wrong": -0.9309039481935396,
+    "X": 82.97986287933868,
+    "expected": 31.0,
+    "n": 31,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.567764362830022,
+    "z_wrong": -1.2572371141874243,
+    "X": 31,
+    "expected": 15.5,
+    "n": 31,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 31,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 30
+  },
+  {
+   "kind": "group",
+   "i": 31,
+   "round_num": 114180574366588,
+   "window": "review msds substance=digester_gas",
+   "chosen": "check first_aid_station status site=T-114",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 2,
+   "race": [
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "p": 0.25,
+     "r": 0.9292291815274638,
+     "score": 0.2935994943097375,
+     "win": true
+    },
+    {
+     "cmd": "read gas_meter serial=GM-4471 channel=H2S",
+     "p": 0.75,
+     "r": 0.18797330282691815,
+     "score": 2.2286071099677676,
+     "win": false
+    }
+   ],
+   "phi": 0.25,
+   "phase": "further diligence",
+   "result": "First-aid post staffed, eyewash serviced 2026-07-12.",
+   "observations": [
+    {
+     "cmd": "check first_aid_station status site=T-114",
+     "text": "First-aid post staffed, eyewash serviced 2026-07-12.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.480210916847515,
+    "z_wrong": -0.9904697952963183,
+    "X": 85.62817141105292,
+    "expected": 32.0,
+    "n": 32,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.65685424949238,
+    "z_wrong": -1.0606601717798212,
+    "X": 32,
+    "expected": 16.0,
+    "n": 32,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 32,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 31
+  },
+  {
+   "kind": "group",
+   "i": 32,
+   "round_num": 206504902089026,
+   "window": "check first_aid_station status site=T-114||review last_record",
+   "chosen": "read gas_meter serial=GM-4471 channel=H2S",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 1,
+   "race": [
+    {
+     "cmd": "read gas_meter serial=GM-4471 channel=H2S",
+     "p": 1.0,
+     "r": 0.17614151409946466,
+     "score": 1.736467549641629,
+     "win": true
+    }
+   ],
+   "phi": 1.0,
+   "phase": "atmospheric test",
+   "result": "H2S = 8.4 ppm. Permit limit 10 ppm. MARGINAL - within limit but above the 5 ppm re-test trigger. Re-test required before entry.",
+   "observations": [
+    {
+     "cmd": "read gas_meter serial=GM-4471 channel=H2S",
+     "text": "H2S = 8.4 ppm. Permit limit 10 ppm. MARGINAL - within limit but above the 5 ppm re-test trigger. Re-test required before entry.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.480210916847515,
+    "z_wrong": -0.9904697952963183,
+    "X": 85.62817141105292,
+    "expected": 32.0,
+    "n": 32,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.744562646538029,
+    "z_wrong": -1.2185435916898848,
+    "X": 33,
+    "expected": 16.5,
+    "n": 33,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 33,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 32
+  },
+  {
+   "kind": "group",
+   "i": 33,
+   "round_num": 48768406157252,
+   "window": "read gas_meter serial=GM-4471 channel=H2S",
+   "chosen": "re-test gas_meter serial=GM-4471 channel=H2S",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 1,
+   "race": [
+    {
+     "cmd": "re-test gas_meter serial=GM-4471 channel=H2S",
+     "p": 1.0,
+     "r": 0.13857361728105122,
+     "score": 1.9763535618530488,
+     "win": true
+    }
+   ],
+   "phi": 1.0,
+   "phase": "atmospheric test",
+   "result": "H2S re-test = 4.1 ppm after extended purge. Now below the re-test trigger.",
+   "observations": [
+    {
+     "cmd": "re-test gas_meter serial=GM-4471 channel=H2S",
+     "text": "H2S re-test = 4.1 ppm after extended purge. Now below the re-test trigger.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.480210916847515,
+    "z_wrong": -0.9904697952963183,
+    "X": 85.62817141105292,
+    "expected": 32.0,
+    "n": 32,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.8309518948453,
+    "z_wrong": -1.3719886811400706,
+    "X": 34,
+    "expected": 17.0,
+    "n": 34,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 34,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 33
+  },
+  {
+   "kind": "group",
+   "i": 34,
+   "round_num": 253425064581721,
+   "window": "re-test gas_meter serial=GM-4471 channel=H2S||review last_record",
+   "chosen": "attach evidence item=isolation_certificate",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 6,
+   "race": [
+    {
+     "cmd": "attach evidence item=isolation_certificate",
+     "p": 0.22,
+     "r": 0.6433811404460474,
+     "score": 2.0046271679005305,
+     "win": true
+    },
+    {
+     "cmd": "notify control_room space=T-114",
+     "p": 0.05,
+     "r": 0.8144691020553951,
+     "score": 4.104375730419512,
+     "win": false
+    },
+    {
+     "cmd": "attach evidence item=competency_summary",
+     "p": 0.12,
+     "r": 0.4877246154588246,
+     "score": 5.983369541646992,
+     "win": false
+    },
+    {
+     "cmd": "attach evidence item=atmospheric_log",
+     "p": 0.33,
+     "r": 0.09068393307088995,
+     "score": 7.273863882434674,
+     "win": false
+    },
+    {
+     "cmd": "attach evidence item=rescue_plan",
+     "p": 0.2,
+     "r": 0.163589457965283,
+     "score": 9.051976473773585,
+     "win": false
+    },
+    {
+     "cmd": "brief entrants space=T-114",
+     "p": 0.08,
+     "r": 0.46117314331510384,
+     "score": 9.674771555879232,
+     "win": false
+    }
+   ],
+   "phi": 0.22,
+   "phase": "permit assembly",
+   "result": "Isolation certificate ISO-CERT-2291 attached.",
+   "observations": [
+    {
+     "cmd": "attach evidence item=isolation_certificate",
+     "text": "Isolation certificate ISO-CERT-2291 attached.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.340878044249864,
+    "z_wrong": -0.5079463870516947,
+    "X": 86.65925909886496,
+    "expected": 33.0,
+    "n": 33,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.916079783099616,
+    "z_wrong": -1.1832159566199232,
+    "X": 35,
+    "expected": 17.5,
+    "n": 35,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 35,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 34
+  },
+  {
+   "kind": "group",
+   "i": 35,
+   "round_num": 17974864047570,
+   "window": "attach evidence item=isolation_certificate||review last_record",
+   "chosen": "attach evidence item=competency_summary",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 5,
+   "race": [
+    {
+     "cmd": "attach evidence item=competency_summary",
+     "p": 0.16,
+     "r": 0.9649087424390583,
+     "score": 0.22326093459747823,
+     "win": true
+    },
+    {
+     "cmd": "attach evidence item=rescue_plan",
+     "p": 0.3,
+     "r": 0.7216616956797812,
+     "score": 1.0873293848030559,
+     "win": false
+    },
+    {
+     "cmd": "brief entrants space=T-114",
+     "p": 0.08,
+     "r": 0.7634661615160994,
+     "score": 3.373580944003622,
+     "win": false
+    },
+    {
+     "cmd": "attach evidence item=atmospheric_log",
+     "p": 0.34,
+     "r": 0.15555919919814953,
+     "score": 5.472732110507808,
+     "win": false
+    },
+    {
+     "cmd": "notify control_room space=T-114",
+     "p": 0.12,
+     "r": 0.30934770055067173,
+     "score": 9.777411584974253,
+     "win": false
+    }
+   ],
+   "phi": 0.16,
+   "phase": "permit assembly",
+   "result": "Competency summary for both entrants attached.",
+   "observations": [
+    {
+     "cmd": "attach evidence item=competency_summary",
+     "text": "Competency summary for both entrants attached.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.60547494830992,
+    "z_wrong": -0.3829175089128705,
+    "X": 90.0090623507368,
+    "expected": 34.0,
+    "n": 34,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 6.0,
+    "z_wrong": -1.0,
+    "X": 36,
+    "expected": 18.0,
+    "n": 36,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 36,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 35
+  },
+  {
+   "kind": "group",
+   "i": 36,
+   "round_num": 201121420712641,
+   "window": "attach evidence item=competency_summary||review last_record",
+   "chosen": "attach evidence item=atmospheric_log",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 4,
+   "race": [
+    {
+     "cmd": "attach evidence item=atmospheric_log",
+     "p": 0.42,
+     "r": 0.9810365996955606,
+     "score": 0.04558455132036954,
+     "win": true
+    },
+    {
+     "cmd": "notify control_room space=T-114",
+     "p": 0.08,
+     "r": 0.9010443800961674,
+     "score": 1.302509576229101,
+     "win": false
+    },
+    {
+     "cmd": "attach evidence item=rescue_plan",
+     "p": 0.35,
+     "r": 0.21036985015045073,
+     "score": 4.4539660175734435,
+     "win": false
+    },
+    {
+     "cmd": "brief entrants space=T-114",
+     "p": 0.15,
+     "r": 0.20133872761368243,
+     "score": 10.685110515274408,
+     "win": false
+    }
+   ],
+   "phi": 0.42,
+   "phase": "permit assembly",
+   "result": "Atmospheric log incl. the H2S re-test attached.",
+   "observations": [
+    {
+     "cmd": "attach evidence item=atmospheric_log",
+     "text": "Atmospheric log incl. the H2S re-test attached.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.968477263692652,
+    "z_wrong": -0.4177015532331967,
+    "X": 93.97430680802027,
+    "expected": 35.0,
+    "n": 35,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 6.08276253029822,
+    "z_wrong": -1.150792911137501,
+    "X": 37,
+    "expected": 18.5,
+    "n": 37,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 37,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 36
+  },
+  {
+   "kind": "group",
+   "i": 37,
+   "round_num": 34645490820085,
+   "window": "attach evidence item=atmospheric_log||review last_record",
+   "chosen": "attach evidence item=rescue_plan",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 3,
+   "race": [
+    {
+     "cmd": "attach evidence item=rescue_plan",
+     "p": 0.5,
+     "r": 0.5683401621503639,
+     "score": 1.130070324981957,
+     "win": true
+    },
+    {
+     "cmd": "brief entrants space=T-114",
+     "p": 0.2,
+     "r": 0.571402095546554,
+     "score": 2.7983106090117515,
+     "win": false
+    },
+    {
+     "cmd": "notify control_room space=T-114",
+     "p": 0.3,
+     "r": 0.14853888008042504,
+     "score": 6.356361787615075,
+     "win": false
+    }
+   ],
+   "phi": 0.5,
+   "phase": "permit assembly",
+   "result": "Rescue and retrieval plan RP-114 attached.",
+   "observations": [
+    {
+     "cmd": "attach evidence item=rescue_plan",
+     "text": "Rescue and retrieval plan RP-114 attached.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.802404036885894,
+    "z_wrong": -0.48630063420684283,
+    "X": 94.81442422131536,
+    "expected": 36.0,
+    "n": 36,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 6.164414002968977,
+    "z_wrong": -0.9733285267845753,
+    "X": 38,
+    "expected": 19.0,
+    "n": 38,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 38,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 37
+  },
+  {
+   "kind": "group",
+   "i": 38,
+   "round_num": 45099838030688,
+   "window": "attach evidence item=rescue_plan||review last_record",
+   "chosen": "compile permit_record space=T-114",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 3,
+   "race": [
+    {
+     "cmd": "compile permit_record space=T-114",
+     "p": 0.32,
+     "r": 0.8048956524888473,
+     "score": 0.6782582318843061,
+     "win": true
+    },
+    {
+     "cmd": "notify control_room space=T-114",
+     "p": 0.4,
+     "r": 0.5082367888406369,
+     "score": 1.6920195505967341,
+     "win": false
+    },
+    {
+     "cmd": "brief entrants space=T-114",
+     "p": 0.28,
+     "r": 0.045800849609233696,
+     "score": 11.012330848621803,
+     "win": false
+    }
+   ],
+   "phi": 0.32,
+   "phase": "permit assembly",
+   "result": "Draft permit PTW-4471 assembled from the checks above.",
+   "observations": [
+    {
+     "cmd": "compile permit_record space=T-114",
+     "text": "Draft permit PTW-4471 assembled from the checks above.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.773297029647575,
+    "z_wrong": -0.4228445688138311,
+    "X": 96.44864496941516,
+    "expected": 37.0,
+    "n": 37,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 6.244997998398398,
+    "z_wrong": -0.8006407690254357,
+    "X": 39,
+    "expected": 19.5,
+    "n": 39,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 39,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 38
+  },
+  {
+   "kind": "group",
+   "i": 39,
+   "round_num": 69868754510999,
+   "window": "compile permit_record space=T-114",
+   "chosen": "request countersign worker=W-3310",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 3,
+   "race": [
+    {
+     "cmd": "request countersign worker=W-3310",
+     "p": 0.15,
+     "r": 0.8421178159237424,
+     "score": 1.145569004188764,
+     "win": true
+    },
+    {
+     "cmd": "brief entrants space=T-114",
+     "p": 0.6,
+     "r": 0.13520195616563435,
+     "score": 3.3349760779953606,
+     "win": false
+    },
+    {
+     "cmd": "notify control_room space=T-114",
+     "p": 0.25,
+     "r": 0.35921601056565544,
+     "score": 4.0953254828127195,
+     "win": false
+    }
+   ],
+   "phi": 0.15,
+   "phase": "permit assembly",
+   "result": "Supervisor W-3310 countersigned the draft.",
+   "observations": [
+    {
+     "cmd": "request countersign worker=W-3310",
+     "text": "Supervisor W-3310 countersigned the draft.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.78106777625326,
+    "z_wrong": -0.30148245137519164,
+    "X": 98.29455116392421,
+    "expected": 38.0,
+    "n": 38,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 6.324555320336758,
+    "z_wrong": -0.6324555320336759,
+    "X": 40,
+    "expected": 20.0,
+    "n": 40,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 40,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 39
+  },
+  {
+   "kind": "group",
+   "i": 40,
+   "round_num": 52893369814190,
+   "window": "request countersign worker=W-3310||review last_record",
+   "chosen": "notify control_room space=T-114",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 2,
+   "race": [
+    {
+     "cmd": "notify control_room space=T-114",
+     "p": 0.55,
+     "r": 0.8960428994464129,
+     "score": 0.19957634237621633,
+     "win": true
+    },
+    {
+     "cmd": "brief entrants space=T-114",
+     "p": 0.45,
+     "r": 0.07401033716892225,
+     "score": 5.785667786804423,
+     "win": false
+    }
+   ],
+   "phi": 0.55,
+   "phase": "permit assembly",
+   "result": "Control room notified, T-114 flagged as an active permit space.",
+   "observations": [
+    {
+     "cmd": "notify control_room space=T-114",
+     "text": "Control room notified, T-114 flagged as an active permit space.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.857221433750452,
+    "z_wrong": -0.17898779667474857,
+    "X": 100.55832812354136,
+    "expected": 39.0,
+    "n": 39,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 6.4031242374328485,
+    "z_wrong": -0.7808688094430304,
+    "X": 41,
+    "expected": 20.5,
+    "n": 41,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 41,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 40
+  },
+  {
+   "kind": "group",
+   "i": 41,
+   "round_num": 148014146900431,
+   "window": "notify control_room space=T-114||review last_record",
+   "chosen": "brief entrants space=T-114",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 1,
+   "race": [
+    {
+     "cmd": "brief entrants space=T-114",
+     "p": 1.0,
+     "r": 0.5339399685481114,
+     "score": 0.6274718647905992,
+     "win": true
+    }
+   ],
+   "phi": 1.0,
+   "phase": "permit assembly",
+   "result": "Pre-entry brief delivered to both entrants and the attendant, signed.",
+   "observations": [
+    {
+     "cmd": "brief entrants space=T-114",
+     "text": "Pre-entry brief delivered to both entrants and the attendant, signed.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.857221433750452,
+    "z_wrong": -0.17898779667474857,
+    "X": 100.55832812354136,
+    "expected": 39.0,
+    "n": 39,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 6.48074069840786,
+    "z_wrong": -0.9258200997725514,
+    "X": 42,
+    "expected": 21.0,
+    "n": 42,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 42,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 41
+  },
+  {
+   "kind": "group",
+   "i": 42,
+   "round_num": 195616292276629,
+   "window": "brief entrants space=T-114",
+   "chosen": "issue permit space=T-114 validity=8h",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 1,
+   "race": [
+    {
+     "cmd": "issue permit space=T-114 validity=8h",
+     "p": 1.0,
+     "r": 0.6119676032948229,
+     "score": 0.49107593366373253,
+     "win": true
+    }
+   ],
+   "phi": 1.0,
+   "phase": "issue / file",
+   "result": "PERMIT PTW-4471 ISSUED. Valid 8 h. Entry authorised.",
+   "observations": [
+    {
+     "cmd": "issue permit space=T-114 validity=8h",
+     "text": "PERMIT PTW-4471 ISSUED. Valid 8 h. Entry authorised.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 9.857221433750452,
+    "z_wrong": -0.17898779667474857,
+    "X": 100.55832812354136,
+    "expected": 39.0,
+    "n": 39,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 6.557438524302001,
+    "z_wrong": -1.0674899923282326,
+    "X": 43,
+    "expected": 21.5,
+    "n": 43,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 43,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 42
+  },
+  {
+   "kind": "task_done",
+   "game_id": "hse_confined_space-T114-digester-sludge_rake__ptw4471",
+   "success": true,
+   "final_reward": 1.0
+  }
+ ],
+ "detect": {
+  "right": {
+   "layer1": {
+    "z": 9.857221433750452,
+    "z_wrong": -0.17898779667474857,
+    "X": 100.55832812354136,
+    "expected": 39.0,
+    "n": 39,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 6.557438524302001,
+    "z_wrong": -1.0674899923282326,
+    "X": 43,
+    "expected": 21.5,
+    "n": 43,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 43,
+    "mismatch": 0,
+    "rate": 0.0
+   }
+  },
+  "wrong": {
+   "layer1": {
+    "z": -0.17898779667474857,
+    "z_wrong": 9.857221433750452,
+    "X": 37.882221568028456,
+    "expected": 39.0,
+    "n": 39,
+    "detected": false,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": -1.0674899923282326,
+    "z_wrong": 6.557438524302001,
+    "X": 18,
+    "expected": 21.5,
+    "n": 43,
+    "detected": false
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 19999991,
+   "key2": 19999992,
+   "consistency": {
+    "total": 43,
+    "mismatch": 0,
+    "rate": 0.0
+   }
+  }
+ },
+ "attacks": {
+  "deletion": [
+   {
+    "rate": 0.1,
+    "after": {
+     "layer1": {
+      "z": 7.3361055281370025,
+      "z_wrong": 0.35409865933920476,
+      "X": 73.49927973156635,
+      "expected": 32.0,
+      "n": 32,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": -0.8006407690254357,
+      "z_wrong": -0.8006407690254357,
+      "X": 17,
+      "expected": 19.5,
+      "n": 39,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 39,
+      "mismatch": 3,
+      "rate": 0.07692307692307693
+     }
+    },
+    "surviving_groups": 39
+   },
+   {
+    "rate": 0.2,
+    "after": {
+     "layer1": {
+      "z": 3.7169868793466194,
+      "z_wrong": 0.32908752962702176,
+      "X": 46.3140303782857,
+      "expected": 27.0,
+      "n": 27,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 0.50709255283711,
+      "z_wrong": 1.52127765851133,
+      "X": 19,
+      "expected": 17.5,
+      "n": 35,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 35,
+      "mismatch": 4,
+      "rate": 0.11428571428571428
+     }
+    },
+    "surviving_groups": 35
+   },
+   {
+    "rate": 0.3,
+    "after": {
+     "layer1": {
+      "z": 2.9600696922232257,
+      "z_wrong": 0.5963960441853695,
+      "X": 37.195995541166724,
+      "expected": 23.0,
+      "n": 23,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": -0.5222329678670935,
+      "z_wrong": 0.8703882797784892,
+      "X": 15,
+      "expected": 16.5,
+      "n": 33,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 33,
+      "mismatch": 6,
+      "rate": 0.18181818181818182
+     }
+    },
+    "surviving_groups": 33
+   },
+   {
+    "rate": 0.4,
+    "after": {
+     "layer1": {
+      "z": 1.230343757272762,
+      "z_wrong": 0.5478090850921014,
+      "X": 23.219906483748634,
+      "expected": 18.0,
+      "n": 18,
+      "detected": false,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": -0.7302967433402214,
+      "z_wrong": -0.7302967433402214,
+      "X": 13,
+      "expected": 15.0,
+      "n": 30,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 30,
+      "mismatch": 8,
+      "rate": 0.26666666666666666
+     }
+    },
+    "surviving_groups": 30
+   },
+   {
+    "rate": 0.5,
+    "after": {
+     "layer1": {
+      "z": 1.4587126611394872,
+      "z_wrong": 1.4173564880647984,
+      "X": 19.458003003733236,
+      "expected": 14.0,
+      "n": 14,
+      "detected": false,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 0.2,
+      "z_wrong": -1.8,
+      "X": 13,
+      "expected": 12.5,
+      "n": 25,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 25,
+      "mismatch": 7,
+      "rate": 0.28
+     }
+    },
+    "surviving_groups": 25
+   }
+  ],
+  "strip_redundant": [
+   {
+    "rate": 0.1,
+    "after": {
+     "layer1": {
+      "z": 9.515765149762979,
+      "z_wrong": -0.1500021521559133,
+      "X": 98.42593431349904,
+      "expected": 39.0,
+      "n": 39,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 5.3374499616411635,
+      "z_wrong": -0.457495710997814,
+      "X": 39,
+      "expected": 21.5,
+      "n": 43,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 43,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 43
+   },
+   {
+    "rate": 0.2,
+    "after": {
+     "layer1": {
+      "z": 9.215551632798887,
+      "z_wrong": -0.19003315961894335,
+      "X": 96.55110150096614,
+      "expected": 39.0,
+      "n": 39,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 4.727455680310745,
+      "z_wrong": 0.15249857033260467,
+      "X": 37,
+      "expected": 21.5,
+      "n": 43,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 43,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 43
+   },
+   {
+    "rate": 0.3,
+    "after": {
+     "layer1": {
+      "z": 9.215551632798887,
+      "z_wrong": -0.19003315961894335,
+      "X": 96.55110150096614,
+      "expected": 39.0,
+      "n": 39,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 4.727455680310745,
+      "z_wrong": 0.15249857033260467,
+      "X": 37,
+      "expected": 21.5,
+      "n": 43,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 43,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 43
+   },
+   {
+    "rate": 0.4,
+    "after": {
+     "layer1": {
+      "z": 8.857875148798326,
+      "z_wrong": -0.1429515037661856,
+      "X": 94.31741257430846,
+      "expected": 39.0,
+      "n": 39,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 4.422458539645535,
+      "z_wrong": 0.457495710997814,
+      "X": 36,
+      "expected": 21.5,
+      "n": 43,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 43,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 43
+   },
+   {
+    "rate": 0.5,
+    "after": {
+     "layer1": {
+      "z": 8.312399212053881,
+      "z_wrong": 0.5198949775792222,
+      "X": 90.91091644116491,
+      "expected": 39.0,
+      "n": 39,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 3.8124642583151167,
+      "z_wrong": 1.0674899923282326,
+      "X": 34,
+      "expected": 21.5,
+      "n": 43,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 43,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 43
+   }
+  ],
+  "semantic_rewrite": [
+   {
+    "rate": 0.1,
+    "after": {
+     "layer1": {
+      "z": 9.857221433750452,
+      "z_wrong": -0.17898779667474857,
+      "X": 100.55832812354136,
+      "expected": 39.0,
+      "n": 39,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.557438524302001,
+      "z_wrong": -1.0674899923282326,
+      "X": 43,
+      "expected": 21.5,
+      "n": 43,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 43,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 43
+   },
+   {
+    "rate": 0.2,
+    "after": {
+     "layer1": {
+      "z": 9.857221433750452,
+      "z_wrong": -0.17898779667474857,
+      "X": 100.55832812354136,
+      "expected": 39.0,
+      "n": 39,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.557438524302001,
+      "z_wrong": -1.0674899923282326,
+      "X": 43,
+      "expected": 21.5,
+      "n": 43,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 43,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 43
+   },
+   {
+    "rate": 0.3,
+    "after": {
+     "layer1": {
+      "z": 9.857221433750452,
+      "z_wrong": -0.17898779667474857,
+      "X": 100.55832812354136,
+      "expected": 39.0,
+      "n": 39,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.557438524302001,
+      "z_wrong": -1.0674899923282326,
+      "X": 43,
+      "expected": 21.5,
+      "n": 43,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 43,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 43
+   },
+   {
+    "rate": 0.4,
+    "after": {
+     "layer1": {
+      "z": 9.857221433750452,
+      "z_wrong": -0.17898779667474857,
+      "X": 100.55832812354136,
+      "expected": 39.0,
+      "n": 39,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.557438524302001,
+      "z_wrong": -1.0674899923282326,
+      "X": 43,
+      "expected": 21.5,
+      "n": 43,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 43,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 43
+   },
+   {
+    "rate": 0.5,
+    "after": {
+     "layer1": {
+      "z": 9.857221433750452,
+      "z_wrong": -0.17898779667474857,
+      "X": 100.55832812354136,
+      "expected": 39.0,
+      "n": 39,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.557438524302001,
+      "z_wrong": -1.0674899923282326,
+      "X": 43,
+      "expected": 21.5,
+      "n": 43,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 43,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 43
+   }
+  ],
+  "llm_substitute": [
+   {
+    "rate": 0.1,
+    "after": {
+     "layer1": {
+      "z": 7.2611216105249055,
+      "z_wrong": -1.143647521389958,
+      "X": 84.34568992385539,
+      "expected": 39.0,
+      "n": 39,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.557438524302001,
+      "z_wrong": -1.0674899923282326,
+      "X": 43,
+      "expected": 21.5,
+      "n": 43,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 43,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 43
+   },
+   {
+    "rate": 0.2,
+    "after": {
+     "layer1": {
+      "z": 4.18491065441477,
+      "z_wrong": -1.0910860964378408,
+      "X": 65.13475866029637,
+      "expected": 39.0,
+      "n": 39,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.557438524302001,
+      "z_wrong": -1.0674899923282326,
+      "X": 43,
+      "expected": 21.5,
+      "n": 43,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 43,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 43
+   },
+   {
+    "rate": 0.3,
+    "after": {
+     "layer1": {
+      "z": 4.607155755416616,
+      "z_wrong": -1.4233293517560806,
+      "X": 67.77167847088643,
+      "expected": 39.0,
+      "n": 39,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.557438524302001,
+      "z_wrong": -1.0674899923282326,
+      "X": 43,
+      "expected": 21.5,
+      "n": 43,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 43,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 43
+   },
+   {
+    "rate": 0.4,
+    "after": {
+     "layer1": {
+      "z": 3.517450688961172,
+      "z_wrong": -1.4954963853826664,
+      "X": 60.966472512027586,
+      "expected": 39.0,
+      "n": 39,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.557438524302001,
+      "z_wrong": -1.0674899923282326,
+      "X": 43,
+      "expected": 21.5,
+      "n": 43,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 43,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 43
+   },
+   {
+    "rate": 0.5,
+    "after": {
+     "layer1": {
+      "z": 2.7190007665225266,
+      "z_wrong": -1.2067118562970618,
+      "X": 55.98015434457689,
+      "expected": 39.0,
+      "n": 39,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.557438524302001,
+      "z_wrong": -1.0674899923282326,
+      "X": 43,
+      "expected": 21.5,
+      "n": 43,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 43,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 43
+   }
+  ],
+  "combined": [
+   {
+    "rate": 0.1,
+    "after": {
+     "layer1": {
+      "z": 6.220470235500776,
+      "z_wrong": 1.1706293134439865,
+      "X": 67.18829348553344,
+      "expected": 32.0,
+      "n": 32,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": -0.8006407690254357,
+      "z_wrong": -0.8006407690254357,
+      "X": 17,
+      "expected": 19.5,
+      "n": 39,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 39,
+      "mismatch": 3,
+      "rate": 0.07692307692307693
+     }
+    },
+    "surviving_groups": 39
+   },
+   {
+    "rate": 0.2,
+    "after": {
+     "layer1": {
+      "z": 0.8325645166881224,
+      "z_wrong": 2.2720219002624367,
+      "X": 31.326132130448563,
+      "expected": 27.0,
+      "n": 27,
+      "detected": false,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 0.50709255283711,
+      "z_wrong": 1.52127765851133,
+      "X": 19,
+      "expected": 17.5,
+      "n": 35,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 35,
+      "mismatch": 4,
+      "rate": 0.11428571428571428
+     }
+    },
+    "surviving_groups": 35
+   },
+   {
+    "rate": 0.3,
+    "after": {
+     "layer1": {
+      "z": 0.2441538664020466,
+      "z_wrong": 1.682014282026779,
+      "X": 24.170920809029617,
+      "expected": 23.0,
+      "n": 23,
+      "detected": false,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": -0.5222329678670935,
+      "z_wrong": 0.8703882797784892,
+      "X": 15,
+      "expected": 16.5,
+      "n": 33,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 33,
+      "mismatch": 6,
+      "rate": 0.18181818181818182
+     }
+    },
+    "surviving_groups": 33
+   },
+   {
+    "rate": 0.4,
+    "after": {
+     "layer1": {
+      "z": -0.5823178019832889,
+      "z_wrong": -0.14455547208747124,
+      "X": 15.529434800471828,
+      "expected": 18.0,
+      "n": 18,
+      "detected": false,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": -0.7302967433402214,
+      "z_wrong": -0.7302967433402214,
+      "X": 13,
+      "expected": 15.0,
+      "n": 30,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 30,
+      "mismatch": 8,
+      "rate": 0.26666666666666666
+     }
+    },
+    "surviving_groups": 30
+   },
+   {
+    "rate": 0.5,
+    "after": {
+     "layer1": {
+      "z": 1.3537381972944782,
+      "z_wrong": 0.41916990380589975,
+      "X": 19.065224525664924,
+      "expected": 14.0,
+      "n": 14,
+      "detected": false,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 0.2,
+      "z_wrong": -1.8,
+      "X": 13,
+      "expected": 12.5,
+      "n": 25,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 25,
+      "mismatch": 7,
+      "rate": 0.28
+     }
+    },
+    "surviving_groups": 25
+   }
+  ]
+ },
+ "matrix": [
+  {
+   "rate": 0.1,
+   "rows": [
+    {
+     "attack": "clean",
+     "param": null,
+     "z1": 9.857221433750452,
+     "z2": 6.557438524302001,
+     "z1_wrong": -0.17898779667474857,
+     "z2_wrong": -1.0674899923282326,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "deletion",
+     "param": 0.1,
+     "z1": 7.3361055281370025,
+     "z2": -0.8006407690254357,
+     "z1_wrong": 0.35409865933920476,
+     "z2_wrong": -0.8006407690254357,
+     "n1": 32,
+     "n2": 39,
+     "inconsistency": 0.07692307692307693
+    },
+    {
+     "attack": "strip_redundant",
+     "param": 0.1,
+     "z1": 9.515765149762979,
+     "z2": 5.3374499616411635,
+     "z1_wrong": -0.1500021521559133,
+     "z2_wrong": -0.457495710997814,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "semantic_rewrite",
+     "param": 0.1,
+     "z1": 9.857221433750452,
+     "z2": 6.557438524302001,
+     "z1_wrong": -0.17898779667474857,
+     "z2_wrong": -1.0674899923282326,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "llm_substitute",
+     "param": 0.1,
+     "z1": 7.2611216105249055,
+     "z2": 6.557438524302001,
+     "z1_wrong": -1.143647521389958,
+     "z2_wrong": -1.0674899923282326,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "combined",
+     "param": 0.1,
+     "z1": 6.220470235500776,
+     "z2": -0.8006407690254357,
+     "z1_wrong": 1.1706293134439865,
+     "z2_wrong": -0.8006407690254357,
+     "n1": 32,
+     "n2": 39,
+     "inconsistency": 0.07692307692307693
+    }
+   ]
+  },
+  {
+   "rate": 0.2,
+   "rows": [
+    {
+     "attack": "clean",
+     "param": null,
+     "z1": 9.857221433750452,
+     "z2": 6.557438524302001,
+     "z1_wrong": -0.17898779667474857,
+     "z2_wrong": -1.0674899923282326,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "deletion",
+     "param": 0.2,
+     "z1": 3.7169868793466194,
+     "z2": 0.50709255283711,
+     "z1_wrong": 0.32908752962702176,
+     "z2_wrong": 1.52127765851133,
+     "n1": 27,
+     "n2": 35,
+     "inconsistency": 0.11428571428571428
+    },
+    {
+     "attack": "strip_redundant",
+     "param": 0.2,
+     "z1": 9.215551632798887,
+     "z2": 4.727455680310745,
+     "z1_wrong": -0.19003315961894335,
+     "z2_wrong": 0.15249857033260467,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "semantic_rewrite",
+     "param": 0.2,
+     "z1": 9.857221433750452,
+     "z2": 6.557438524302001,
+     "z1_wrong": -0.17898779667474857,
+     "z2_wrong": -1.0674899923282326,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "llm_substitute",
+     "param": 0.2,
+     "z1": 4.18491065441477,
+     "z2": 6.557438524302001,
+     "z1_wrong": -1.0910860964378408,
+     "z2_wrong": -1.0674899923282326,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "combined",
+     "param": 0.2,
+     "z1": 0.8325645166881224,
+     "z2": 0.50709255283711,
+     "z1_wrong": 2.2720219002624367,
+     "z2_wrong": 1.52127765851133,
+     "n1": 27,
+     "n2": 35,
+     "inconsistency": 0.11428571428571428
+    }
+   ]
+  },
+  {
+   "rate": 0.3,
+   "rows": [
+    {
+     "attack": "clean",
+     "param": null,
+     "z1": 9.857221433750452,
+     "z2": 6.557438524302001,
+     "z1_wrong": -0.17898779667474857,
+     "z2_wrong": -1.0674899923282326,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "deletion",
+     "param": 0.3,
+     "z1": 2.9600696922232257,
+     "z2": -0.5222329678670935,
+     "z1_wrong": 0.5963960441853695,
+     "z2_wrong": 0.8703882797784892,
+     "n1": 23,
+     "n2": 33,
+     "inconsistency": 0.18181818181818182
+    },
+    {
+     "attack": "strip_redundant",
+     "param": 0.3,
+     "z1": 9.215551632798887,
+     "z2": 4.727455680310745,
+     "z1_wrong": -0.19003315961894335,
+     "z2_wrong": 0.15249857033260467,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "semantic_rewrite",
+     "param": 0.3,
+     "z1": 9.857221433750452,
+     "z2": 6.557438524302001,
+     "z1_wrong": -0.17898779667474857,
+     "z2_wrong": -1.0674899923282326,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "llm_substitute",
+     "param": 0.3,
+     "z1": 4.607155755416616,
+     "z2": 6.557438524302001,
+     "z1_wrong": -1.4233293517560806,
+     "z2_wrong": -1.0674899923282326,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "combined",
+     "param": 0.3,
+     "z1": 0.2441538664020466,
+     "z2": -0.5222329678670935,
+     "z1_wrong": 1.682014282026779,
+     "z2_wrong": 0.8703882797784892,
+     "n1": 23,
+     "n2": 33,
+     "inconsistency": 0.18181818181818182
+    }
+   ]
+  },
+  {
+   "rate": 0.4,
+   "rows": [
+    {
+     "attack": "clean",
+     "param": null,
+     "z1": 9.857221433750452,
+     "z2": 6.557438524302001,
+     "z1_wrong": -0.17898779667474857,
+     "z2_wrong": -1.0674899923282326,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "deletion",
+     "param": 0.4,
+     "z1": 1.230343757272762,
+     "z2": -0.7302967433402214,
+     "z1_wrong": 0.5478090850921014,
+     "z2_wrong": -0.7302967433402214,
+     "n1": 18,
+     "n2": 30,
+     "inconsistency": 0.26666666666666666
+    },
+    {
+     "attack": "strip_redundant",
+     "param": 0.4,
+     "z1": 8.857875148798326,
+     "z2": 4.422458539645535,
+     "z1_wrong": -0.1429515037661856,
+     "z2_wrong": 0.457495710997814,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "semantic_rewrite",
+     "param": 0.4,
+     "z1": 9.857221433750452,
+     "z2": 6.557438524302001,
+     "z1_wrong": -0.17898779667474857,
+     "z2_wrong": -1.0674899923282326,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "llm_substitute",
+     "param": 0.4,
+     "z1": 3.517450688961172,
+     "z2": 6.557438524302001,
+     "z1_wrong": -1.4954963853826664,
+     "z2_wrong": -1.0674899923282326,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "combined",
+     "param": 0.4,
+     "z1": -0.5823178019832889,
+     "z2": -0.7302967433402214,
+     "z1_wrong": -0.14455547208747124,
+     "z2_wrong": -0.7302967433402214,
+     "n1": 18,
+     "n2": 30,
+     "inconsistency": 0.26666666666666666
+    }
+   ]
+  },
+  {
+   "rate": 0.5,
+   "rows": [
+    {
+     "attack": "clean",
+     "param": null,
+     "z1": 9.857221433750452,
+     "z2": 6.557438524302001,
+     "z1_wrong": -0.17898779667474857,
+     "z2_wrong": -1.0674899923282326,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "deletion",
+     "param": 0.5,
+     "z1": 1.4587126611394872,
+     "z2": 0.2,
+     "z1_wrong": 1.4173564880647984,
+     "z2_wrong": -1.8,
+     "n1": 14,
+     "n2": 25,
+     "inconsistency": 0.28
+    },
+    {
+     "attack": "strip_redundant",
+     "param": 0.5,
+     "z1": 8.312399212053881,
+     "z2": 3.8124642583151167,
+     "z1_wrong": 0.5198949775792222,
+     "z2_wrong": 1.0674899923282326,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "semantic_rewrite",
+     "param": 0.5,
+     "z1": 9.857221433750452,
+     "z2": 6.557438524302001,
+     "z1_wrong": -0.17898779667474857,
+     "z2_wrong": -1.0674899923282326,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "llm_substitute",
+     "param": 0.5,
+     "z1": 2.7190007665225266,
+     "z2": 6.557438524302001,
+     "z1_wrong": -1.2067118562970618,
+     "z2_wrong": -1.0674899923282326,
+     "n1": 39,
+     "n2": 43,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "combined",
+     "param": 0.5,
+     "z1": 1.3537381972944782,
+     "z2": 0.2,
+     "z1_wrong": 0.41916990380589975,
+     "z2_wrong": -1.8,
+     "n1": 14,
+     "n2": 25,
+     "inconsistency": 0.28
+    }
+   ]
+  }
+ ]
+}

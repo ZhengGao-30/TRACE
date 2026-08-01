@@ -4,8 +4,9 @@ import type { DetectResult } from '../api'
 import { useI18n } from '../i18n'
 
 function Gauge({
-  label, sub, z, zWrong, tau, tone,
-}: { label: string; sub: string; z: number; zWrong: number; tau: number; tone: 'l1' | 'l2' }) {
+  label, sub, z, zWrong, tau, tone, delta,
+}: { label: string; sub: string; z: number; zWrong: number; tau: number
+     tone: 'l1' | 'l2'; delta?: number | null }) {
   const { t } = useI18n()
   const hit = z > tau
   const c = tone === 'l1'
@@ -29,8 +30,31 @@ function Gauge({
             transition={{ type: 'spring', stiffness: 320, damping: 22 }}
             className={`text-2xl font-bold tabular-nums leading-none ${c.fg}`}
           >
-            {z >= 0 ? '+' : ''}{z.toFixed(2)}
+            {z.toFixed(2)}
           </motion.div>
+
+          {/* What the step just added. The big number above is a LEVEL (no sign);
+              this is the increment, so it is the one place a '+' belongs. */}
+          {delta != null && Math.abs(delta) > 1e-9 && (
+            <motion.div
+              key={`d${z.toFixed(3)}`}
+              initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
+              className="mt-0.5 flex items-center justify-end gap-1">
+              <span className="text-[8px] uppercase tracking-wide text-slate-400">
+                {t('thisStep')}
+              </span>
+              <span className={[
+                'mono text-[10px] font-semibold tabular-nums rounded px-1',
+                delta > 0 ? (tone === 'l1' ? 'bg-l1-100 text-l1-700'
+                                           : 'bg-l2-100 text-l2-700')
+                          : 'bg-slate-100 text-slate-400',
+              ].join(' ')}>
+                {delta > 0 ? '+' : ''}{delta.toFixed(2)}
+              </span>
+            </motion.div>
+          )}
+
           <span className={[
             'chip mt-1',
             hit ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500',
@@ -55,7 +79,7 @@ function Gauge({
               animate={{ width: `${fillW * 100}%` }} transition={{ duration: 0.6, ease: [0.32, 0.72, 0, 1] }} />
           </div>
           <span className="w-10 text-right text-[9px] tabular-nums text-rose-400">
-            {zWrong >= 0 ? '+' : ''}{zWrong.toFixed(2)}
+            {zWrong.toFixed(2)}
           </span>
         </div>
       </div>
@@ -75,12 +99,21 @@ export default function DetectPanel({
   // defensive: a missing field must not blank the whole dashboard
   const tau = d.tau ?? 2
   const cons = d.consistency ?? { total: 0, mismatch: 0, rate: 0 }
+  // Per-step gain, read off the curve the replay is already accumulating. Makes
+  // it legible that each completed step ADDS evidence, rather than the number
+  // just churning.
+  const prev = curve.length > 1 ? curve[curve.length - 2] : null
+  const last = curve.length > 0 ? curve[curve.length - 1] : null
+  const dz1 = prev && last ? last.z1 - prev.z1 : null
+  const dz2 = prev && last ? last.z2 - prev.z2 : null
   return (
     <div className="space-y-2">
       <Gauge label={`z₁ · ${t('selChannel')}`} sub={`${t('selSub')} · n=${d.layer1.n}`}
-             z={d.layer1.z} zWrong={d.layer1.z_wrong ?? 0} tau={tau} tone="l1" />
+             z={d.layer1.z} zWrong={d.layer1.z_wrong ?? 0} tau={tau} tone="l1"
+             delta={dz1} />
       <Gauge label={`z₂ · ${t('tallyChannel')}`} sub={`${t('tallySub')} · n=${d.layer2.n}`}
-             z={d.layer2.z} zWrong={d.layer2.z_wrong ?? 0} tau={tau} tone="l2" />
+             z={d.layer2.z} zWrong={d.layer2.z_wrong ?? 0} tau={tau} tone="l2"
+             delta={dz2} />
 
       {curve.length > 1 && (
         <div className="card p-2">

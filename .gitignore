@@ -3,6 +3,8 @@
 # ─────────────────────────────────────────────────────────────
 chatgpt.txt
 robust_api.txt
+deepseek_api.txt
+*_api.txt
 *.key
 .env
 .env.*
@@ -12,6 +14,8 @@ robust_api.txt
 #  demo backend (runs on your own machine, not on GitHub).
 # ─────────────────────────────────────────────────────────────
 two_layer_watermark/
+two_layer_watermark.zip
+*.zip
 experiments/
 demo/server/
 demo/launcher/

@@ -1,0 +1,6486 @@
+{
+ "summary": {
+  "game_id": "hse_spill_response-B7-bund-acid_release__spillb7",
+  "task_type": "environmental_compliance_record",
+  "query": "Document the acid release at bund B-7 and file the compliance report.",
+  "success": true,
+  "groups": 42,
+  "k2": 23,
+  "z1": 7.690899086568314,
+  "z2": 6.48074069840786,
+  "detected": true,
+  "source": "live",
+  "slug": "hse_spill_response-B7-bund-acid_release__spillb7",
+  "scenario": "hse",
+  "model": "gpt-5.4-mini",
+  "mean_entropy_bits": 2.1171077682686072
+ },
+ "events": [
+  {
+   "kind": "task_start",
+   "game_id": "hse_spill_response-B7-bund-acid_release__spillb7",
+   "task_type": "environmental_compliance_record",
+   "query": "Document the acid release at bund B-7 and file the compliance report.",
+   "success": true,
+   "total_groups": 42,
+   "mode": "replay",
+   "scene": "SITE: Port Kembla chemical terminal, containment bund B-7.\nEVENT: approximately 200 L of dilute sulphuric acid released from a transfer hose failure at 13:55.\nHAZARDS: low pH release, stormwater pathway to the harbour, licence exceedance with a 24 h statutory notification window.\nYou are the HSE compliance agent. The record you build is the evidence the regulator will use to set fines, licence conditions and liability.",
+   "record_ref": "file compliance_report ref=SPILL-B7",
+   "phases": [
+    "immediate response",
+    "containment",
+    "instrument readings",
+    "sampling",
+    "limit comparison",
+    "remediation",
+    "reporting",
+    "further diligence",
+    "issue / file"
+   ]
+  },
+  {
+   "kind": "group",
+   "i": 0,
+   "round_num": 101824664665850,
+   "window": "TWO_LAYER_WM_LAYER1_BOOTSTRAP",
+   "chosen": "log containment action=absorbent_applied",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 22,
+   "race": [
+    {
+     "cmd": "log containment action=absorbent_applied",
+     "p": 0.07017543859649124,
+     "r": 0.8806130510530339,
+     "score": 1.811701753148157,
+     "win": true
+    },
+    {
+     "cmd": "identify source equipment=transfer_hose_TH-4",
+     "p": 0.12280701754385966,
+     "r": 0.7056497367813301,
+     "score": 2.8388954891244524,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=PH-12",
+     "p": 0.01754385964912281,
+     "r": 0.9411237171522195,
+     "score": 3.4587984130461864,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.01754385964912281,
+     "r": 0.9308021630694325,
+     "score": 4.087385849453835,
+     "win": false
+    },
+    {
+     "cmd": "interview operator id=OP-77",
+     "p": 0.07017543859649124,
+     "r": 0.6989226326959581,
+     "score": 5.104566966403475,
+     "win": false
+    },
+    {
+     "cmd": "log containment action=drain_blocked",
+     "p": 0.07017543859649124,
+     "r": 0.6659679667807243,
+     "score": 5.79282033223596,
+     "win": false
+    },
+    {
+     "cmd": "log containment action=boom_deployed",
+     "p": 0.06140350877192983,
+     "r": 0.6951281347529012,
+     "score": 5.922447937145831,
+     "win": false
+    },
+    {
+     "cmd": "check tide_state location=harbour_outfall",
+     "p": 0.04385964912280702,
+     "r": 0.6590132766521672,
+     "score": 9.507864434802965,
+     "win": false
+    },
+    {
+     "cmd": "check bund_capacity id=B7",
+     "p": 0.03508771929824562,
+     "r": 0.6732089972340731,
+     "score": 11.277434378564717,
+     "win": false
+    },
+    {
+     "cmd": "photograph scene location=bund_B7",
+     "p": 0.07017543859649124,
+     "r": 0.4083097029505225,
+     "score": 12.764142762564918,
+     "win": false
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.03508771929824562,
+     "r": 0.6275130067822727,
+     "score": 13.280740087157545,
+     "win": false
+    },
+    {
+     "cmd": "verify drain_plan site=port_kembla",
+     "p": 0.02631578947368421,
+     "r": 0.6296610194385586,
+     "score": 17.57779941395866,
+     "win": false
+    },
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.06140350877192983,
+     "r": 0.330958227521978,
+     "score": 18.008142116375396,
+     "win": false
+    },
+    {
+     "cmd": "notify site_supervisor ref=SPILL-B7",
+     "p": 0.10526315789473684,
+     "r": 0.1501752677114716,
+     "score": 18.011546048049244,
+     "win": false
+    },
+    {
+     "cmd": "record weather_forecast site=port_kembla",
+     "p": 0.01754385964912281,
+     "r": 0.7051501437848384,
+     "score": 19.91263814941855,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=sulphuric_acid",
+     "p": 0.02631578947368421,
+     "r": 0.5713209081226607,
+     "score": 21.272560225947714,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=EC-4",
+     "p": 0.01754385964912281,
+     "r": 0.6826044971502627,
+     "score": 21.764860293127363,
+     "win": false
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.04385964912280702,
+     "r": 0.27472323955142897,
+     "score": 29.457396845362634,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.01754385964912281,
+     "r": 0.49341028085533667,
+     "score": 40.2656115858424,
+     "win": false
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.02631578947368421,
+     "r": 0.3111221973957732,
+     "score": 44.36764199953455,
+     "win": false
+    },
+    {
+     "cmd": "verify ppe_compliance team=response",
+     "p": 0.02631578947368421,
+     "r": 0.1473764764997847,
+     "score": 72.76106625762199,
+     "win": false
+    },
+    {
+     "cmd": "query licence_conditions ref=EPL-3312",
+     "p": 0.01754385964912281,
+     "r": 0.0013531655305456525,
+     "score": 376.50258985411944,
+     "win": false
+    }
+   ],
+   "phi": 0.07017543859649124,
+   "phase": "containment",
+   "result": "Acid-neutralising absorbent applied to the bund floor.",
+   "observations": [
+    {
+     "cmd": "log containment action=absorbent_applied",
+     "text": "Acid-neutralising absorbent applied to the bund floor.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 1.1253853892996868,
+    "z_wrong": -0.46896275450770053,
+    "X": 2.125385389299687,
+    "expected": 1.0,
+    "n": 1,
+    "detected": false,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 1.0,
+    "z_wrong": 1.0,
+    "X": 1,
+    "expected": 0.5,
+    "n": 1,
+    "detected": false
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 1,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 0
+  },
+  {
+   "kind": "group",
+   "i": 1,
+   "round_num": 14445099951306,
+   "window": "log containment action=absorbent_applied||review last_record",
+   "chosen": "log containment action=boom_deployed",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 21,
+   "race": [
+    {
+     "cmd": "log containment action=boom_deployed",
+     "p": 0.12264150943396226,
+     "r": 0.9899910585474632,
+     "score": 0.08202253634153071,
+     "win": true
+    },
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.04716981132075472,
+     "r": 0.9887501054789898,
+     "score": 0.23984944828836127,
+     "win": false
+    },
+    {
+     "cmd": "log containment action=drain_blocked",
+     "p": 0.1320754716981132,
+     "r": 0.9244864657999228,
+     "score": 0.5944848557684265,
+     "win": false
+    },
+    {
+     "cmd": "verify ppe_compliance team=response",
+     "p": 0.028301886792452827,
+     "r": 0.9645150642373981,
+     "score": 1.276587258015057,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=sulphuric_acid",
+     "p": 0.04716981132075472,
+     "r": 0.8474486801768151,
+     "score": 3.509129913602818,
+     "win": false
+    },
+    {
+     "cmd": "notify site_supervisor ref=SPILL-B7",
+     "p": 0.08490566037735849,
+     "r": 0.7386123278334531,
+     "score": 3.568455678275983,
+     "win": false
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.028301886792452827,
+     "r": 0.8677146377745328,
+     "score": 5.0135306433619435,
+     "win": false
+    },
+    {
+     "cmd": "check bund_capacity id=B7",
+     "p": 0.04716981132075472,
+     "r": 0.7363641796852225,
+     "score": 6.487846033453751,
+     "win": false
+    },
+    {
+     "cmd": "photograph scene location=bund_B7",
+     "p": 0.056603773584905655,
+     "r": 0.5659777460135575,
+     "score": 10.055875845368758,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.018867924528301886,
+     "r": 0.8171111052972102,
+     "score": 10.704950683333452,
+     "win": false
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.03773584905660377,
+     "r": 0.6004415937189123,
+     "score": 13.517382480961633,
+     "win": false
+    },
+    {
+     "cmd": "verify drain_plan site=port_kembla",
+     "p": 0.056603773584905655,
+     "r": 0.4250398870023415,
+     "score": 15.115109974213087,
+     "win": false
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.03773584905660377,
+     "r": 0.5559938914762326,
+     "score": 15.555446240654316,
+     "win": false
+    },
+    {
+     "cmd": "identify source equipment=transfer_hose_TH-4",
+     "p": 0.04716981132075472,
+     "r": 0.4201352925333197,
+     "score": 18.384184083326534,
+     "win": false
+    },
+    {
+     "cmd": "query licence_conditions ref=EPL-3312",
+     "p": 0.0660377358490566,
+     "r": 0.2892529944889146,
+     "score": 18.784011056942624,
+     "win": false
+    },
+    {
+     "cmd": "record weather_forecast site=port_kembla",
+     "p": 0.018867924528301886,
+     "r": 0.5770568817563706,
+     "score": 29.14016507793794,
+     "win": false
+    },
+    {
+     "cmd": "check tide_state location=harbour_outfall",
+     "p": 0.056603773584905655,
+     "r": 0.12023635836573643,
+     "score": 37.42322615996712,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=EC-4",
+     "p": 0.009433962264150943,
+     "r": 0.6104491847915194,
+     "score": 52.31738377477837,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=PH-12",
+     "p": 0.009433962264150943,
+     "r": 0.5979348843835759,
+     "score": 54.51298251480787,
+     "win": false
+    },
+    {
+     "cmd": "interview operator id=OP-77",
+     "p": 0.028301886792452827,
+     "r": 0.14987330134329357,
+     "score": 67.0614299830959,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.018867924528301886,
+     "r": 0.0709837664905335,
+     "score": 140.2011156602625,
+     "win": false
+    }
+   ],
+   "phi": 0.12264150943396226,
+   "phase": "containment",
+   "result": "Absorbent boom deployed across the bund outlet.",
+   "observations": [
+    {
+     "cmd": "log containment action=boom_deployed",
+     "text": "Absorbent boom deployed across the bund outlet.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 3.344375952389617,
+    "z_wrong": -0.7902697663725042,
+    "X": 6.729661829543833,
+    "expected": 2.0,
+    "n": 2,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 1.414213562373095,
+    "z_wrong": 1.414213562373095,
+    "X": 2,
+    "expected": 1.0,
+    "n": 2,
+    "detected": false
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 2,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 1
+  },
+  {
+   "kind": "group",
+   "i": 2,
+   "round_num": 53019022493604,
+   "window": "log containment action=boom_deployed",
+   "chosen": "verify drain_plan site=port_kembla",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 22,
+   "race": [
+    {
+     "cmd": "verify drain_plan site=port_kembla",
+     "p": 0.05405405405405405,
+     "r": 0.9570809955898336,
+     "score": 0.811544240077488,
+     "win": true
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.04504504504504504,
+     "r": 0.9572078611089048,
+     "score": 0.9709105702826277,
+     "win": false
+    },
+    {
+     "cmd": "query licence_conditions ref=EPL-3312",
+     "p": 0.07207207207207207,
+     "r": 0.8128265003433264,
+     "score": 2.8754216850226957,
+     "win": false
+    },
+    {
+     "cmd": "notify site_supervisor ref=SPILL-B7",
+     "p": 0.1081081081081081,
+     "r": 0.6860538090041348,
+     "score": 3.4853927438455896,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.07207207207207207,
+     "r": 0.7100582444678112,
+     "score": 4.750914855164761,
+     "win": false
+    },
+    {
+     "cmd": "interview operator id=OP-77",
+     "p": 0.027027027027027025,
+     "r": 0.8394521010461609,
+     "score": 6.4752168428896555,
+     "win": false
+    },
+    {
+     "cmd": "check bund_capacity id=B7",
+     "p": 0.06306306306306306,
+     "r": 0.6597927588984702,
+     "score": 6.593867705469163,
+     "win": false
+    },
+    {
+     "cmd": "verify ppe_compliance team=response",
+     "p": 0.018018018018018018,
+     "r": 0.8812983390650886,
+     "score": 7.0129285803713115,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=EC-4",
+     "p": 0.027027027027027025,
+     "r": 0.8003134682752922,
+     "score": 8.241816330548073,
+     "win": false
+    },
+    {
+     "cmd": "photograph scene location=bund_B7",
+     "p": 0.09009009009009009,
+     "r": 0.25565710738012726,
+     "score": 15.139491538587254,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=PH-12",
+     "p": 0.027027027027027025,
+     "r": 0.6451773962944185,
+     "score": 16.214508778497112,
+     "win": false
+    },
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.04504504504504504,
+     "r": 0.47964911809603983,
+     "score": 16.310349909202287,
+     "win": false
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.027027027027027025,
+     "r": 0.636179385218328,
+     "score": 16.734164017704103,
+     "win": false
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.027027027027027025,
+     "r": 0.6314170580621703,
+     "score": 17.012181417895064,
+     "win": false
+    },
+    {
+     "cmd": "identify source equipment=transfer_hose_TH-4",
+     "p": 0.07207207207207207,
+     "r": 0.2870254883880383,
+     "score": 17.318556572138814,
+     "win": false
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.027027027027027025,
+     "r": 0.48387788563788914,
+     "score": 26.859140140506153,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.018018018018018018,
+     "r": 0.5422695405671352,
+     "score": 33.96556120808428,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.018018018018018018,
+     "r": 0.4074472449673916,
+     "score": 49.83033172609725,
+     "win": false
+    },
+    {
+     "cmd": "record weather_forecast site=port_kembla",
+     "p": 0.018018018018018018,
+     "r": 0.36015366217198497,
+     "score": 56.677959707562756,
+     "win": false
+    },
+    {
+     "cmd": "log containment action=drain_blocked",
+     "p": 0.08108108108108107,
+     "r": 0.002022400560950821,
+     "score": 76.50946427859571,
+     "win": false
+    },
+    {
+     "cmd": "check tide_state location=harbour_outfall",
+     "p": 0.027027027027027025,
+     "r": 0.09603247229778256,
+     "score": 86.69354898946206,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=sulphuric_acid",
+     "p": 0.036036036036036036,
+     "r": 0.03394366178208541,
+     "score": 93.87972449982328,
+     "win": false
+    }
+   ],
+   "phi": 0.05405405405405405,
+   "phase": "further diligence",
+   "result": "Stormwater plan confirms SD-3 is the only pathway to the harbour.",
+   "observations": [
+    {
+     "cmd": "verify drain_plan site=port_kembla",
+     "text": "Stormwater plan confirms SD-3 is the only pathway to the harbour.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 3.9710742649026183,
+    "z_wrong": -0.51251085680904,
+    "X": 9.878102387440565,
+    "expected": 3.0,
+    "n": 3,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 1.7320508075688774,
+    "z_wrong": 1.7320508075688774,
+    "X": 3,
+    "expected": 1.5,
+    "n": 3,
+    "detected": false
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 3,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 2
+  },
+  {
+   "kind": "group",
+   "i": 3,
+   "round_num": 76003438751413,
+   "window": "verify drain_plan site=port_kembla||review last_record",
+   "chosen": "log containment action=drain_blocked",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 21,
+   "race": [
+    {
+     "cmd": "log containment action=drain_blocked",
+     "p": 0.06542056074766356,
+     "r": 0.9853436003165783,
+     "score": 0.22569152053447203,
+     "win": true
+    },
+    {
+     "cmd": "photograph scene location=bund_B7",
+     "p": 0.07476635514018691,
+     "r": 0.9704535914748542,
+     "score": 0.40113894346595413,
+     "win": false
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.05607476635514018,
+     "r": 0.8493459272625696,
+     "score": 2.9119822277423437,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.05607476635514018,
+     "r": 0.8449707871208443,
+     "score": 3.0040824889099222,
+     "win": false
+    },
+    {
+     "cmd": "identify source equipment=transfer_hose_TH-4",
+     "p": 0.08411214953271028,
+     "r": 0.6585722375719565,
+     "score": 4.965763756492653,
+     "win": false
+    },
+    {
+     "cmd": "notify site_supervisor ref=SPILL-B7",
+     "p": 0.102803738317757,
+     "r": 0.5978923766919837,
+     "score": 5.003169356795338,
+     "win": false
+    },
+    {
+     "cmd": "verify ppe_compliance team=response",
+     "p": 0.02803738317757009,
+     "r": 0.8599750111984503,
+     "score": 5.380386106197266,
+     "win": false
+    },
+    {
+     "cmd": "check bund_capacity id=B7",
+     "p": 0.037383177570093455,
+     "r": 0.7515000212538931,
+     "score": 7.6420481103162095,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.06542056074766356,
+     "r": 0.5743769361332931,
+     "score": 8.475461058247863,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.018691588785046728,
+     "r": 0.794605815798495,
+     "score": 12.30013773146739,
+     "win": false
+    },
+    {
+     "cmd": "check tide_state location=harbour_outfall",
+     "p": 0.037383177570093455,
+     "r": 0.5992975102082876,
+     "score": 13.695923121206144,
+     "win": false
+    },
+    {
+     "cmd": "interview operator id=OP-77",
+     "p": 0.05607476635514018,
+     "r": 0.372016859655135,
+     "score": 17.633887189469416,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=PH-12",
+     "p": 0.037383177570093455,
+     "r": 0.4740656779567256,
+     "score": 19.966451605032926,
+     "win": false
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.04672897196261682,
+     "r": 0.24230913621885786,
+     "score": 30.335376236766383,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=sulphuric_acid",
+     "p": 0.02803738317757009,
+     "r": 0.29367062467127636,
+     "score": 43.70224054659181,
+     "win": false
+    },
+    {
+     "cmd": "query licence_conditions ref=EPL-3312",
+     "p": 0.04672897196261682,
+     "r": 0.09864009431215126,
+     "score": 49.568337729636276,
+     "win": false
+    },
+    {
+     "cmd": "record weather_forecast site=port_kembla",
+     "p": 0.018691588785046728,
+     "r": 0.3852843117223388,
+     "score": 51.02689536951421,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.018691588785046728,
+     "r": 0.2871012394242707,
+     "score": 66.76374005271855,
+     "win": false
+    },
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.07476635514018691,
+     "r": 0.004713958127747331,
+     "score": 71.65291590039628,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=EC-4",
+     "p": 0.018691588785046728,
+     "r": 0.09877622001907738,
+     "score": 123.84706393264298,
+     "win": false
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.02803738317757009,
+     "r": 0.027638791041368016,
+     "score": 127.99108239775244,
+     "win": false
+    }
+   ],
+   "phi": 0.06542056074766356,
+   "phase": "containment",
+   "result": "Stormwater drain SD-3 plugged, isolation confirmed.",
+   "observations": [
+    {
+     "cmd": "log containment action=drain_blocked",
+     "text": "Stormwater drain SD-3 plugged, isolation confirmed.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 5.050490293943474,
+    "z_wrong": -0.7876330193440575,
+    "X": 14.100980587886948,
+    "expected": 4.0,
+    "n": 4,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 2.0,
+    "z_wrong": 1.0,
+    "X": 4,
+    "expected": 2.0,
+    "n": 4,
+    "detected": false
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 4,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 3
+  },
+  {
+   "kind": "group",
+   "i": 4,
+   "round_num": 221091268875789,
+   "window": "log containment action=drain_blocked",
+   "chosen": "check bund_capacity id=B7",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 21,
+   "race": [
+    {
+     "cmd": "check bund_capacity id=B7",
+     "p": 0.038461538461538464,
+     "r": 0.953464438899138,
+     "score": 1.2389818992470223,
+     "win": true
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.028846153846153844,
+     "r": 0.9636717291827475,
+     "score": 1.2828251716272074,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.09615384615384616,
+     "r": 0.8581176302573761,
+     "score": 1.5913465431677254,
+     "win": false
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.028846153846153844,
+     "r": 0.9436942855445085,
+     "score": 2.009037865334047,
+     "win": false
+    },
+    {
+     "cmd": "query licence_conditions ref=EPL-3312",
+     "p": 0.05769230769230769,
+     "r": 0.7718409497632459,
+     "score": 4.488930745968609,
+     "win": false
+    },
+    {
+     "cmd": "notify site_supervisor ref=SPILL-B7",
+     "p": 0.11538461538461538,
+     "r": 0.3975806663651358,
+     "score": 7.993764403943124,
+     "win": false
+    },
+    {
+     "cmd": "record weather_forecast site=port_kembla",
+     "p": 0.019230769230769232,
+     "r": 0.8390438734121644,
+     "score": 9.125598631581996,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.019230769230769232,
+     "r": 0.8381779022597824,
+     "score": 9.179295172586201,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=PH-12",
+     "p": 0.06730769230769232,
+     "r": 0.5290245279294259,
+     "score": 9.459847155236648,
+     "win": false
+    },
+    {
+     "cmd": "photograph scene location=bund_B7",
+     "p": 0.11538461538461538,
+     "r": 0.2835977153409457,
+     "score": 10.921720682401668,
+     "win": false
+    },
+    {
+     "cmd": "identify source equipment=transfer_hose_TH-4",
+     "p": 0.038461538461538464,
+     "r": 0.4520086570819666,
+     "score": 20.645402608924854,
+     "win": false
+    },
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.04807692307692308,
+     "r": 0.2981624318435616,
+     "score": 25.170430847633394,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.019230769230769232,
+     "r": 0.5550614873145425,
+     "score": 30.611171937741407,
+     "win": false
+    },
+    {
+     "cmd": "check tide_state location=harbour_outfall",
+     "p": 0.019230769230769232,
+     "r": 0.5377855158456437,
+     "score": 32.25536432258541,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=EC-4",
+     "p": 0.05769230769230769,
+     "r": 0.13736057153747483,
+     "score": 34.40919562650038,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.028846153846153844,
+     "r": 0.3643058693355339,
+     "score": 35.00506407936211,
+     "win": false
+    },
+    {
+     "cmd": "verify ppe_compliance team=response",
+     "p": 0.028846153846153844,
+     "r": 0.3261474052304829,
+     "score": 38.840735666260755,
+     "win": false
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.07692307692307693,
+     "r": 0.03593275308673993,
+     "score": 43.239378743211404,
+     "win": false
+    },
+    {
+     "cmd": "interview operator id=OP-77",
+     "p": 0.038461538461538464,
+     "r": 0.1395942450756973,
+     "score": 51.19439816113313,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.019230769230769232,
+     "r": 0.32661339150266033,
+     "score": 58.18686101917273,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=sulphuric_acid",
+     "p": 0.038461538461538464,
+     "r": 0.010418608505070814,
+     "score": 118.66820660121523,
+     "win": false
+    }
+   ],
+   "phi": 0.038461538461538464,
+   "phase": "further diligence",
+   "result": "Bund B-7 rated 12 kL, release well within containment volume.",
+   "observations": [
+    {
+     "cmd": "check bund_capacity id=B7",
+     "text": "Bund B-7 rated 12 kL, release well within containment volume.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 5.4419271749065885,
+    "z_wrong": -0.19727168584913687,
+    "X": 17.16851909169452,
+    "expected": 5.0,
+    "n": 5,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 2.23606797749979,
+    "z_wrong": 0.4472135954999579,
+    "X": 5,
+    "expected": 2.5,
+    "n": 5,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 5,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 4
+  },
+  {
+   "kind": "group",
+   "i": 5,
+   "round_num": 106771213649952,
+   "window": "check bund_capacity id=B7||review last_record",
+   "chosen": "query licence_conditions ref=EPL-3312",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 20,
+   "race": [
+    {
+     "cmd": "query licence_conditions ref=EPL-3312",
+     "p": 0.09411764705882353,
+     "r": 0.9865498618363986,
+     "score": 0.14387748777283507,
+     "win": true
+    },
+    {
+     "cmd": "review msds substance=sulphuric_acid",
+     "p": 0.07058823529411765,
+     "r": 0.9726605163151283,
+     "score": 0.3927022917809972,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=PH-12",
+     "p": 0.03529411764705882,
+     "r": 0.9349806022785161,
+     "score": 1.9048357238205225,
+     "win": false
+    },
+    {
+     "cmd": "notify site_supervisor ref=SPILL-B7",
+     "p": 0.09411764705882353,
+     "r": 0.7491646848601141,
+     "score": 3.0684622457198154,
+     "win": false
+    },
+    {
+     "cmd": "verify ppe_compliance team=response",
+     "p": 0.03529411764705882,
+     "r": 0.8452528581454637,
+     "score": 4.763384586089,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.03529411764705882,
+     "r": 0.8421824141581327,
+     "score": 4.866494922129149,
+     "win": false
+    },
+    {
+     "cmd": "identify source equipment=transfer_hose_TH-4",
+     "p": 0.09411764705882353,
+     "r": 0.46275422089484475,
+     "score": 8.187191566315443,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.023529411764705882,
+     "r": 0.7911973893511406,
+     "score": 9.953831427147644,
+     "win": false
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.03529411764705882,
+     "r": 0.6749979449686345,
+     "score": 11.136292923812682,
+     "win": false
+    },
+    {
+     "cmd": "record weather_forecast site=port_kembla",
+     "p": 0.023529411764705882,
+     "r": 0.7577002317662935,
+     "score": 11.792366376949312,
+     "win": false
+    },
+    {
+     "cmd": "photograph scene location=bund_B7",
+     "p": 0.10588235294117647,
+     "r": 0.2568422355113844,
+     "score": 12.837769603993213,
+     "win": false
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.09411764705882353,
+     "r": 0.21048098007686789,
+     "score": 16.557574849883757,
+     "win": false
+    },
+    {
+     "cmd": "check tide_state location=harbour_outfall",
+     "p": 0.03529411764705882,
+     "r": 0.5152283540684968,
+     "score": 18.78911033467327,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=EC-4",
+     "p": 0.03529411764705882,
+     "r": 0.46250931755441993,
+     "score": 21.84750965812098,
+     "win": false
+    },
+    {
+     "cmd": "interview operator id=OP-77",
+     "p": 0.05882352941176471,
+     "r": 0.22342834636323539,
+     "score": 25.477296742392358,
+     "win": false
+    },
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.09411764705882353,
+     "r": 0.07191311154849056,
+     "score": 27.96815214812865,
+     "win": false
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.03529411764705882,
+     "r": 0.010255982722593204,
+     "score": 129.76366513022737,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.9872931358957169,
+     "score": 12788286788.661226,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.37843863766655894,
+     "score": 971701339018.7748,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.007166133802420038,
+     "score": 4938388988431.654,
+     "win": false
+    }
+   ],
+   "phi": 0.09411764705882353,
+   "phase": "further diligence",
+   "result": "EPL-3312: pH 6.0-9.0, TOC <30 mg/L at the licensed discharge point.",
+   "observations": [
+    {
+     "cmd": "query licence_conditions ref=EPL-3312",
+     "text": "EPL-3312: pH 6.0-9.0, TOC <30 mg/L at the licensed discharge point.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 6.318575139126375,
+    "z_wrong": -0.4095662088801841,
+    "X": 21.477284992294848,
+    "expected": 6.0,
+    "n": 6,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 2.4494897427831783,
+    "z_wrong": 0.8164965809277261,
+    "X": 6,
+    "expected": 3.0,
+    "n": 6,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 6,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 5
+  },
+  {
+   "kind": "group",
+   "i": 6,
+   "round_num": 66422687100449,
+   "window": "query licence_conditions ref=EPL-3312||review last_record",
+   "chosen": "check tide_state location=harbour_outfall",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 19,
+   "race": [
+    {
+     "cmd": "check tide_state location=harbour_outfall",
+     "p": 0.04,
+     "r": 0.9844715827329089,
+     "score": 0.39125614972543127,
+     "win": true
+    },
+    {
+     "cmd": "verify sensor_calibration id=PH-12",
+     "p": 0.08,
+     "r": 0.9217232375640174,
+     "score": 1.0188784583160662,
+     "win": false
+    },
+    {
+     "cmd": "notify site_supervisor ref=SPILL-B7",
+     "p": 0.13333333333333333,
+     "r": 0.81405125033543,
+     "score": 1.5429896539614505,
+     "win": false
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.04,
+     "r": 0.8802449801535939,
+     "score": 3.1888755928513075,
+     "win": false
+    },
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.06666666666666667,
+     "r": 0.7584203866838397,
+     "score": 4.147761708400026,
+     "win": false
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.10666666666666667,
+     "r": 0.5206607210676062,
+     "score": 6.118656154876468,
+     "win": false
+    },
+    {
+     "cmd": "interview operator id=OP-77",
+     "p": 0.05333333333333334,
+     "r": 0.6560508299494741,
+     "score": 7.903443906764145,
+     "win": false
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.04,
+     "r": 0.6880057360686269,
+     "score": 9.348952594362444,
+     "win": false
+    },
+    {
+     "cmd": "photograph scene location=bund_B7",
+     "p": 0.14666666666666667,
+     "r": 0.15589349430874488,
+     "score": 12.672151593328154,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=EC-4",
+     "p": 0.05333333333333334,
+     "r": 0.44964341345679193,
+     "score": 14.986882966586107,
+     "win": false
+    },
+    {
+     "cmd": "record weather_forecast site=port_kembla",
+     "p": 0.013333333333333334,
+     "r": 0.8136738218200654,
+     "score": 15.464677768513534,
+     "win": false
+    },
+    {
+     "cmd": "identify source equipment=transfer_hose_TH-4",
+     "p": 0.09333333333333334,
+     "r": 0.14555075662756156,
+     "score": 20.648897254296244,
+     "win": false
+    },
+    {
+     "cmd": "verify ppe_compliance team=response",
+     "p": 0.04,
+     "r": 0.21920812066437279,
+     "score": 37.943341944199375,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.013333333333333334,
+     "r": 0.5567617968842058,
+     "score": 43.921333817517464,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=sulphuric_acid",
+     "p": 0.05333333333333334,
+     "r": 0.06578487347438511,
+     "score": 51.02560037786844,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.02666666666666667,
+     "r": 0.24168772548256356,
+     "score": 53.254079124906966,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.5526134090557173,
+     "score": 593096601395.0432,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.4902254546656464,
+     "score": 712889882133.7883,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.21545043021265586,
+     "score": 1535024418112.556,
+     "win": false
+    }
+   ],
+   "phi": 0.04,
+   "phase": "further diligence",
+   "result": "Outgoing tide, would have accelerated dispersion if released.",
+   "observations": [
+    {
+     "cmd": "check tide_state location=harbour_outfall",
+     "text": "Outgoing tide, would have accelerated dispersion if released.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.046153006102215,
+    "z_wrong": -0.17261417595797662,
+    "X": 25.64236855385664,
+    "expected": 7.0,
+    "n": 7,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 2.6457513110645903,
+    "z_wrong": 1.1338934190276817,
+    "X": 7,
+    "expected": 3.5,
+    "n": 7,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 7,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 6
+  },
+  {
+   "kind": "group",
+   "i": 7,
+   "round_num": 127144456810319,
+   "window": "check tide_state location=harbour_outfall",
+   "chosen": "verify ppe_compliance team=response",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 18,
+   "race": [
+    {
+     "cmd": "verify ppe_compliance team=response",
+     "p": 0.06666666666666667,
+     "r": 0.9279468010280061,
+     "score": 1.1217131147640536,
+     "win": true
+    },
+    {
+     "cmd": "identify source equipment=transfer_hose_TH-4",
+     "p": 0.08,
+     "r": 0.7773834724124076,
+     "score": 3.1477690108976804,
+     "win": false
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.10666666666666667,
+     "r": 0.6362823939105828,
+     "score": 4.238557486922689,
+     "win": false
+    },
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.10666666666666667,
+     "r": 0.5000258781649651,
+     "score": 6.497769614712446,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=sulphuric_acid",
+     "p": 0.05333333333333334,
+     "r": 0.6506871888673207,
+     "score": 8.057367392009889,
+     "win": false
+    },
+    {
+     "cmd": "photograph scene location=bund_B7",
+     "p": 0.13333333333333333,
+     "r": 0.3277880007392351,
+     "score": 8.365411640811576,
+     "win": false
+    },
+    {
+     "cmd": "notify site_supervisor ref=SPILL-B7",
+     "p": 0.09333333333333334,
+     "r": 0.44890821250258317,
+     "score": 8.581466128236588,
+     "win": false
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.09333333333333334,
+     "r": 0.26802097763872346,
+     "score": 14.107393143891795,
+     "win": false
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.05333333333333334,
+     "r": 0.31026356490578544,
+     "score": 21.9437462503632,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=EC-4",
+     "p": 0.02666666666666667,
+     "r": 0.5240836618286246,
+     "score": 24.2288980285163,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.02666666666666667,
+     "r": 0.45192473069276184,
+     "score": 29.7839864262281,
+     "win": false
+    },
+    {
+     "cmd": "interview operator id=OP-77",
+     "p": 0.06666666666666667,
+     "r": 0.1353514239326843,
+     "score": 29.998211139040457,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=PH-12",
+     "p": 0.02666666666666667,
+     "r": 0.3918957470249238,
+     "score": 35.12847847612757,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.02666666666666667,
+     "r": 0.2087916546878159,
+     "score": 58.74068969034841,
+     "win": false
+    },
+    {
+     "cmd": "record weather_forecast site=port_kembla",
+     "p": 0.04,
+     "r": 0.08188175400070796,
+     "score": 62.56197742043167,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.8967505552341422,
+     "score": 108977543407.24689,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.373316994471806,
+     "score": 985327369126.4762,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.33985762537846553,
+     "score": 1079228497958.5948,
+     "win": false
+    }
+   ],
+   "phi": 0.06666666666666667,
+   "phase": "further diligence",
+   "result": "Response team in acid-resistant suits and face shields.",
+   "observations": [
+    {
+     "cmd": "verify ppe_compliance team=response",
+     "text": "Response team in acid-resistant suits and face shields.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.167488578608627,
+    "z_wrong": -0.34307969640954106,
+    "X": 28.27271911204516,
+    "expected": 8.0,
+    "n": 8,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 2.82842712474619,
+    "z_wrong": 0.7071067811865475,
+    "X": 8,
+    "expected": 4.0,
+    "n": 8,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 8,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 7
+  },
+  {
+   "kind": "group",
+   "i": 8,
+   "round_num": 203276849857698,
+   "window": "verify ppe_compliance team=response||review last_record",
+   "chosen": "identify source equipment=transfer_hose_TH-4",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 17,
+   "race": [
+    {
+     "cmd": "identify source equipment=transfer_hose_TH-4",
+     "p": 0.16304347826086954,
+     "r": 0.9284013732768315,
+     "score": 0.455652235764327,
+     "win": true
+    },
+    {
+     "cmd": "interview operator id=OP-77",
+     "p": 0.09782608695652173,
+     "r": 0.8464579032243953,
+     "score": 1.7039913812578988,
+     "win": false
+    },
+    {
+     "cmd": "notify site_supervisor ref=SPILL-B7",
+     "p": 0.15217391304347827,
+     "r": 0.6729557214037662,
+     "score": 2.602783462963525,
+     "win": false
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.03260869565217391,
+     "r": 0.8662383933147959,
+     "score": 4.403583905049994,
+     "win": false
+    },
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.1847826086956522,
+     "r": 0.08543472874795066,
+     "score": 13.31295525268292,
+     "win": false
+    },
+    {
+     "cmd": "photograph scene location=bund_B7",
+     "p": 0.07608695652173914,
+     "r": 0.34378029855990855,
+     "score": 14.033318474439286,
+     "win": false
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.06521739130434782,
+     "r": 0.3741128672097609,
+     "score": 15.075698727716016,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=sulphuric_acid",
+     "p": 0.043478260869565216,
+     "r": 0.4883843587120813,
+     "score": 16.48300894503149,
+     "win": false
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.06521739130434782,
+     "r": 0.23426952526505018,
+     "score": 22.25300613930532,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.021739130434782608,
+     "r": 0.5936978254957948,
+     "score": 23.983700815801868,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=PH-12",
+     "p": 0.043478260869565216,
+     "r": 0.34165569968914666,
+     "score": 24.700890826464992,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=EC-4",
+     "p": 0.010869565217391304,
+     "r": 0.6677775589873722,
+     "score": 37.14961439144033,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.021739130434782608,
+     "r": 0.3739978063332514,
+     "score": 45.24124596218035,
+     "win": false
+    },
+    {
+     "cmd": "record weather_forecast site=port_kembla",
+     "p": 0.021739130434782608,
+     "r": 0.027772179741776037,
+     "score": 164.85114245084878,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.8235671992183218,
+     "score": 194110130728.5261,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.7924220663436534,
+     "score": 232661117064.84232,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.7273203304624309,
+     "score": 318388278874.73694,
+     "win": false
+    }
+   ],
+   "phi": 0.16304347826086954,
+   "phase": "immediate response",
+   "result": "Source traced to transfer hose TH-4, longitudinal split near the coupling.",
+   "observations": [
+    {
+     "cmd": "identify source equipment=transfer_hose_TH-4",
+     "text": "Source traced to transfer hose TH-4, longitudinal split near the coupling.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.3031328323628815,
+    "z_wrong": -0.566901228821286,
+    "X": 30.909398497088645,
+    "expected": 9.0,
+    "n": 9,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 3.0,
+    "z_wrong": 1.0,
+    "X": 9,
+    "expected": 4.5,
+    "n": 9,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 9,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 8
+  },
+  {
+   "kind": "group",
+   "i": 9,
+   "round_num": 196053417497769,
+   "window": "identify source equipment=transfer_hose_TH-4",
+   "chosen": "isolate source equipment=transfer_hose_TH-4",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 17,
+   "race": [
+    {
+     "cmd": "isolate source equipment=transfer_hose_TH-4",
+     "p": 0.15853658536585366,
+     "r": 0.8541503338624887,
+     "score": 0.9943954914527482,
+     "win": true
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.06097560975609756,
+     "r": 0.9155715280395529,
+     "score": 1.4465913214410036,
+     "win": false
+    },
+    {
+     "cmd": "photograph scene location=bund_B7",
+     "p": 0.09756097560975609,
+     "r": 0.7617016491975719,
+     "score": 2.7900534486334143,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=EC-4",
+     "p": 0.012195121951219511,
+     "r": 0.9638280316279708,
+     "score": 3.0210760384227426,
+     "win": false
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.08536585365853659,
+     "r": 0.6597938222930029,
+     "score": 4.871126632133148,
+     "win": false
+    },
+    {
+     "cmd": "notify site_supervisor ref=SPILL-B7",
+     "p": 0.09756097560975609,
+     "r": 0.5869560673517782,
+     "score": 5.4612543724214255,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=PH-12",
+     "p": 0.06097560975609756,
+     "r": 0.6747815828529462,
+     "score": 6.451206031481849,
+     "win": false
+    },
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.17073170731707318,
+     "r": 0.23999542146730057,
+     "score": 8.358936107815666,
+     "win": false
+    },
+    {
+     "cmd": "record weather_forecast site=port_kembla",
+     "p": 0.036585365853658534,
+     "r": 0.6468960938487056,
+     "score": 11.9055689084564,
+     "win": false
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.06097560975609756,
+     "r": 0.34855595118115534,
+     "score": 17.284886814596636,
+     "win": false
+    },
+    {
+     "cmd": "interview operator id=OP-77",
+     "p": 0.06097560975609756,
+     "r": 0.32868441508832813,
+     "score": 18.24757829685199,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.036585365853658534,
+     "r": 0.41363138344069017,
+     "score": 24.129322185067384,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=sulphuric_acid",
+     "p": 0.036585365853658534,
+     "r": 0.32923824781607514,
+     "score": 30.366612629774295,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.024390243902439022,
+     "r": 0.07731522669451008,
+     "score": 104.95443879974572,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.8413950675298956,
+     "score": 172693970060.7559,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.7403383414857094,
+     "score": 300647979052.39276,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.6856445875813635,
+     "score": 377395879417.9907,
+     "win": false
+    }
+   ],
+   "phi": 0.15853658536585366,
+   "phase": "immediate response",
+   "result": "TH-4 isolated at the manifold, transfer pump stopped, line depressurised.",
+   "observations": [
+    {
+     "cmd": "isolate source equipment=transfer_hose_TH-4",
+     "text": "TH-4 isolated at the manifold, transfer pump stopped, line depressurised.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.2209273892871835,
+    "z_wrong": -0.6630613313132406,
+    "X": 32.83457736884084,
+    "expected": 10.0,
+    "n": 10,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 3.162277660168379,
+    "z_wrong": 0.6324555320336759,
+    "X": 10,
+    "expected": 5.0,
+    "n": 10,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 10,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 9
+  },
+  {
+   "kind": "group",
+   "i": 10,
+   "round_num": 19119648107921,
+   "window": "isolate source equipment=transfer_hose_TH-4",
+   "chosen": "notify site_supervisor ref=SPILL-B7",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 16,
+   "race": [
+    {
+     "cmd": "notify site_supervisor ref=SPILL-B7",
+     "p": 0.10958904109589042,
+     "r": 0.8626509262795994,
+     "score": 1.3481745703472576,
+     "win": true
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.06849315068493152,
+     "r": 0.8880693197664009,
+     "score": 1.7330999530559335,
+     "win": false
+    },
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.1506849315068493,
+     "r": 0.5651513371321464,
+     "score": 3.7871187560968793,
+     "win": false
+    },
+    {
+     "cmd": "interview operator id=OP-77",
+     "p": 0.0821917808219178,
+     "r": 0.7070091492883943,
+     "score": 4.2183253447024684,
+     "win": false
+    },
+    {
+     "cmd": "photograph scene location=bund_B7",
+     "p": 0.1232876712328767,
+     "r": 0.5302649174006049,
+     "score": 5.1455149312220385,
+     "win": false
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.06849315068493152,
+     "r": 0.6843342999842221,
+     "score": 5.537907576090515,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=sulphuric_acid",
+     "p": 0.05479452054794521,
+     "r": 0.6590144814857688,
+     "score": 7.610428298496072,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.027397260273972605,
+     "r": 0.7332508236892463,
+     "score": 11.32476184415055,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=EC-4",
+     "p": 0.06849315068493152,
+     "r": 0.4155183757071381,
+     "score": 12.82213522598476,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=PH-12",
+     "p": 0.0821917808219178,
+     "r": 0.32579495923296764,
+     "score": 13.644759167967623,
+     "win": false
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.0821917808219178,
+     "r": 0.06702606373774223,
+     "score": 32.88253031140732,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.0410958904109589,
+     "r": 0.19999093586915806,
+     "score": 39.16409203013951,
+     "win": false
+    },
+    {
+     "cmd": "record weather_forecast site=port_kembla",
+     "p": 0.0410958904109589,
+     "r": 0.11088662917288783,
+     "score": 53.51500932143024,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.26812478987651245,
+     "score": 1316302772977.5056,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.21563467491153765,
+     "score": 1534169623048.146,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.1266046145117119,
+     "score": 2066686320396.741,
+     "win": false
+    }
+   ],
+   "phi": 0.10958904109589042,
+   "phase": "immediate response",
+   "result": "Site supervisor notified at 14:02, response team mobilised.",
+   "observations": [
+    {
+     "cmd": "notify site_supervisor ref=SPILL-B7",
+     "text": "Site supervisor notified at 14:02, response team mobilised.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.18194202989356,
+    "z_wrong": -0.2511858638078491,
+    "X": 34.81980697924036,
+    "expected": 11.0,
+    "n": 11,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 3.3166247903554,
+    "z_wrong": 0.9045340337332909,
+    "X": 11,
+    "expected": 5.5,
+    "n": 11,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 11,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 10
+  },
+  {
+   "kind": "group",
+   "i": 11,
+   "round_num": 252404102780178,
+   "window": "notify site_supervisor ref=SPILL-B7||review last_record",
+   "chosen": "photograph scene location=bund_B7",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 15,
+   "race": [
+    {
+     "cmd": "photograph scene location=bund_B7",
+     "p": 0.14516129032258063,
+     "r": 0.8338097959623689,
+     "score": 1.252055314642942,
+     "win": true
+    },
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.1935483870967742,
+     "r": 0.7035557141530902,
+     "score": 1.8166424177886518,
+     "win": false
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.1774193548387097,
+     "r": 0.6234824848389162,
+     "score": 2.6628132334483525,
+     "win": false
+    },
+    {
+     "cmd": "interview operator id=OP-77",
+     "p": 0.06451612903225806,
+     "r": 0.7835164736770119,
+     "score": 3.781429470647714,
+     "win": false
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.0967741935483871,
+     "r": 0.42651532752661336,
+     "score": 8.805105405929817,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.03225806451612903,
+     "r": 0.7379083619181779,
+     "score": 9.422004620956457,
+     "win": false
+    },
+    {
+     "cmd": "record weather_forecast site=port_kembla",
+     "p": 0.04838709677419355,
+     "r": 0.4939860308102684,
+     "score": 14.575126158058241,
+     "win": false
+    },
+    {
+     "cmd": "review msds substance=sulphuric_acid",
+     "p": 0.06451612903225806,
+     "r": 0.3889446489608719,
+     "score": 14.636932659193118,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=PH-12",
+     "p": 0.04838709677419355,
+     "r": 0.4875887266995542,
+     "score": 14.844515366784302,
+     "win": false
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.08064516129032259,
+     "r": 0.09329308099670897,
+     "score": 29.41291572352183,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=EC-4",
+     "p": 0.03225806451612903,
+     "r": 0.22961693972583275,
+     "score": 45.611627976902206,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.016129032258064516,
+     "r": 0.4431237410771769,
+     "score": 50.46218580804375,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.8892579962102489,
+     "score": 117367876110.5049,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.36779701098818784,
+     "score": 1000224093576.3472,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.1379365285943952,
+     "score": 1980961637350.5034,
+     "win": false
+    }
+   ],
+   "phi": 0.14516129032258063,
+   "phase": "immediate response",
+   "result": "14 time-stamped photographs captured of the bund and outlet.",
+   "observations": [
+    {
+     "cmd": "photograph scene location=bund_B7",
+     "text": "14 time-stamped photographs captured of the bund and outlet.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.1055736964482445,
+    "z_wrong": -0.4400319518972857,
+    "X": 36.61442931834671,
+    "expected": 12.0,
+    "n": 12,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 3.464101615137755,
+    "z_wrong": 1.1547005383792517,
+    "X": 12,
+    "expected": 6.0,
+    "n": 12,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 12,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 11
+  },
+  {
+   "kind": "group",
+   "i": 12,
+   "round_num": 176713722046923,
+   "window": "photograph scene location=bund_B7",
+   "chosen": "review msds substance=sulphuric_acid",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 14,
+   "race": [
+    {
+     "cmd": "review msds substance=sulphuric_acid",
+     "p": 0.11864406779661019,
+     "r": 0.8811789118736006,
+     "score": 1.0661687333897623,
+     "win": true
+    },
+    {
+     "cmd": "record weather_forecast site=port_kembla",
+     "p": 0.06779661016949153,
+     "r": 0.6694343641261558,
+     "score": 5.919501798193552,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=EC-4",
+     "p": 0.06779661016949153,
+     "r": 0.6366303872133474,
+     "score": 6.6605989670988945,
+     "win": false
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.15254237288135594,
+     "r": 0.3554878075972181,
+     "score": 6.780177253588799,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.05084745762711865,
+     "r": 0.6766727137582267,
+     "score": 7.681161994961371,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=PH-12",
+     "p": 0.11864406779661019,
+     "r": 0.2372507475090857,
+     "score": 12.125660536522329,
+     "win": false
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.1016949152542373,
+     "r": 0.26204699271809107,
+     "score": 13.169109059552133,
+     "win": false
+    },
+    {
+     "cmd": "interview operator id=OP-77",
+     "p": 0.08474576271186442,
+     "r": 0.1778279819082038,
+     "score": 20.377875358739814,
+     "win": false
+    },
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.13559322033898305,
+     "r": 0.046375387869109996,
+     "score": 22.648524658221515,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.03389830508474576,
+     "r": 0.38187891866852186,
+     "score": 28.39822477996667,
+     "win": false
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.06779661016949153,
+     "r": 0.11017577123296585,
+     "score": 32.5337544560427,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.6288636722676528,
+     "score": 463840783025.9435,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.400035840271989,
+     "score": 916201135208.0837,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.06080085263084478,
+     "score": 2800151466574.7134,
+     "win": false
+    }
+   ],
+   "phi": 0.11864406779661019,
+   "phase": "further diligence",
+   "result": "H2SO4 MSDS reviewed: corrosive, exothermic on dilution.",
+   "observations": [
+    {
+     "cmd": "review msds substance=sulphuric_acid",
+     "text": "H2SO4 MSDS reviewed: corrosive, exothermic on dilution.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.140257821838567,
+    "z_wrong": -0.42848781704290373,
+    "X": 38.74456569667177,
+    "expected": 13.0,
+    "n": 13,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 3.6055512754639896,
+    "z_wrong": 0.8320502943378437,
+    "X": 13,
+    "expected": 6.5,
+    "n": 13,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 13,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 12
+  },
+  {
+   "kind": "group",
+   "i": 13,
+   "round_num": 218699716183564,
+   "window": "review msds substance=sulphuric_acid||review last_record",
+   "chosen": "verify sensor_calibration id=EC-4",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 13,
+   "race": [
+    {
+     "cmd": "verify sensor_calibration id=EC-4",
+     "p": 0.0892857142857143,
+     "r": 0.9843876160503839,
+     "score": 0.17623805634529208,
+     "win": true
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.14285714285714288,
+     "r": 0.9410301261383691,
+     "score": 0.42546087419075124,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=PH-12",
+     "p": 0.0892857142857143,
+     "r": 0.917324252628803,
+     "score": 0.9664957979022308,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.07142857142857144,
+     "r": 0.8742163764406674,
+     "score": 1.8819830913635414,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.10714285714285714,
+     "r": 0.7866581208779961,
+     "score": 2.239640974482612,
+     "win": false
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.0892857142857143,
+     "r": 0.8092841463966909,
+     "score": 2.369978149852588,
+     "win": false
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.10714285714285714,
+     "r": 0.598865486634562,
+     "score": 4.785370513459224,
+     "win": false
+    },
+    {
+     "cmd": "record weather_forecast site=port_kembla",
+     "p": 0.05357142857142857,
+     "r": 0.5505576951268545,
+     "score": 11.140705769342683,
+     "win": false
+    },
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.16071428571428573,
+     "r": 0.15885067929597674,
+     "score": 11.44758621651391,
+     "win": false
+    },
+    {
+     "cmd": "interview operator id=OP-77",
+     "p": 0.0892857142857143,
+     "r": 0.2031234101784427,
+     "score": 17.852145390716952,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.8144050202079858,
+     "score": 205297468902.34143,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.4733175230437279,
+     "score": 747988819633.0935,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.4438489411649713,
+     "score": 812270997040.168,
+     "win": false
+    }
+   ],
+   "phi": 0.0892857142857143,
+   "phase": "instrument readings",
+   "result": "EC-4 calibrated 2026-07-28, cert on file.",
+   "observations": [
+    {
+     "cmd": "verify sensor_calibration id=EC-4",
+     "text": "EC-4 calibrated 2026-07-28, cert on file.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.724987497672044,
+    "z_wrong": -0.3167172888207433,
+    "X": 42.90425653340095,
+    "expected": 14.0,
+    "n": 14,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 3.7416573867739413,
+    "z_wrong": 0.5345224838248488,
+    "X": 14,
+    "expected": 7.0,
+    "n": 14,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 14,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 13
+  },
+  {
+   "kind": "group",
+   "i": 14,
+   "round_num": 189433718305161,
+   "window": "verify sensor_calibration id=EC-4",
+   "chosen": "record weather_forecast site=port_kembla",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 13,
+   "race": [
+    {
+     "cmd": "record weather_forecast site=port_kembla",
+     "p": 0.07936507936507937,
+     "r": 0.9692327672202312,
+     "score": 0.3937560743154814,
+     "win": true
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.12698412698412698,
+     "r": 0.7718235799927513,
+     "score": 2.0396193173861907,
+     "win": false
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.15873015873015875,
+     "r": 0.5494785972837934,
+     "score": 3.772348368610856,
+     "win": false
+    },
+    {
+     "cmd": "interview operator id=OP-77",
+     "p": 0.06349206349206349,
+     "r": 0.7827961124277936,
+     "score": 3.8569074029632593,
+     "win": false
+    },
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.14285714285714285,
+     "r": 0.41014982323029514,
+     "score": 6.238629344649899,
+     "win": false
+    },
+    {
+     "cmd": "read calibrated_sensor id=EC-4 location=bund_B7",
+     "p": 0.2698412698412699,
+     "r": 0.1698100454282616,
+     "score": 6.5708067840878535,
+     "win": false
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.09523809523809523,
+     "r": 0.33885654075446103,
+     "score": 11.362873670235171,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.06349206349206349,
+     "r": 0.3979617600353733,
+     "score": 14.512039898372741,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.879357392069958,
+     "score": 128563874546.40828,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=PH-12",
+     "p": 0.0,
+     "r": 0.46118470231837905,
+     "score": 773956660438.346,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.0,
+     "r": 0.25409800399765237,
+     "score": 1370035243871.2378,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.2409601387400162,
+     "score": 1423123758590.4944,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.060937118497541354,
+     "score": 2797912790796.8364,
+     "win": false
+    }
+   ],
+   "phi": 0.07936507936507937,
+   "phase": "further diligence",
+   "result": "No rain forecast for 12 h, low remobilisation risk.",
+   "observations": [
+    {
+     "cmd": "record weather_forecast site=port_kembla",
+     "text": "No rain forecast for 12 h, low remobilisation risk.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 8.103717148754724,
+    "z_wrong": -0.26307187967376205,
+    "X": 46.3855615595025,
+    "expected": 15.0,
+    "n": 15,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 3.8729833462074166,
+    "z_wrong": 0.2581988897471611,
+    "X": 15,
+    "expected": 7.5,
+    "n": 15,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 15,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 14
+  },
+  {
+   "kind": "group",
+   "i": 15,
+   "round_num": 106392425636689,
+   "window": "record weather_forecast site=port_kembla",
+   "chosen": "read calibrated_sensor id=EC-4 location=bund_B7",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 12,
+   "race": [
+    {
+     "cmd": "read calibrated_sensor id=EC-4 location=bund_B7",
+     "p": 0.25,
+     "r": 0.80690654430476,
+     "score": 0.8581896949282452,
+     "win": true
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.05357142857142856,
+     "r": 0.9021377941707784,
+     "score": 1.9224427680424956,
+     "win": false
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.07142857142857142,
+     "r": 0.865892900295878,
+     "score": 2.015916696940239,
+     "win": false
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.125,
+     "r": 0.7657228563244776,
+     "score": 2.1354798485933757,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.08928571428571429,
+     "r": 0.5418448486233516,
+     "score": 6.863086447553034,
+     "win": false
+    },
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.17857142857142858,
+     "r": 0.2588165870157606,
+     "score": 7.569159507758201,
+     "win": false
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.03571428571428571,
+     "r": 0.6840973861514226,
+     "score": 10.63033983423799,
+     "win": false
+    },
+    {
+     "cmd": "interview operator id=OP-77",
+     "p": 0.10714285714285712,
+     "r": 0.23413173073972549,
+     "score": 13.550799454670166,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=PH-12",
+     "p": 0.08928571428571429,
+     "r": 0.1983849671610738,
+     "score": 18.11651360242723,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.30765502242366494,
+     "score": 1178776180807.276,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.2794939374277945,
+     "score": 1274774677399.3533,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.19654354016779085,
+     "score": 1626871293755.6628,
+     "win": false
+    }
+   ],
+   "phi": 0.25,
+   "phase": "instrument readings",
+   "result": "Conductivity 4820 uS/cm, elevated.",
+   "observations": [
+    {
+     "cmd": "read calibrated_sensor id=EC-4 location=bund_B7",
+     "text": "Conductivity 4820 uS/cm, elevated.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 8.007535635094829,
+    "z_wrong": -0.487095994555486,
+    "X": 48.030142540379316,
+    "expected": 16.0,
+    "n": 16,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 4.0,
+    "z_wrong": 0.5,
+    "X": 16,
+    "expected": 8.0,
+    "n": 16,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 16,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 15
+  },
+  {
+   "kind": "group",
+   "i": 16,
+   "round_num": 136405263132756,
+   "window": "read calibrated_sensor id=EC-4 location=bund_B7||review last_record",
+   "chosen": "verify sensor_calibration id=PH-12",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 11,
+   "race": [
+    {
+     "cmd": "verify sensor_calibration id=PH-12",
+     "p": 0.07142857142857142,
+     "r": 0.9129231940173168,
+     "score": 1.2754493747797697,
+     "win": true
+    },
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.1904761904761905,
+     "r": 0.6973875034462176,
+     "score": 1.8921738343004126,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.09523809523809525,
+     "r": 0.7126866273234045,
+     "score": 3.556491414549496,
+     "win": false
+    },
+    {
+     "cmd": "interview operator id=OP-77",
+     "p": 0.14285714285714285,
+     "r": 0.5875734694076242,
+     "score": 3.7222779053012824,
+     "win": false
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.1904761904761905,
+     "r": 0.4249328245220758,
+     "score": 4.493076958117477,
+     "win": false
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.16666666666666669,
+     "r": 0.2721405914601738,
+     "score": 7.808618795126989,
+     "win": false
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.11904761904761905,
+     "r": 0.027367537953866927,
+     "score": 30.22654079897713,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.02380952380952381,
+     "r": 0.2784088283866575,
+     "score": 53.703914874358965,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.5688290700607774,
+     "score": 564175294097.2714,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.42404062086071237,
+     "score": 857926024422.307,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.19957686214845283,
+     "score": 1611555842924.0793,
+     "win": false
+    }
+   ],
+   "phi": 0.07142857142857142,
+   "phase": "instrument readings",
+   "result": "PH-12 calibrated 2026-07-28, cert on file.",
+   "observations": [
+    {
+     "cmd": "verify sensor_calibration id=PH-12",
+     "text": "PH-12 calibrated 2026-07-28, cert on file.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 8.117935920637123,
+    "z_wrong": -0.6744686914296603,
+    "X": 50.4711072627826,
+    "expected": 17.0,
+    "n": 17,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 4.123105625617661,
+    "z_wrong": 0.24253562503633297,
+    "X": 17,
+    "expected": 8.5,
+    "n": 17,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 17,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 16
+  },
+  {
+   "kind": "group",
+   "i": 17,
+   "round_num": 268318679392677,
+   "window": "verify sensor_calibration id=PH-12",
+   "chosen": "interview operator id=OP-77",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 11,
+   "race": [
+    {
+     "cmd": "interview operator id=OP-77",
+     "p": 0.0909090909090909,
+     "r": 0.945555333354404,
+     "score": 0.6158115672093731,
+     "win": true
+    },
+    {
+     "cmd": "read calibrated_sensor id=PH-12 location=bund_B7",
+     "p": 0.3333333333333333,
+     "r": 0.5240359174632543,
+     "score": 1.9385851566989338,
+     "win": false
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.12121212121212122,
+     "r": 0.34431587233903405,
+     "score": 8.796115427414392,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.07575757575757576,
+     "r": 0.48737018707154944,
+     "score": 9.487253251528596,
+     "win": false
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.07575757575757576,
+     "r": 0.22901785853896062,
+     "score": 19.45620987528596,
+     "win": false
+    },
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.10606060606060606,
+     "r": 0.1065958231855948,
+     "score": 21.107846101337994,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.12121212121212122,
+     "r": 0.07375223103732176,
+     "score": 21.50811327114661,
+     "win": false
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.07575757575757576,
+     "r": 0.15042195574128536,
+     "score": 25.00490382453893,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.9936170463640512,
+     "score": 6403411786.590401,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.8942190823735683,
+     "score": 111804475247.1632,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.6283478257396158,
+     "score": 464661403196.5401,
+     "win": false
+    }
+   ],
+   "phi": 0.0909090909090909,
+   "phase": "further diligence",
+   "result": "Operator OP-77 statement recorded: hose failed during transfer at 13:55.",
+   "observations": [
+    {
+     "cmd": "interview operator id=OP-77",
+     "text": "Operator OP-77 statement recorded: hose failed during transfer at 13:55.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 8.339541397926586,
+    "z_wrong": -0.7582875064042033,
+    "X": 53.38167764675897,
+    "expected": 18.0,
+    "n": 18,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 4.242640687119286,
+    "z_wrong": 0.47140452079103173,
+    "X": 18,
+    "expected": 9.0,
+    "n": 18,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 18,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 17
+  },
+  {
+   "kind": "group",
+   "i": 18,
+   "round_num": 55929176395960,
+   "window": "interview operator id=OP-77||review last_record",
+   "chosen": "read calibrated_sensor id=PH-12 location=bund_B7",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 10,
+   "race": [
+    {
+     "cmd": "read calibrated_sensor id=PH-12 location=bund_B7",
+     "p": 0.36363636363636365,
+     "r": 0.259196122126768,
+     "score": 3.7129682577531837,
+     "win": true
+    },
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.2272727272727273,
+     "r": 0.409337593773637,
+     "score": 3.9301462233243765,
+     "win": false
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.13636363636363635,
+     "r": 0.4949855364064508,
+     "score": 5.156996065622491,
+     "win": false
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.06818181818181818,
+     "r": 0.14951244865213065,
+     "score": 27.8721757752813,
+     "win": false
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.15909090909090912,
+     "r": 0.00833972089522006,
+     "score": 30.08798903925525,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.045454545454545456,
+     "r": 0.09600441434069618,
+     "score": 51.553944328829544,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.46393076625835294,
+     "score": 768019948538.9998,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.4304834870348653,
+     "score": 842846313492.6141,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.0,
+     "r": 0.33576669102009515,
+     "score": 1091338732170.8035,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.13152808118217973,
+     "score": 2028534905050.1968,
+     "win": false
+    }
+   ],
+   "phi": 0.36363636363636365,
+   "phase": "instrument readings",
+   "result": "pH = 3.4. Licence condition requires 6.0-9.0 at the discharge point. OVER LIMIT - reportable exceedance.",
+   "observations": [
+    {
+     "cmd": "read calibrated_sensor id=PH-12 location=bund_B7",
+     "text": "pH = 3.4. Licence condition requires 6.0-9.0 at the discharge point. OVER LIMIT - reportable exceedance.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.956526970900887,
+    "z_wrong": -0.9092889816802031,
+    "X": 53.681697007712756,
+    "expected": 19.0,
+    "n": 19,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 4.358898943540673,
+    "z_wrong": 0.6882472016116852,
+    "X": 19,
+    "expected": 9.5,
+    "n": 19,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 19,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 18
+  },
+  {
+   "kind": "group",
+   "i": 19,
+   "round_num": 80534752635247,
+   "window": "read calibrated_sensor id=PH-12 location=bund_B7",
+   "chosen": "estimate release_volume",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 9,
+   "race": [
+    {
+     "cmd": "estimate release_volume",
+     "p": 0.2619047619047619,
+     "r": 0.9497324743113364,
+     "score": 0.19692249831174793,
+     "win": true
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.35714285714285715,
+     "r": 0.7144504653490198,
+     "score": 0.9414765128399409,
+     "win": false
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.1904761904761905,
+     "r": 0.2225735140978733,
+     "score": 7.888113615407381,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.07142857142857142,
+     "r": 0.254731090576261,
+     "score": 19.145655718127752,
+     "win": false
+    },
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.09523809523809525,
+     "r": 0.07461015435509988,
+     "score": 27.25252596858709,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.02380952380952381,
+     "r": 0.34610815465644906,
+     "score": 44.56216661638844,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.8002927377444202,
+     "score": 222777696066.87784,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.6642606694908164,
+     "score": 409080632008.56244,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.6454469040029491,
+     "score": 437812327689.85114,
+     "win": false
+    }
+   ],
+   "phi": 0.2619047619047619,
+   "phase": "containment",
+   "result": "Release estimated at 205 L from transfer-hose failure at 13:55.",
+   "observations": [
+    {
+     "cmd": "estimate release_volume",
+     "text": "Release estimated at 205 L from transfer-hose failure at 13:55.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 8.200129289370317,
+    "z_wrong": -0.8712993174231844,
+    "X": 56.672093030638145,
+    "expected": 20.0,
+    "n": 20,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 4.47213595499958,
+    "z_wrong": 0.8944271909999159,
+    "X": 20,
+    "expected": 10.0,
+    "n": 20,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 20,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 19
+  },
+  {
+   "kind": "group",
+   "i": 20,
+   "round_num": 196880452523064,
+   "window": "estimate release_volume||review last_record",
+   "chosen": "record weather_conditions",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 8,
+   "race": [
+    {
+     "cmd": "record weather_conditions",
+     "p": 0.15625,
+     "r": 0.9436184271335308,
+     "score": 0.37141377981388346,
+     "win": true
+    },
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.25,
+     "r": 0.6942451323006407,
+     "score": 1.4597206570803678,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.09375,
+     "r": 0.8109643442531445,
+     "score": 2.2349993706219107,
+     "win": false
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.09375,
+     "r": 0.6230018976647569,
+     "score": 5.047527618010425,
+     "win": false
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.40625,
+     "r": 0.09305672293450828,
+     "score": 5.84503642518147,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.4331103984418554,
+     "score": 836762621717.3918,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.393631170338538,
+     "score": 932340924006.3561,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.10465678653666499,
+     "score": 2257068982344.103,
+     "win": false
+    }
+   ],
+   "phi": 0.15625,
+   "phase": "immediate response",
+   "result": "17 C, light NE wind 8 km/h, no rain in the preceding 6 h.",
+   "observations": [
+    {
+     "cmd": "record weather_conditions",
+     "text": "17 C, light NE wind 8 km/h, no rain in the preceding 6 h.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 8.411799060767896,
+    "z_wrong": -0.6445550443955386,
+    "X": 59.547705926727325,
+    "expected": 21.0,
+    "n": 21,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 4.58257569495584,
+    "z_wrong": 1.091089451179962,
+    "X": 21,
+    "expected": 10.5,
+    "n": 21,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 21,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 20
+  },
+  {
+   "kind": "group",
+   "i": 21,
+   "round_num": 68867726505087,
+   "window": "record weather_conditions",
+   "chosen": "photograph containment location=SD3",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 7,
+   "race": [
+    {
+     "cmd": "photograph containment location=SD3",
+     "p": 0.5,
+     "r": 0.07615717286061807,
+     "score": 5.149912020481679,
+     "win": true
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.11538461538461538,
+     "r": 0.5032555803720058,
+     "score": 5.95102842408571,
+     "win": false
+    },
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.3076923076923077,
+     "r": 0.07519716081880823,
+     "score": 8.409835862376399,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.07692307692307693,
+     "r": 0.37841002148305414,
+     "score": 12.63310045816513,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.316071761134314,
+     "score": 1151785998979.5586,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.27411200085804643,
+     "score": 1294218493858.9546,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.19424288420774083,
+     "score": 1638645922540.5356,
+     "win": false
+    }
+   ],
+   "phi": 0.5,
+   "phase": "further diligence",
+   "result": "Plugged drain SD-3 photographed with time stamp.",
+   "observations": [
+    {
+     "cmd": "photograph containment location=SD3",
+     "text": "Plugged drain SD-3 photographed with time stamp.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 8.022086138148971,
+    "z_wrong": -0.7574532320019903,
+    "X": 59.62691924903501,
+    "expected": 22.0,
+    "n": 22,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 4.69041575982343,
+    "z_wrong": 1.2792042981336627,
+    "X": 22,
+    "expected": 11.0,
+    "n": 22,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 22,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 21
+  },
+  {
+   "kind": "group",
+   "i": 22,
+   "round_num": 87093643249481,
+   "window": "photograph containment location=SD3||review last_record",
+   "chosen": "check neutralising_stock item=soda_ash",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 6,
+   "race": [
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "p": 0.5714285714285714,
+     "r": 0.7248274604674756,
+     "score": 0.5631878665220895,
+     "win": true
+    },
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.2857142857142857,
+     "r": 0.19093967557182356,
+     "score": 5.795292074334999,
+     "win": false
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.14285714285714285,
+     "r": 0.04945744749119507,
+     "score": 21.0464983803066,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.8385627466695476,
+     "score": 176065868473.8719,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.8264791404421183,
+     "score": 190580600464.0918,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.4749666638947747,
+     "score": 744510658684.4752,
+     "win": false
+    }
+   ],
+   "phi": 0.5714285714285714,
+   "phase": "further diligence",
+   "result": "480 kg soda ash on site, sufficient for the estimated volume.",
+   "observations": [
+    {
+     "cmd": "check neutralising_stock item=soda_ash",
+     "text": "480 kg soda ash on site, sufficient for the estimated volume.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.9062986316960435,
+    "z_wrong": -0.5608337621407675,
+    "X": 60.9172762106121,
+    "expected": 23.0,
+    "n": 23,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 4.79583152331272,
+    "z_wrong": 1.4596008983995234,
+    "X": 23,
+    "expected": 11.5,
+    "n": 23,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 23,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 22
+  },
+  {
+   "kind": "group",
+   "i": 23,
+   "round_num": 75252704422683,
+   "window": "check neutralising_stock item=soda_ash",
+   "chosen": "review spill_history site=port_kembla",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 5,
+   "race": [
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "p": 0.5,
+     "r": 0.6977946362862313,
+     "score": 0.719660873730303,
+     "win": true
+    },
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 0.5,
+     "r": 0.16061545501274965,
+     "score": 3.6574844982869394,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.9979585293956168,
+     "score": 2043557245.859291,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.952219990452257,
+     "score": 48959188478.36585,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.38778088218442774,
+     "score": 947314835520.7338,
+     "win": false
+    }
+   ],
+   "phi": 0.5,
+   "phase": "further diligence",
+   "result": "One prior reportable release in 2023, different bund.",
+   "observations": [
+    {
+     "cmd": "review spill_history site=port_kembla",
+     "text": "One prior reportable release in 2023, different bund.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.7799722989898354,
+    "z_wrong": -0.29627001831220035,
+    "X": 62.11392469102572,
+    "expected": 24.0,
+    "n": 24,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 4.898979485566357,
+    "z_wrong": 1.2247448713915892,
+    "X": 24,
+    "expected": 12.0,
+    "n": 24,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 24,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 23
+  },
+  {
+   "kind": "group",
+   "i": 24,
+   "round_num": 214951821637914,
+   "window": "review spill_history site=port_kembla",
+   "chosen": "verify sensor_calibration id=TOC-2",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 4,
+   "race": [
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "p": 1.0,
+     "r": 0.39470038062512924,
+     "score": 0.9296283319734681,
+     "win": true
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.8887262899931436,
+     "score": 117965976146.688,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.7100274961272663,
+     "score": 342451582756.8328,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.28492924868774216,
+     "score": 1255514379751.1213,
+     "win": false
+    }
+   ],
+   "phi": 1.0,
+   "phase": "instrument readings",
+   "result": "TOC-2 calibrated 2026-07-21, cert on file.",
+   "observations": [
+    {
+     "cmd": "verify sensor_calibration id=TOC-2",
+     "text": "TOC-2 calibrated 2026-07-21, cert on file.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.52319127918621,
+    "z_wrong": -0.3567298874125925,
+    "X": 62.61595639593105,
+    "expected": 25.0,
+    "n": 25,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.0,
+    "z_wrong": 1.0,
+    "X": 25,
+    "expected": 12.5,
+    "n": 25,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 25,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 24
+  },
+  {
+   "kind": "group",
+   "i": 25,
+   "round_num": 209725018860344,
+   "window": "verify sensor_calibration id=TOC-2||review last_record",
+   "chosen": "read calibrated_sensor id=TOC-2 location=outfall",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 4,
+   "race": [
+    {
+     "cmd": "read calibrated_sensor id=TOC-2 location=outfall",
+     "p": 1.0,
+     "r": 0.8310992328796976,
+     "score": 0.18500607744163367,
+     "win": true
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.7384204665009491,
+     "score": 303241878814.4649,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.43371327866501286,
+     "score": 835371611443.2388,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.3541243220937864,
+     "score": 1038107235146.6345,
+     "win": false
+    }
+   ],
+   "phi": 1.0,
+   "phase": "instrument readings",
+   "result": "TOC 41 mg/L against a 30 mg/L limit.",
+   "observations": [
+    {
+     "cmd": "read calibrated_sensor id=TOC-2 location=outfall",
+     "text": "TOC 41 mg/L against a 30 mg/L limit.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.529761399598186,
+    "z_wrong": -0.4493226773492364,
+    "X": 64.39440030924887,
+    "expected": 26.0,
+    "n": 26,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.099019513592785,
+    "z_wrong": 1.1766968108291043,
+    "X": 26,
+    "expected": 13.0,
+    "n": 26,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 26,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 25
+  },
+  {
+   "kind": "group",
+   "i": 26,
+   "round_num": 188962181580672,
+   "window": "read calibrated_sensor id=TOC-2 location=outfall",
+   "chosen": "compare reading=TOC against=licence_limit",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 5,
+   "race": [
+    {
+     "cmd": "compare reading=TOC against=licence_limit",
+     "p": 0.39999999999999997,
+     "r": 0.5876450082088049,
+     "score": 1.3290806023410213,
+     "win": true
+    },
+    {
+     "cmd": "compare reading=pH against=licence_limit",
+     "p": 0.6,
+     "r": 0.4217635713544967,
+     "score": 1.43885063233796,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.0,
+     "r": 0.8571242919215563,
+     "score": 154172339486.67807,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.0,
+     "r": 0.3305958166466263,
+     "score": 1106858747496.7307,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.0,
+     "r": 0.20631673354667446,
+     "score": 1578342749510.5552,
+     "win": false
+    }
+   ],
+   "phi": 0.39999999999999997,
+   "phase": "limit comparison",
+   "result": "TOC 41 vs 30 mg/L -> exceedance confirmed.",
+   "observations": [
+    {
+     "cmd": "compare reading=TOC against=licence_limit",
+     "text": "TOC 41 vs 30 mg/L -> exceedance confirmed.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.367041584852311,
+    "z_wrong": -0.5854930000070148,
+    "X": 65.28027097931084,
+    "expected": 27.0,
+    "n": 27,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.196152422706632,
+    "z_wrong": 0.9622504486493763,
+    "X": 27,
+    "expected": 13.5,
+    "n": 27,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 27,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 26
+  },
+  {
+   "kind": "group",
+   "i": 27,
+   "round_num": 57814270005442,
+   "window": "compare reading=TOC against=licence_limit",
+   "chosen": "capture geotagged_sample id=S-102 location=outfall",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 4,
+   "race": [
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "p": 0.3,
+     "r": 0.4868258380270407,
+     "score": 2.3994961399421806,
+     "win": true
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.45,
+     "r": 0.057198615739949554,
+     "score": 6.358279069421667,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.15,
+     "r": 0.23449655835113514,
+     "score": 9.668762451630041,
+     "win": false
+    },
+    {
+     "cmd": "compare reading=pH against=licence_limit",
+     "p": 0.1,
+     "r": 0.02296504271390143,
+     "score": 37.73782101249592,
+     "win": false
+    }
+   ],
+   "phi": 0.3,
+   "phase": "sampling",
+   "result": "Sample S-102 taken at the licensed discharge point, sealed.",
+   "observations": [
+    {
+     "cmd": "capture geotagged_sample id=S-102 location=outfall",
+     "text": "Sample S-102 taken at the licensed discharge point, sealed.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.171386595372371,
+    "z_wrong": -0.6032188012885318,
+    "X": 65.94741097371497,
+    "expected": 28.0,
+    "n": 28,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.2915026221291805,
+    "z_wrong": 0.7559289460184544,
+    "X": 28,
+    "expected": 14.0,
+    "n": 28,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 28,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 27
+  },
+  {
+   "kind": "group",
+   "i": 28,
+   "round_num": 153294304307213,
+   "window": "capture geotagged_sample id=S-102 location=outfall||review last_record",
+   "chosen": "verify chain_of_custody sample=S-102",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 4,
+   "race": [
+    {
+     "cmd": "verify chain_of_custody sample=S-102",
+     "p": 0.35,
+     "r": 0.8171780493609069,
+     "score": 0.576852220546484,
+     "win": true
+    },
+    {
+     "cmd": "compare reading=pH against=licence_limit",
+     "p": 0.25,
+     "r": 0.8320579954028209,
+     "score": 0.7354125383090953,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.18,
+     "r": 0.638336322346843,
+     "score": 2.4938332417709552,
+     "win": false
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.22,
+     "r": 0.14076742625840644,
+     "score": 8.912028225544198,
+     "win": false
+    }
+   ],
+   "phi": 0.35,
+   "phase": "sampling",
+   "result": "Custody unbroken, two signatures.",
+   "observations": [
+    {
+     "cmd": "verify chain_of_custody sample=S-102",
+     "text": "Custody unbroken, two signatures.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.176503394956963,
+    "z_wrong": -0.5850890933262093,
+    "X": 67.64665352080353,
+    "expected": 29.0,
+    "n": 29,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.385164807134505,
+    "z_wrong": 0.5570860145311556,
+    "X": 29,
+    "expected": 14.5,
+    "n": 29,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 29,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 28
+  },
+  {
+   "kind": "group",
+   "i": 29,
+   "round_num": 212568317619813,
+   "window": "verify chain_of_custody sample=S-102||review last_record",
+   "chosen": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 3,
+   "race": [
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "p": 0.22,
+     "r": 0.8114064440812259,
+     "score": 0.9499372105103804,
+     "win": true
+    },
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.72,
+     "r": 0.22369742179820573,
+     "score": 2.0798068553021265,
+     "win": false
+    },
+    {
+     "cmd": "compare reading=pH against=licence_limit",
+     "p": 0.06,
+     "r": 0.3903113619727083,
+     "score": 15.68017490581506,
+     "win": false
+    }
+   ],
+   "phi": 0.22,
+   "phase": "sampling",
+   "result": "Sample S-103 taken upstream of the plugged drain, sealed.",
+   "observations": [
+    {
+     "cmd": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+     "text": "Sample S-103 taken upstream of the plugged drain, sealed.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.177870266513584,
+    "z_wrong": -0.2231826930797112,
+    "X": 69.31481459815109,
+    "expected": 30.0,
+    "n": 30,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.477225575051661,
+    "z_wrong": 0.7302967433402214,
+    "X": 30,
+    "expected": 15.0,
+    "n": 30,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 30,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 29
+  },
+  {
+   "kind": "group",
+   "i": 30,
+   "round_num": 150077837950320,
+   "window": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+   "chosen": "capture geotagged_sample id=S-101 location=bund_B7",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 2,
+   "race": [
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "p": 0.82,
+     "r": 0.36881512618906487,
+     "score": 1.2164143579613935,
+     "win": true
+    },
+    {
+     "cmd": "compare reading=pH against=licence_limit",
+     "p": 0.18,
+     "r": 0.19464443963149636,
+     "score": 9.09211539620133,
+     "win": false
+    }
+   ],
+   "phi": 0.82,
+   "phase": "sampling",
+   "result": "Sample S-101 taken at -34.4821, 150.8309, chain-of-custody opened.",
+   "observations": [
+    {
+     "cmd": "capture geotagged_sample id=S-101 location=bund_B7",
+     "text": "Sample S-101 taken at -34.4821, 150.8309, chain-of-custody opened.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 6.964190390477976,
+    "z_wrong": -0.14018243023391772,
+    "X": 69.77497107206656,
+    "expected": 31.0,
+    "n": 31,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.567764362830022,
+    "z_wrong": 0.8980265101338746,
+    "X": 31,
+    "expected": 15.5,
+    "n": 31,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 31,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 30
+  },
+  {
+   "kind": "group",
+   "i": 31,
+   "round_num": 235983873492996,
+   "window": "capture geotagged_sample id=S-101 location=bund_B7||review last_record",
+   "chosen": "compare reading=pH against=licence_limit",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 2,
+   "race": [
+    {
+     "cmd": "compare reading=pH against=licence_limit",
+     "p": 0.22,
+     "r": 0.9574136436939233,
+     "score": 0.19781705158293256,
+     "win": true
+    },
+    {
+     "cmd": "verify chain_of_custody sample=S-101",
+     "p": 0.78,
+     "r": 0.2981772404067988,
+     "score": 1.551368208736459,
+     "win": false
+    }
+   ],
+   "phi": 0.22,
+   "phase": "limit comparison",
+   "result": "pH 3.4 vs licence 6.0-9.0 -> EXCEEDANCE confirmed, notification clock started.",
+   "observations": [
+    {
+     "cmd": "compare reading=pH against=licence_limit",
+     "text": "pH 3.4 vs licence 6.0-9.0 -> EXCEEDANCE confirmed, notification clock started.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.235680931190764,
+    "z_wrong": -0.3028505090086588,
+    "X": 72.93119242357746,
+    "expected": 32.0,
+    "n": 32,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.65685424949238,
+    "z_wrong": 1.0606601717798212,
+    "X": 32,
+    "expected": 16.0,
+    "n": 32,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 32,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 31
+  },
+  {
+   "kind": "group",
+   "i": 32,
+   "round_num": 24933412489216,
+   "window": "compare reading=pH against=licence_limit||review last_record",
+   "chosen": "record remediation action=neutralisation",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 4,
+   "race": [
+    {
+     "cmd": "record remediation action=neutralisation",
+     "p": 0.18,
+     "r": 0.962083909936196,
+     "score": 0.2147422647464607,
+     "win": true
+    },
+    {
+     "cmd": "record remediation action=soil_removal",
+     "p": 0.14,
+     "r": 0.8911488551458888,
+     "score": 0.823170001471711,
+     "win": false
+    },
+    {
+     "cmd": "verify chain_of_custody sample=S-101",
+     "p": 0.46,
+     "r": 0.5439189674970102,
+     "score": 1.323815217452887,
+     "win": false
+    },
+    {
+     "cmd": "record remediation action=recovery",
+     "p": 0.22,
+     "r": 0.5850820573224718,
+     "score": 2.4363780575442933,
+     "win": false
+    }
+   ],
+   "phi": 0.18,
+   "phase": "remediation",
+   "result": "Soda ash dosed, pH rising through 5.2 at 14:40.",
+   "observations": [
+    {
+     "cmd": "record remediation action=neutralisation",
+     "text": "Soda ash dosed, pH rising through 5.2 at 14:40.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.520776567152149,
+    "z_wrong": -0.33976993286776647,
+    "X": 76.20357214062074,
+    "expected": 33.0,
+    "n": 33,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.744562646538029,
+    "z_wrong": 1.2185435916898848,
+    "X": 33,
+    "expected": 16.5,
+    "n": 33,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 33,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 32
+  },
+  {
+   "kind": "group",
+   "i": 33,
+   "round_num": 74213370199762,
+   "window": "record remediation action=neutralisation||review last_record",
+   "chosen": "verify chain_of_custody sample=S-101",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 3,
+   "race": [
+    {
+     "cmd": "verify chain_of_custody sample=S-101",
+     "p": 0.8,
+     "r": 0.901635752078509,
+     "score": 0.12943082875894704,
+     "win": true
+    },
+    {
+     "cmd": "record remediation action=recovery",
+     "p": 0.12,
+     "r": 0.1726338925176345,
+     "score": 14.638184625676757,
+     "win": false
+    },
+    {
+     "cmd": "record remediation action=soil_removal",
+     "p": 0.08,
+     "r": 0.04208799785324313,
+     "score": 39.59990831950025,
+     "win": false
+    }
+   ],
+   "phi": 0.8,
+   "phase": "sampling",
+   "result": "Custody unbroken, two signatures.",
+   "observations": [
+    {
+     "cmd": "verify chain_of_custody sample=S-101",
+     "text": "Custody unbroken, two signatures.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.635571484487253,
+    "z_wrong": -0.38109780689386574,
+    "X": 78.52265001569769,
+    "expected": 34.0,
+    "n": 34,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.8309518948453,
+    "z_wrong": 1.3719886811400706,
+    "X": 34,
+    "expected": 17.0,
+    "n": 34,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 34,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 33
+  },
+  {
+   "kind": "group",
+   "i": 34,
+   "round_num": 269787534578366,
+   "window": "verify chain_of_custody sample=S-101",
+   "chosen": "record remediation action=recovery",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 2,
+   "race": [
+    {
+     "cmd": "record remediation action=recovery",
+     "p": 1.0,
+     "r": 0.9632667765954805,
+     "score": 0.03742487896988916,
+     "win": true
+    },
+    {
+     "cmd": "record remediation action=soil_removal",
+     "p": 0.0,
+     "r": 0.6671607491233023,
+     "score": 404724258919.75366,
+     "win": false
+    }
+   ],
+   "phi": 1.0,
+   "phase": "remediation",
+   "result": "184 L recovered to the waste tank.",
+   "observations": [
+    {
+     "cmd": "record remediation action=recovery",
+     "text": "184 L recovered to the waste tank.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.915160950503119,
+    "z_wrong": -0.5083748359228328,
+    "X": 81.82672367925105,
+    "expected": 35.0,
+    "n": 35,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 5.916079783099616,
+    "z_wrong": 1.52127765851133,
+    "X": 35,
+    "expected": 17.5,
+    "n": 35,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 35,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 34
+  },
+  {
+   "kind": "group",
+   "i": 35,
+   "round_num": 41675947968206,
+   "window": "record remediation action=recovery||review last_record",
+   "chosen": "record remediation action=soil_removal",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 1,
+   "race": [
+    {
+     "cmd": "record remediation action=soil_removal",
+     "p": 1.0,
+     "r": 0.35053585827940026,
+     "score": 1.0482922716650802,
+     "win": true
+    }
+   ],
+   "phi": 1.0,
+   "phase": "remediation",
+   "result": "Contaminated bund sediment drummed for disposal.",
+   "observations": [
+    {
+     "cmd": "record remediation action=soil_removal",
+     "text": "Contaminated bund sediment drummed for disposal.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.915160950503119,
+    "z_wrong": -0.5083748359228328,
+    "X": 81.82672367925105,
+    "expected": 35.0,
+    "n": 35,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 6.0,
+    "z_wrong": 1.6666666666666667,
+    "X": 36,
+    "expected": 18.0,
+    "n": 36,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 36,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 35
+  },
+  {
+   "kind": "group",
+   "i": 36,
+   "round_num": 163349331602070,
+   "window": "record remediation action=soil_removal||review last_record",
+   "chosen": "attach evidence item=sample_results",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 4,
+   "race": [
+    {
+     "cmd": "attach evidence item=sample_results",
+     "p": 0.28,
+     "r": 0.7638133162953282,
+     "score": 0.9622566788315153,
+     "win": true
+    },
+    {
+     "cmd": "attach evidence item=chain_of_custody",
+     "p": 0.27,
+     "r": 0.7230054436261748,
+     "score": 1.2012538060428073,
+     "win": false
+    },
+    {
+     "cmd": "notify regulator ref=EPA-NSW window=24h",
+     "p": 0.25,
+     "r": 0.5907062117833273,
+     "score": 2.105745955017987,
+     "win": false
+    },
+    {
+     "cmd": "attach evidence item=photographs",
+     "p": 0.2,
+     "r": 0.6493545602143249,
+     "score": 2.15888196856807,
+     "win": false
+    }
+   ],
+   "phi": 0.28,
+   "phase": "reporting",
+   "result": "Laboratory results attached.",
+   "observations": [
+    {
+     "cmd": "attach evidence item=sample_results",
+     "text": "Laboratory results attached.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.878309405543682,
+    "z_wrong": -0.564194943608508,
+    "X": 83.26985643326209,
+    "expected": 36.0,
+    "n": 36,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 6.08276253029822,
+    "z_wrong": 1.8083888603589302,
+    "X": 37,
+    "expected": 18.5,
+    "n": 37,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 37,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 36
+  },
+  {
+   "kind": "group",
+   "i": 37,
+   "round_num": 221517728441439,
+   "window": "attach evidence item=sample_results||review last_record",
+   "chosen": "attach evidence item=chain_of_custody",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 3,
+   "race": [
+    {
+     "cmd": "attach evidence item=chain_of_custody",
+     "p": 0.46,
+     "r": 0.5968894828691744,
+     "score": 1.12178979032318,
+     "win": true
+    },
+    {
+     "cmd": "notify regulator ref=EPA-NSW window=24h",
+     "p": 0.2,
+     "r": 0.7254818377636423,
+     "score": 1.6045962053342628,
+     "win": false
+    },
+    {
+     "cmd": "attach evidence item=photographs",
+     "p": 0.34,
+     "r": 0.4226290943054214,
+     "score": 2.533118618245607,
+     "win": false
+    }
+   ],
+   "phi": 0.46,
+   "phase": "reporting",
+   "result": "Chain-of-custody forms attached.",
+   "observations": [
+    {
+     "cmd": "attach evidence item=chain_of_custody",
+     "text": "Chain-of-custody forms attached.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.756081339168064,
+    "z_wrong": -0.690077817322432,
+    "X": 84.17840095183674,
+    "expected": 37.0,
+    "n": 37,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 6.164414002968977,
+    "z_wrong": 1.6222142113076254,
+    "X": 38,
+    "expected": 19.0,
+    "n": 38,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 38,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 37
+  },
+  {
+   "kind": "group",
+   "i": 38,
+   "round_num": 36241026244475,
+   "window": "attach evidence item=chain_of_custody||review last_record",
+   "chosen": "attach evidence item=photographs",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 2,
+   "race": [
+    {
+     "cmd": "attach evidence item=photographs",
+     "p": 0.25,
+     "r": 0.708141175926015,
+     "score": 1.3804472165628578,
+     "win": true
+    },
+    {
+     "cmd": "notify regulator ref=EPA-NSW window=24h",
+     "p": 0.75,
+     "r": 0.037134325604957,
+     "score": 4.390951358209433,
+     "win": false
+    }
+   ],
+   "phi": 0.25,
+   "phase": "reporting",
+   "result": "Time-stamped site photographs attached.",
+   "observations": [
+    {
+     "cmd": "attach evidence item=photographs",
+     "text": "Time-stamped site photographs attached.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.690899086568314,
+    "z_wrong": -0.6186345161479658,
+    "X": 85.40988602466302,
+    "expected": 38.0,
+    "n": 38,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 6.244997998398398,
+    "z_wrong": 1.7614096918559585,
+    "X": 39,
+    "expected": 19.5,
+    "n": 39,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 39,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 38
+  },
+  {
+   "kind": "group",
+   "i": 39,
+   "round_num": 212462209732760,
+   "window": "attach evidence item=photographs||review last_record",
+   "chosen": "notify regulator ref=EPA-NSW window=24h",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 1,
+   "race": [
+    {
+     "cmd": "notify regulator ref=EPA-NSW window=24h",
+     "p": 1.0,
+     "r": 0.4337373660496313,
+     "score": 0.8353160754083729,
+     "win": true
+    }
+   ],
+   "phi": 1.0,
+   "phase": "reporting",
+   "result": "Statutory notification lodged, reference EPA-2026-11884.",
+   "observations": [
+    {
+     "cmd": "notify regulator ref=EPA-NSW window=24h",
+     "text": "Statutory notification lodged, reference EPA-2026-11884.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.690899086568314,
+    "z_wrong": -0.6186345161479658,
+    "X": 85.40988602466302,
+    "expected": 38.0,
+    "n": 38,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 6.324555320336758,
+    "z_wrong": 1.5811388300841895,
+    "X": 40,
+    "expected": 20.0,
+    "n": 40,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 40,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 39
+  },
+  {
+   "kind": "group",
+   "i": 40,
+   "round_num": 217875146507908,
+   "window": "notify regulator ref=EPA-NSW window=24h",
+   "chosen": "compile compliance_report ref=SPILL-B7",
+   "k": 1,
+   "green": [
+    1
+   ],
+   "l2_hit": true,
+   "n_candidates": 1,
+   "race": [
+    {
+     "cmd": "compile compliance_report ref=SPILL-B7",
+     "p": 1.0,
+     "r": 0.1733630269713422,
+     "score": 1.7523674612965108,
+     "win": true
+    }
+   ],
+   "phi": 1.0,
+   "phase": "reporting",
+   "result": "Draft incident report assembled.",
+   "observations": [
+    {
+     "cmd": "compile compliance_report ref=SPILL-B7",
+     "text": "Draft incident report assembled.",
+     "confirm": false
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.690899086568314,
+    "z_wrong": -0.6186345161479658,
+    "X": 85.40988602466302,
+    "expected": 38.0,
+    "n": 38,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 6.4031242374328485,
+    "z_wrong": 1.4055638569974547,
+    "X": 41,
+    "expected": 20.5,
+    "n": 41,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 41,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 40
+  },
+  {
+   "kind": "group",
+   "i": 41,
+   "round_num": 179477274459134,
+   "window": "compile compliance_report ref=SPILL-B7",
+   "chosen": "file compliance_report ref=SPILL-B7",
+   "k": 2,
+   "green": [
+    2
+   ],
+   "l2_hit": true,
+   "n_candidates": 1,
+   "race": [
+    {
+     "cmd": "file compliance_report ref=SPILL-B7",
+     "p": 1.0,
+     "r": 0.5604223282631708,
+     "score": 0.5790646218740937,
+     "win": true
+    }
+   ],
+   "phi": 1.0,
+   "phase": "issue / file",
+   "result": "REPORT SPILL-B7 FILED with the regulator. Record closed.",
+   "observations": [
+    {
+     "cmd": "file compliance_report ref=SPILL-B7",
+     "text": "REPORT SPILL-B7 FILED with the regulator. Record closed.",
+     "confirm": false
+    },
+    {
+     "cmd": "review last_record",
+     "text": "Read-only attestation. No state change.",
+     "confirm": true
+    }
+   ]
+  },
+  {
+   "layer1": {
+    "z": 7.690899086568314,
+    "z_wrong": -0.6186345161479658,
+    "X": 85.40988602466302,
+    "expected": 38.0,
+    "n": 38,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 6.48074069840786,
+    "z_wrong": 1.543033499620919,
+    "X": 42,
+    "expected": 21.0,
+    "n": 42,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 42,
+    "mismatch": 0,
+    "rate": 0.0
+   },
+   "kind": "detect",
+   "i": 41
+  },
+  {
+   "kind": "task_done",
+   "game_id": "hse_spill_response-B7-bund-acid_release__spillb7",
+   "success": true,
+   "final_reward": 1.0
+  }
+ ],
+ "detect": {
+  "right": {
+   "layer1": {
+    "z": 7.690899086568314,
+    "z_wrong": -0.6186345161479658,
+    "X": 85.40988602466302,
+    "expected": 38.0,
+    "n": 38,
+    "detected": true,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 6.48074069840786,
+    "z_wrong": 1.543033499620919,
+    "X": 42,
+    "expected": 21.0,
+    "n": 42,
+    "detected": true
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 20250001,
+   "key2": 20250002,
+   "consistency": {
+    "total": 42,
+    "mismatch": 0,
+    "rate": 0.0
+   }
+  },
+  "wrong": {
+   "layer1": {
+    "z": -0.6186345161479658,
+    "z_wrong": 7.690899086568314,
+    "X": 34.18648072593754,
+    "expected": 38.0,
+    "n": 38,
+    "detected": false,
+    "scheme": "exp"
+   },
+   "layer2": {
+    "z": 1.543033499620919,
+    "z_wrong": 6.48074069840786,
+    "X": 26,
+    "expected": 21.0,
+    "n": 42,
+    "detected": false
+   },
+   "tau": 2.0,
+   "source": "executed",
+   "key1": 19999991,
+   "key2": 19999992,
+   "consistency": {
+    "total": 42,
+    "mismatch": 0,
+    "rate": 0.0
+   }
+  }
+ },
+ "attacks": {
+  "deletion": [
+   {
+    "rate": 0.1,
+    "after": {
+     "layer1": {
+      "z": 4.505005155706847,
+      "z_wrong": -1.088511320845119,
+      "X": 54.67492945457713,
+      "expected": 30.0,
+      "n": 30,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 0.6488856845230502,
+      "z_wrong": 0.6488856845230502,
+      "X": 21,
+      "expected": 19.0,
+      "n": 38,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 38,
+      "mismatch": 4,
+      "rate": 0.10526315789473684
+     }
+    },
+    "surviving_groups": 38
+   },
+   {
+    "rate": 0.2,
+    "after": {
+     "layer1": {
+      "z": 1.7906221822027404,
+      "z_wrong": -0.6964685839264412,
+      "X": 33.9531109110137,
+      "expected": 25.0,
+      "n": 25,
+      "detected": false,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 0.6666666666666666,
+      "z_wrong": -0.3333333333333333,
+      "X": 20,
+      "expected": 18.0,
+      "n": 36,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 36,
+      "mismatch": 7,
+      "rate": 0.19444444444444445
+     }
+    },
+    "surviving_groups": 36
+   },
+   {
+    "rate": 0.3,
+    "after": {
+     "layer1": {
+      "z": 0.9578185192772689,
+      "z_wrong": -1.1592637874708707,
+      "X": 25.389275866618604,
+      "expected": 21.0,
+      "n": 21,
+      "detected": false,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 1.3333333333333333,
+      "z_wrong": 1.0,
+      "X": 22,
+      "expected": 18.0,
+      "n": 36,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 36,
+      "mismatch": 11,
+      "rate": 0.3055555555555556
+     }
+    },
+    "surviving_groups": 36
+   },
+   {
+    "rate": 0.4,
+    "after": {
+     "layer1": {
+      "z": 0.2090866435633265,
+      "z_wrong": -1.173257831752755,
+      "X": 17.862086316317466,
+      "expected": 17.0,
+      "n": 17,
+      "detected": false,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 1.975658322294524,
+      "z_wrong": 0.1796053020267749,
+      "X": 21,
+      "expected": 15.5,
+      "n": 31,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 31,
+      "mismatch": 11,
+      "rate": 0.3548387096774194
+     }
+    },
+    "surviving_groups": 31
+   },
+   {
+    "rate": 0.5,
+    "after": {
+     "layer1": {
+      "z": 1.0265103101371702,
+      "z_wrong": -1.3479436614339138,
+      "X": 18.97565733587147,
+      "expected": 15.0,
+      "n": 15,
+      "detected": false,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": -1.1766968108291043,
+      "z_wrong": -1.1766968108291043,
+      "X": 10,
+      "expected": 13.0,
+      "n": 26,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 26,
+      "mismatch": 8,
+      "rate": 0.3076923076923077
+     }
+    },
+    "surviving_groups": 26
+   }
+  ],
+  "strip_redundant": [
+   {
+    "rate": 0.1,
+    "after": {
+     "layer1": {
+      "z": 7.111630409882079,
+      "z_wrong": -0.6756737082854273,
+      "X": 81.83903408261709,
+      "expected": 38.0,
+      "n": 38,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 5.246313898711125,
+      "z_wrong": 0.9258200997725514,
+      "X": 38,
+      "expected": 21.0,
+      "n": 42,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 42,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 42
+   },
+   {
+    "rate": 0.2,
+    "after": {
+     "layer1": {
+      "z": 6.988294866983121,
+      "z_wrong": -0.9667886369557515,
+      "X": 81.07874273490697,
+      "expected": 38.0,
+      "n": 38,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 4.6291004988627575,
+      "z_wrong": 1.543033499620919,
+      "X": 36,
+      "expected": 21.0,
+      "n": 42,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 42,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 42
+   },
+   {
+    "rate": 0.3,
+    "after": {
+     "layer1": {
+      "z": 6.988294866983121,
+      "z_wrong": -0.9667886369557515,
+      "X": 81.07874273490697,
+      "expected": 38.0,
+      "n": 38,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 4.6291004988627575,
+      "z_wrong": 1.543033499620919,
+      "X": 36,
+      "expected": 21.0,
+      "n": 42,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 42,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 42
+   },
+   {
+    "rate": 0.4,
+    "after": {
+     "layer1": {
+      "z": 6.792873937958455,
+      "z_wrong": -0.6627506214698138,
+      "X": 79.87408722355411,
+      "expected": 38.0,
+      "n": 38,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 4.320493798938573,
+      "z_wrong": 1.8516401995451028,
+      "X": 35,
+      "expected": 21.0,
+      "n": 42,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 42,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 42
+   },
+   {
+    "rate": 0.5,
+    "after": {
+     "layer1": {
+      "z": 5.893971012612721,
+      "z_wrong": -0.5660682609498653,
+      "X": 74.33287744324309,
+      "expected": 38.0,
+      "n": 38,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 3.7032803990902057,
+      "z_wrong": 1.2344267996967353,
+      "X": 33,
+      "expected": 21.0,
+      "n": 42,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 42,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 42
+   }
+  ],
+  "semantic_rewrite": [
+   {
+    "rate": 0.1,
+    "after": {
+     "layer1": {
+      "z": 7.690899086568314,
+      "z_wrong": -0.6186345161479658,
+      "X": 85.40988602466302,
+      "expected": 38.0,
+      "n": 38,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.48074069840786,
+      "z_wrong": 1.543033499620919,
+      "X": 42,
+      "expected": 21.0,
+      "n": 42,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 42,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 42
+   },
+   {
+    "rate": 0.2,
+    "after": {
+     "layer1": {
+      "z": 7.690899086568314,
+      "z_wrong": -0.6186345161479658,
+      "X": 85.40988602466302,
+      "expected": 38.0,
+      "n": 38,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.48074069840786,
+      "z_wrong": 1.543033499620919,
+      "X": 42,
+      "expected": 21.0,
+      "n": 42,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 42,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 42
+   },
+   {
+    "rate": 0.3,
+    "after": {
+     "layer1": {
+      "z": 7.690899086568314,
+      "z_wrong": -0.6186345161479658,
+      "X": 85.40988602466302,
+      "expected": 38.0,
+      "n": 38,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.48074069840786,
+      "z_wrong": 1.543033499620919,
+      "X": 42,
+      "expected": 21.0,
+      "n": 42,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 42,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 42
+   },
+   {
+    "rate": 0.4,
+    "after": {
+     "layer1": {
+      "z": 7.690899086568314,
+      "z_wrong": -0.6186345161479658,
+      "X": 85.40988602466302,
+      "expected": 38.0,
+      "n": 38,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.48074069840786,
+      "z_wrong": 1.543033499620919,
+      "X": 42,
+      "expected": 21.0,
+      "n": 42,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 42,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 42
+   },
+   {
+    "rate": 0.5,
+    "after": {
+     "layer1": {
+      "z": 7.690899086568314,
+      "z_wrong": -0.6186345161479658,
+      "X": 85.40988602466302,
+      "expected": 38.0,
+      "n": 38,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.48074069840786,
+      "z_wrong": 1.543033499620919,
+      "X": 42,
+      "expected": 21.0,
+      "n": 42,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 42,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 42
+   }
+  ],
+  "llm_substitute": [
+   {
+    "rate": 0.1,
+    "after": {
+     "layer1": {
+      "z": 6.5534944011524905,
+      "z_wrong": -0.9152575278704566,
+      "X": 78.3984526548432,
+      "expected": 38.0,
+      "n": 38,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.48074069840786,
+      "z_wrong": 1.543033499620919,
+      "X": 42,
+      "expected": 21.0,
+      "n": 42,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 42,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 42
+   },
+   {
+    "rate": 0.2,
+    "after": {
+     "layer1": {
+      "z": 4.315235244283787,
+      "z_wrong": -0.9732598830207757,
+      "X": 64.60089656596823,
+      "expected": 38.0,
+      "n": 38,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.48074069840786,
+      "z_wrong": 1.543033499620919,
+      "X": 42,
+      "expected": 21.0,
+      "n": 42,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 42,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 42
+   },
+   {
+    "rate": 0.3,
+    "after": {
+     "layer1": {
+      "z": 2.470830423910075,
+      "z_wrong": -1.6519899296255152,
+      "X": 53.231221664113036,
+      "expected": 38.0,
+      "n": 38,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.48074069840786,
+      "z_wrong": 1.543033499620919,
+      "X": 42,
+      "expected": 21.0,
+      "n": 42,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 42,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 42
+   },
+   {
+    "rate": 0.4,
+    "after": {
+     "layer1": {
+      "z": 0.7871300737805941,
+      "z_wrong": -1.7010580787626994,
+      "X": 42.8521956489711,
+      "expected": 38.0,
+      "n": 38,
+      "detected": false,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.48074069840786,
+      "z_wrong": 1.543033499620919,
+      "X": 42,
+      "expected": 21.0,
+      "n": 42,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 42,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 42
+   },
+   {
+    "rate": 0.5,
+    "after": {
+     "layer1": {
+      "z": 0.9239926029424124,
+      "z_wrong": -1.7608481043981747,
+      "X": 43.69587294021796,
+      "expected": 38.0,
+      "n": 38,
+      "detected": false,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 6.48074069840786,
+      "z_wrong": 1.543033499620919,
+      "X": 42,
+      "expected": 21.0,
+      "n": 42,
+      "detected": true
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 42,
+      "mismatch": 0,
+      "rate": 0.0
+     }
+    },
+    "surviving_groups": 42
+   }
+  ],
+  "combined": [
+   {
+    "rate": 0.1,
+    "after": {
+     "layer1": {
+      "z": 3.551337878208097,
+      "z_wrong": -1.3283077921928284,
+      "X": 49.45147865217109,
+      "expected": 30.0,
+      "n": 30,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 0.6488856845230502,
+      "z_wrong": 0.6488856845230502,
+      "X": 21,
+      "expected": 19.0,
+      "n": 38,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 38,
+      "mismatch": 4,
+      "rate": 0.10526315789473684
+     }
+    },
+    "surviving_groups": 38
+   },
+   {
+    "rate": 0.2,
+    "after": {
+     "layer1": {
+      "z": 2.1870696829847334,
+      "z_wrong": -0.3590428833381111,
+      "X": 35.935348414923666,
+      "expected": 25.0,
+      "n": 25,
+      "detected": true,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 0.6666666666666666,
+      "z_wrong": -0.3333333333333333,
+      "X": 20,
+      "expected": 18.0,
+      "n": 36,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 36,
+      "mismatch": 7,
+      "rate": 0.19444444444444445
+     }
+    },
+    "surviving_groups": 36
+   },
+   {
+    "rate": 0.3,
+    "after": {
+     "layer1": {
+      "z": 0.6373467386318773,
+      "z_wrong": -0.4057790240111779,
+      "X": 23.920689673713813,
+      "expected": 21.0,
+      "n": 21,
+      "detected": false,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 1.3333333333333333,
+      "z_wrong": 1.0,
+      "X": 22,
+      "expected": 18.0,
+      "n": 36,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 36,
+      "mismatch": 11,
+      "rate": 0.3055555555555556
+     }
+    },
+    "surviving_groups": 36
+   },
+   {
+    "rate": 0.4,
+    "after": {
+     "layer1": {
+      "z": -0.14869788139699103,
+      "z_wrong": -0.39202596403108586,
+      "X": 16.38690292869464,
+      "expected": 17.0,
+      "n": 17,
+      "detected": false,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": 1.975658322294524,
+      "z_wrong": 0.1796053020267749,
+      "X": 21,
+      "expected": 15.5,
+      "n": 31,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 31,
+      "mismatch": 11,
+      "rate": 0.3548387096774194
+     }
+    },
+    "surviving_groups": 31
+   },
+   {
+    "rate": 0.5,
+    "after": {
+     "layer1": {
+      "z": 0.850037090173152,
+      "z_wrong": -1.7866665889737636,
+      "X": 18.29217949389923,
+      "expected": 15.0,
+      "n": 15,
+      "detected": false,
+      "scheme": "exp"
+     },
+     "layer2": {
+      "z": -1.1766968108291043,
+      "z_wrong": -1.1766968108291043,
+      "X": 10,
+      "expected": 13.0,
+      "n": 26,
+      "detected": false
+     },
+     "tau": 2.0,
+     "source": "executed",
+     "key1": 20250001,
+     "key2": 20250002,
+     "consistency": {
+      "total": 26,
+      "mismatch": 8,
+      "rate": 0.3076923076923077
+     }
+    },
+    "surviving_groups": 26
+   }
+  ]
+ },
+ "matrix": [
+  {
+   "rate": 0.1,
+   "rows": [
+    {
+     "attack": "clean",
+     "param": null,
+     "z1": 7.690899086568314,
+     "z2": 6.48074069840786,
+     "z1_wrong": -0.6186345161479658,
+     "z2_wrong": 1.543033499620919,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "deletion",
+     "param": 0.1,
+     "z1": 4.505005155706847,
+     "z2": 0.6488856845230502,
+     "z1_wrong": -1.088511320845119,
+     "z2_wrong": 0.6488856845230502,
+     "n1": 30,
+     "n2": 38,
+     "inconsistency": 0.10526315789473684
+    },
+    {
+     "attack": "strip_redundant",
+     "param": 0.1,
+     "z1": 7.111630409882079,
+     "z2": 5.246313898711125,
+     "z1_wrong": -0.6756737082854273,
+     "z2_wrong": 0.9258200997725514,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "semantic_rewrite",
+     "param": 0.1,
+     "z1": 7.690899086568314,
+     "z2": 6.48074069840786,
+     "z1_wrong": -0.6186345161479658,
+     "z2_wrong": 1.543033499620919,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "llm_substitute",
+     "param": 0.1,
+     "z1": 6.5534944011524905,
+     "z2": 6.48074069840786,
+     "z1_wrong": -0.9152575278704566,
+     "z2_wrong": 1.543033499620919,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "combined",
+     "param": 0.1,
+     "z1": 3.551337878208097,
+     "z2": 0.6488856845230502,
+     "z1_wrong": -1.3283077921928284,
+     "z2_wrong": 0.6488856845230502,
+     "n1": 30,
+     "n2": 38,
+     "inconsistency": 0.10526315789473684
+    }
+   ]
+  },
+  {
+   "rate": 0.2,
+   "rows": [
+    {
+     "attack": "clean",
+     "param": null,
+     "z1": 7.690899086568314,
+     "z2": 6.48074069840786,
+     "z1_wrong": -0.6186345161479658,
+     "z2_wrong": 1.543033499620919,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "deletion",
+     "param": 0.2,
+     "z1": 1.7906221822027404,
+     "z2": 0.6666666666666666,
+     "z1_wrong": -0.6964685839264412,
+     "z2_wrong": -0.3333333333333333,
+     "n1": 25,
+     "n2": 36,
+     "inconsistency": 0.19444444444444445
+    },
+    {
+     "attack": "strip_redundant",
+     "param": 0.2,
+     "z1": 6.988294866983121,
+     "z2": 4.6291004988627575,
+     "z1_wrong": -0.9667886369557515,
+     "z2_wrong": 1.543033499620919,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "semantic_rewrite",
+     "param": 0.2,
+     "z1": 7.690899086568314,
+     "z2": 6.48074069840786,
+     "z1_wrong": -0.6186345161479658,
+     "z2_wrong": 1.543033499620919,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "llm_substitute",
+     "param": 0.2,
+     "z1": 4.315235244283787,
+     "z2": 6.48074069840786,
+     "z1_wrong": -0.9732598830207757,
+     "z2_wrong": 1.543033499620919,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "combined",
+     "param": 0.2,
+     "z1": 2.1870696829847334,
+     "z2": 0.6666666666666666,
+     "z1_wrong": -0.3590428833381111,
+     "z2_wrong": -0.3333333333333333,
+     "n1": 25,
+     "n2": 36,
+     "inconsistency": 0.19444444444444445
+    }
+   ]
+  },
+  {
+   "rate": 0.3,
+   "rows": [
+    {
+     "attack": "clean",
+     "param": null,
+     "z1": 7.690899086568314,
+     "z2": 6.48074069840786,
+     "z1_wrong": -0.6186345161479658,
+     "z2_wrong": 1.543033499620919,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "deletion",
+     "param": 0.3,
+     "z1": 0.9578185192772689,
+     "z2": 1.3333333333333333,
+     "z1_wrong": -1.1592637874708707,
+     "z2_wrong": 1.0,
+     "n1": 21,
+     "n2": 36,
+     "inconsistency": 0.3055555555555556
+    },
+    {
+     "attack": "strip_redundant",
+     "param": 0.3,
+     "z1": 6.988294866983121,
+     "z2": 4.6291004988627575,
+     "z1_wrong": -0.9667886369557515,
+     "z2_wrong": 1.543033499620919,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "semantic_rewrite",
+     "param": 0.3,
+     "z1": 7.690899086568314,
+     "z2": 6.48074069840786,
+     "z1_wrong": -0.6186345161479658,
+     "z2_wrong": 1.543033499620919,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "llm_substitute",
+     "param": 0.3,
+     "z1": 2.470830423910075,
+     "z2": 6.48074069840786,
+     "z1_wrong": -1.6519899296255152,
+     "z2_wrong": 1.543033499620919,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "combined",
+     "param": 0.3,
+     "z1": 0.6373467386318773,
+     "z2": 1.3333333333333333,
+     "z1_wrong": -0.4057790240111779,
+     "z2_wrong": 1.0,
+     "n1": 21,
+     "n2": 36,
+     "inconsistency": 0.3055555555555556
+    }
+   ]
+  },
+  {
+   "rate": 0.4,
+   "rows": [
+    {
+     "attack": "clean",
+     "param": null,
+     "z1": 7.690899086568314,
+     "z2": 6.48074069840786,
+     "z1_wrong": -0.6186345161479658,
+     "z2_wrong": 1.543033499620919,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "deletion",
+     "param": 0.4,
+     "z1": 0.2090866435633265,
+     "z2": 1.975658322294524,
+     "z1_wrong": -1.173257831752755,
+     "z2_wrong": 0.1796053020267749,
+     "n1": 17,
+     "n2": 31,
+     "inconsistency": 0.3548387096774194
+    },
+    {
+     "attack": "strip_redundant",
+     "param": 0.4,
+     "z1": 6.792873937958455,
+     "z2": 4.320493798938573,
+     "z1_wrong": -0.6627506214698138,
+     "z2_wrong": 1.8516401995451028,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "semantic_rewrite",
+     "param": 0.4,
+     "z1": 7.690899086568314,
+     "z2": 6.48074069840786,
+     "z1_wrong": -0.6186345161479658,
+     "z2_wrong": 1.543033499620919,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "llm_substitute",
+     "param": 0.4,
+     "z1": 0.7871300737805941,
+     "z2": 6.48074069840786,
+     "z1_wrong": -1.7010580787626994,
+     "z2_wrong": 1.543033499620919,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "combined",
+     "param": 0.4,
+     "z1": -0.14869788139699103,
+     "z2": 1.975658322294524,
+     "z1_wrong": -0.39202596403108586,
+     "z2_wrong": 0.1796053020267749,
+     "n1": 17,
+     "n2": 31,
+     "inconsistency": 0.3548387096774194
+    }
+   ]
+  },
+  {
+   "rate": 0.5,
+   "rows": [
+    {
+     "attack": "clean",
+     "param": null,
+     "z1": 7.690899086568314,
+     "z2": 6.48074069840786,
+     "z1_wrong": -0.6186345161479658,
+     "z2_wrong": 1.543033499620919,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "deletion",
+     "param": 0.5,
+     "z1": 1.0265103101371702,
+     "z2": -1.1766968108291043,
+     "z1_wrong": -1.3479436614339138,
+     "z2_wrong": -1.1766968108291043,
+     "n1": 15,
+     "n2": 26,
+     "inconsistency": 0.3076923076923077
+    },
+    {
+     "attack": "strip_redundant",
+     "param": 0.5,
+     "z1": 5.893971012612721,
+     "z2": 3.7032803990902057,
+     "z1_wrong": -0.5660682609498653,
+     "z2_wrong": 1.2344267996967353,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "semantic_rewrite",
+     "param": 0.5,
+     "z1": 7.690899086568314,
+     "z2": 6.48074069840786,
+     "z1_wrong": -0.6186345161479658,
+     "z2_wrong": 1.543033499620919,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "llm_substitute",
+     "param": 0.5,
+     "z1": 0.9239926029424124,
+     "z2": 6.48074069840786,
+     "z1_wrong": -1.7608481043981747,
+     "z2_wrong": 1.543033499620919,
+     "n1": 38,
+     "n2": 42,
+     "inconsistency": 0.0
+    },
+    {
+     "attack": "combined",
+     "param": 0.5,
+     "z1": 0.850037090173152,
+     "z2": -1.1766968108291043,
+     "z1_wrong": -1.7866665889737636,
+     "z2_wrong": -1.1766968108291043,
+     "n1": 15,
+     "n2": 26,
+     "inconsistency": 0.3076923076923077
+    }
+   ]
+  }
+ ]
+}

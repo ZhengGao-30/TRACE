@@ -15,7 +15,7 @@ function Cell({ z, tau }: { z: number; tau: number }) {
       alive ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'
         : 'bg-rose-50 text-rose-600 ring-1 ring-rose-200',
     ].join(' ')}>
-      {alive ? '✓' : '✗'} {z >= 0 ? '+' : ''}{z.toFixed(2)}
+      {alive ? '✓' : '✗'} {z.toFixed(2)}
     </div>
   )
 }

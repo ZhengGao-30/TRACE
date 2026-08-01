@@ -16,6 +16,9 @@ export interface GroupView {
   roundNum?: number
   observations: { command: string; text: string; confirm: boolean }[]
   thought?: string
+  /** HSE only: which permit phase this decision belongs to, and its outcome. */
+  phase?: string
+  result?: string
 }
 
 export default function GroupCard({ g, active, compact = false }:
