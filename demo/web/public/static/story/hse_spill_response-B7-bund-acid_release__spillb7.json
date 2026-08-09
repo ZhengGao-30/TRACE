@@ -1,0 +1,700 @@
+{
+ "game_id": "hse_spill_response-B7-bund-acid_release__spillb7",
+ "task_type": "environmental_compliance_record",
+ "query": "Document the acid release at bund B-7 and file the compliance report.",
+ "model": "gpt-5.4-mini",
+ "attack_model": "gpt-5.4-mini",
+ "tau": 2.0,
+ "steps": [
+  {
+   "i": 0,
+   "action": "log containment action=absorbent_applied",
+   "label": "Apply absorbent",
+   "phase": "containment",
+   "k": 2,
+   "result": "Acid-neutralising absorbent applied to the bund floor.",
+   "flag": false
+  },
+  {
+   "i": 1,
+   "action": "log containment action=boom_deployed",
+   "label": "Deploy absorbent boom",
+   "phase": "containment",
+   "k": 1,
+   "result": "Absorbent boom deployed across the bund outlet.",
+   "flag": false
+  },
+  {
+   "i": 2,
+   "action": "verify drain_plan site=port_kembla",
+   "label": "Check the drainage plan",
+   "phase": "further diligence",
+   "k": 2,
+   "result": "Stormwater plan confirms SD-3 is the only pathway to the harbour.",
+   "flag": false
+  },
+  {
+   "i": 3,
+   "action": "log containment action=drain_blocked",
+   "label": "Plug the stormwater drain",
+   "phase": "containment",
+   "k": 1,
+   "result": "Stormwater drain SD-3 plugged, isolation confirmed.",
+   "flag": false
+  },
+  {
+   "i": 4,
+   "action": "check bund_capacity id=B7",
+   "label": "Check bund capacity",
+   "phase": "further diligence",
+   "k": 2,
+   "result": "Bund B-7 rated 12 kL, release well within containment volume.",
+   "flag": false
+  },
+  {
+   "i": 5,
+   "action": "query licence_conditions ref=EPL-3312",
+   "label": "Look up licence conditions",
+   "phase": "further diligence",
+   "k": 2,
+   "result": "EPL-3312: pH 6.0-9.0, TOC <30 mg/L at the licensed discharge point.",
+   "flag": false
+  },
+  {
+   "i": 6,
+   "action": "check tide_state location=harbour_outfall",
+   "label": "Check the tide",
+   "phase": "further diligence",
+   "k": 1,
+   "result": "Outgoing tide, would have accelerated dispersion if released.",
+   "flag": false
+  },
+  {
+   "i": 7,
+   "action": "verify ppe_compliance team=response",
+   "label": "Team in protective gear",
+   "phase": "further diligence",
+   "k": 2,
+   "result": "Response team in acid-resistant suits and face shields.",
+   "flag": false
+  },
+  {
+   "i": 8,
+   "action": "identify source equipment=transfer_hose_TH-4",
+   "label": "Find the leak source",
+   "phase": "immediate response",
+   "k": 1,
+   "result": "Source traced to transfer hose TH-4, longitudinal split near the coupling.",
+   "flag": false
+  },
+  {
+   "i": 9,
+   "action": "isolate source equipment=transfer_hose_TH-4",
+   "label": "Shut off the leak",
+   "phase": "immediate response",
+   "k": 1,
+   "result": "TH-4 isolated at the manifold, transfer pump stopped, line depressurised.",
+   "flag": false
+  },
+  {
+   "i": 10,
+   "action": "notify site_supervisor ref=SPILL-B7",
+   "label": "Notify the supervisor",
+   "phase": "immediate response",
+   "k": 2,
+   "result": "Site supervisor notified at 14:02, response team mobilised.",
+   "flag": false
+  },
+  {
+   "i": 11,
+   "action": "photograph scene location=bund_B7",
+   "label": "Photograph the scene",
+   "phase": "immediate response",
+   "k": 1,
+   "result": "14 time-stamped photographs captured of the bund and outlet.",
+   "flag": false
+  },
+  {
+   "i": 12,
+   "action": "review msds substance=sulphuric_acid",
+   "label": "Read the acid safety sheet",
+   "phase": "further diligence",
+   "k": 2,
+   "result": "H2SO4 MSDS reviewed: corrosive, exothermic on dilution.",
+   "flag": false
+  },
+  {
+   "i": 13,
+   "action": "verify sensor_calibration id=EC-4",
+   "label": "Conductivity sensor calibrated",
+   "phase": "instrument readings",
+   "k": 1,
+   "result": "EC-4 calibrated 2026-07-28, cert on file.",
+   "flag": false
+  },
+  {
+   "i": 14,
+   "action": "record weather_forecast site=port_kembla",
+   "label": "Record the forecast",
+   "phase": "further diligence",
+   "k": 1,
+   "result": "No rain forecast for 12 h, low remobilisation risk.",
+   "flag": false
+  },
+  {
+   "i": 15,
+   "action": "read calibrated_sensor id=EC-4 location=bund_B7",
+   "label": "Read conductivity",
+   "phase": "instrument readings",
+   "k": 2,
+   "result": "Conductivity 4820 uS/cm, elevated.",
+   "flag": false
+  },
+  {
+   "i": 16,
+   "action": "verify sensor_calibration id=PH-12",
+   "label": "pH sensor calibrated",
+   "phase": "instrument readings",
+   "k": 1,
+   "result": "PH-12 calibrated 2026-07-28, cert on file.",
+   "flag": false
+  },
+  {
+   "i": 17,
+   "action": "interview operator id=OP-77",
+   "label": "Interview the operator",
+   "phase": "further diligence",
+   "k": 2,
+   "result": "Operator OP-77 statement recorded: hose failed during transfer at 13:55.",
+   "flag": false
+  },
+  {
+   "i": 18,
+   "action": "read calibrated_sensor id=PH-12 location=bund_B7",
+   "label": "Read pH in the bund",
+   "phase": "instrument readings",
+   "k": 1,
+   "result": "pH = 3.4. Licence condition requires 6.0-9.0 at the discharge point. OVER LIMIT - reportable exceedance.",
+   "flag": true
+  },
+  {
+   "i": 19,
+   "action": "estimate release_volume",
+   "label": "Estimate how much spilled",
+   "phase": "containment",
+   "k": 2,
+   "result": "Release estimated at 205 L from transfer-hose failure at 13:55.",
+   "flag": false
+  },
+  {
+   "i": 20,
+   "action": "record weather_conditions",
+   "label": "Record the weather",
+   "phase": "immediate response",
+   "k": 1,
+   "result": "17 C, light NE wind 8 km/h, no rain in the preceding 6 h.",
+   "flag": false
+  },
+  {
+   "i": 21,
+   "action": "photograph containment location=SD3",
+   "label": "Photograph the plugged drain",
+   "phase": "further diligence",
+   "k": 2,
+   "result": "Plugged drain SD-3 photographed with time stamp.",
+   "flag": false
+  },
+  {
+   "i": 22,
+   "action": "check neutralising_stock item=soda_ash",
+   "label": "Check soda ash stock",
+   "phase": "further diligence",
+   "k": 1,
+   "result": "480 kg soda ash on site, sufficient for the estimated volume.",
+   "flag": false
+  },
+  {
+   "i": 23,
+   "action": "review spill_history site=port_kembla",
+   "label": "Read past spill history",
+   "phase": "further diligence",
+   "k": 1,
+   "result": "One prior reportable release in 2023, different bund.",
+   "flag": false
+  },
+  {
+   "i": 24,
+   "action": "verify sensor_calibration id=TOC-2",
+   "label": "Carbon sensor calibrated",
+   "phase": "instrument readings",
+   "k": 2,
+   "result": "TOC-2 calibrated 2026-07-21, cert on file.",
+   "flag": false
+  },
+  {
+   "i": 25,
+   "action": "read calibrated_sensor id=TOC-2 location=outfall",
+   "label": "Read carbon at the outfall",
+   "phase": "instrument readings",
+   "k": 1,
+   "result": "TOC 41 mg/L against a 30 mg/L limit.",
+   "flag": false
+  },
+  {
+   "i": 26,
+   "action": "compare reading=TOC against=licence_limit",
+   "label": "Compare carbon to the limit",
+   "phase": "limit comparison",
+   "k": 1,
+   "result": "TOC 41 vs 30 mg/L -> exceedance confirmed.",
+   "flag": false
+  },
+  {
+   "i": 27,
+   "action": "capture geotagged_sample id=S-102 location=outfall",
+   "label": "Take sample at the outfall",
+   "phase": "sampling",
+   "k": 2,
+   "result": "Sample S-102 taken at the licensed discharge point, sealed.",
+   "flag": false
+  },
+  {
+   "i": 28,
+   "action": "verify chain_of_custody sample=S-102",
+   "label": "Seal sample 102",
+   "phase": "sampling",
+   "k": 2,
+   "result": "Custody unbroken, two signatures.",
+   "flag": false
+  },
+  {
+   "i": 29,
+   "action": "capture geotagged_sample id=S-103 location=stormwater_SD3",
+   "label": "Take sample at the drain",
+   "phase": "sampling",
+   "k": 1,
+   "result": "Sample S-103 taken upstream of the plugged drain, sealed.",
+   "flag": false
+  },
+  {
+   "i": 30,
+   "action": "capture geotagged_sample id=S-101 location=bund_B7",
+   "label": "Take sample in the bund",
+   "phase": "sampling",
+   "k": 2,
+   "result": "Sample S-101 taken at -34.4821, 150.8309, chain-of-custody opened.",
+   "flag": false
+  },
+  {
+   "i": 31,
+   "action": "compare reading=pH against=licence_limit",
+   "label": "Compare pH to the licence limit",
+   "phase": "limit comparison",
+   "k": 2,
+   "result": "pH 3.4 vs licence 6.0-9.0 -> EXCEEDANCE confirmed, notification clock started.",
+   "flag": true
+  },
+  {
+   "i": 32,
+   "action": "record remediation action=neutralisation",
+   "label": "Record neutralising",
+   "phase": "remediation",
+   "k": 2,
+   "result": "Soda ash dosed, pH rising through 5.2 at 14:40.",
+   "flag": false
+  },
+  {
+   "i": 33,
+   "action": "verify chain_of_custody sample=S-101",
+   "label": "Seal sample 101",
+   "phase": "sampling",
+   "k": 1,
+   "result": "Custody unbroken, two signatures.",
+   "flag": false
+  },
+  {
+   "i": 34,
+   "action": "record remediation action=recovery",
+   "label": "Record liquid recovered",
+   "phase": "remediation",
+   "k": 2,
+   "result": "184 L recovered to the waste tank.",
+   "flag": false
+  },
+  {
+   "i": 35,
+   "action": "record remediation action=soil_removal",
+   "label": "Record soil removed",
+   "phase": "remediation",
+   "k": 2,
+   "result": "Contaminated bund sediment drummed for disposal.",
+   "flag": false
+  },
+  {
+   "i": 36,
+   "action": "attach evidence item=sample_results",
+   "label": "Attach lab results",
+   "phase": "reporting",
+   "k": 2,
+   "result": "Laboratory results attached.",
+   "flag": false
+  },
+  {
+   "i": 37,
+   "action": "attach evidence item=chain_of_custody",
+   "label": "Attach custody forms",
+   "phase": "reporting",
+   "k": 2,
+   "result": "Chain-of-custody forms attached.",
+   "flag": false
+  },
+  {
+   "i": 38,
+   "action": "attach evidence item=photographs",
+   "label": "Attach photographs",
+   "phase": "reporting",
+   "k": 2,
+   "result": "Time-stamped site photographs attached.",
+   "flag": false
+  },
+  {
+   "i": 39,
+   "action": "notify regulator ref=EPA-NSW window=24h",
+   "label": "Notify the regulator",
+   "phase": "reporting",
+   "k": 1,
+   "result": "Statutory notification lodged, reference EPA-2026-11884.",
+   "flag": false
+  },
+  {
+   "i": 40,
+   "action": "compile compliance_report ref=SPILL-B7",
+   "label": "Compile the report",
+   "phase": "reporting",
+   "k": 1,
+   "result": "Draft incident report assembled.",
+   "flag": false
+  },
+  {
+   "i": 41,
+   "action": "file compliance_report ref=SPILL-B7",
+   "label": "File the report",
+   "phase": "issue / file",
+   "k": 2,
+   "result": "REPORT SPILL-B7 FILED with the regulator. Record closed.",
+   "flag": false
+  }
+ ],
+ "clean": {
+  "z1": 7.69,
+  "z2": 6.48,
+  "groups": 42,
+  "records": 65
+ },
+ "attacks": [
+  {
+   "kind": "deletion",
+   "rate": 0.3,
+   "title": "Attack 1: Deletion",
+   "subtitle": "The reading that would have stopped the job is removed, and a swathe of other records goes with it so the gap does not stand out.",
+   "actor": "Log holder",
+   "targeted": [
+    18,
+    31
+   ],
+   "aliveByStep": {
+    "0": [
+     true,
+     true
+    ],
+    "1": [
+     true
+    ],
+    "2": [
+     true,
+     false
+    ],
+    "3": [
+     true
+    ],
+    "4": [
+     true,
+     true
+    ],
+    "5": [
+     false,
+     false
+    ],
+    "6": [
+     true
+    ],
+    "7": [
+     true,
+     true
+    ],
+    "8": [
+     false
+    ],
+    "9": [
+     true
+    ],
+    "10": [
+     true,
+     true
+    ],
+    "11": [
+     true
+    ],
+    "12": [
+     false,
+     true
+    ],
+    "13": [
+     true
+    ],
+    "14": [
+     false
+    ],
+    "15": [
+     true,
+     false
+    ],
+    "16": [
+     true
+    ],
+    "17": [
+     true,
+     false
+    ],
+    "18": [
+     false
+    ],
+    "19": [
+     false,
+     true
+    ],
+    "20": [
+     true
+    ],
+    "21": [
+     false,
+     false
+    ],
+    "22": [
+     true
+    ],
+    "23": [
+     false
+    ],
+    "24": [
+     true,
+     true
+    ],
+    "25": [
+     false
+    ],
+    "26": [
+     true
+    ],
+    "27": [
+     true,
+     false
+    ],
+    "28": [
+     false,
+     false
+    ],
+    "29": [
+     true
+    ],
+    "30": [
+     true,
+     true
+    ],
+    "31": [
+     false,
+     false
+    ],
+    "32": [
+     false,
+     false
+    ],
+    "33": [
+     false
+    ],
+    "34": [
+     true,
+     true
+    ],
+    "35": [
+     true,
+     true
+    ],
+    "36": [
+     true,
+     false
+    ],
+    "37": [
+     true,
+     false
+    ],
+    "38": [
+     false,
+     true
+    ],
+    "39": [
+     false
+    ],
+    "40": [
+     false
+    ],
+    "41": [
+     true,
+     false
+    ]
+   },
+   "goneSteps": [
+    5,
+    8,
+    14,
+    18,
+    21,
+    23,
+    25,
+    28,
+    31,
+    32,
+    33,
+    39,
+    40
+   ],
+   "recordsRemoved": 28,
+   "survivingGroups": 29,
+   "z1": 2.71,
+   "z2": -0.56,
+   "d1": true,
+   "d2": false,
+   "audit": 0.1034,
+   "banner": "Deleting a record trips the alarm that reports it.",
+   "bannerSub": "The reading that would have stopped the job was removed and the permit closed over the gap. The tally channel is keyed to position, so the first missing record breaks it — that break is how you learn records were taken. Meanwhile the selection channel re-synchronises after every gap and still names the agent that produced the permit."
+  },
+  {
+   "kind": "rewrite",
+   "rate": 0.6,
+   "title": "Attack 2: LLM rewrite",
+   "subtitle": "An LLM swaps each recorded action for a different, equally plausible one — the permit still reads as valid work.",
+   "actor": "Log holder + LLM",
+   "changed": {
+    "0": {
+     "was": "Apply absorbent",
+     "now": "Notify the supervisor"
+    },
+    "1": {
+     "was": "Deploy absorbent boom",
+     "now": "Photograph the scene"
+    },
+    "2": {
+     "was": "Check the drainage plan",
+     "now": "Notify the supervisor"
+    },
+    "3": {
+     "was": "Plug the stormwater drain",
+     "now": "Photograph the plugged drain"
+    },
+    "5": {
+     "was": "Look up licence conditions",
+     "now": "Take sample at the outfall"
+    },
+    "6": {
+     "was": "Check the tide",
+     "now": "Take sample at the outfall"
+    },
+    "7": {
+     "was": "Team in protective gear",
+     "now": "Find the leak source"
+    },
+    "11": {
+     "was": "Photograph the scene",
+     "now": "Take sample at the outfall"
+    },
+    "12": {
+     "was": "Read the acid safety sheet",
+     "now": "pH sensor calibrated"
+    },
+    "13": {
+     "was": "Conductivity sensor calibrated",
+     "now": "Record the weather"
+    },
+    "18": {
+     "was": "Read pH in the bund",
+     "now": "Take sample at the outfall"
+    },
+    "19": {
+     "was": "Estimate how much spilled",
+     "now": "Record the weather"
+    },
+    "20": {
+     "was": "Record the weather",
+     "now": "Carbon sensor calibrated"
+    },
+    "22": {
+     "was": "Check soda ash stock",
+     "now": "Read past spill history"
+    },
+    "23": {
+     "was": "Read past spill history",
+     "now": "Take sample at the outfall"
+    },
+    "24": {
+     "was": "Carbon sensor calibrated",
+     "now": "Take sample at the drain"
+    },
+    "25": {
+     "was": "Read carbon at the outfall",
+     "now": "Take sample at the outfall"
+    },
+    "26": {
+     "was": "Compare carbon to the limit",
+     "now": "Take sample at the outfall"
+    },
+    "27": {
+     "was": "Take sample at the outfall",
+     "now": "Compare pH to the licence limit"
+    },
+    "30": {
+     "was": "Take sample in the bund",
+     "now": "Compare pH to the licence limit"
+    },
+    "31": {
+     "was": "Compare pH to the licence limit",
+     "now": "Seal sample 101"
+    },
+    "32": {
+     "was": "Record neutralising",
+     "now": "Record liquid recovered"
+    },
+    "33": {
+     "was": "Seal sample 101",
+     "now": "Record liquid recovered"
+    },
+    "36": {
+     "was": "Attach lab results",
+     "now": "Attach photographs"
+    },
+    "38": {
+     "was": "Attach photographs",
+     "now": "Notify the regulator"
+    }
+   },
+   "stepsRewritten": 25,
+   "survivingGroups": 42,
+   "z1": -0.17,
+   "z2": 6.48,
+   "d1": false,
+   "d2": true,
+   "audit": 0.0,
+   "banner": "Rewriting the words cannot touch a count.",
+   "bannerSub": "Every recorded action was swapped for a different plausible one and the selection channel is gone. But rewording never changes how many records a step holds, so the tally channel is bit-for-bit unchanged and still names the agent. No single edit takes both."
+  }
+ ]
+}

@@ -52,14 +52,14 @@ body::before {
   }
 
   .chip {
-    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5
-           text-[10px] font-semibold tracking-wide;
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1
+           text-[12px] font-semibold tracking-wide;
   }
 
   /* eyebrow tag — microscopic uppercase pill before a heading */
   .eyebrow {
     @apply inline-flex items-center gap-1 rounded-full bg-slate-900/[0.04]
-           px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.18em]
+           px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em]
            text-slate-500;
   }
 

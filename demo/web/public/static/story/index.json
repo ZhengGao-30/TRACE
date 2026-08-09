@@ -1,0 +1,14 @@
+{
+ "jobs": [
+  {
+   "game_id": "hse_confined_space-T114-digester-sludge_rake__ptw4471",
+   "task_type": "confined_space_entry_permit",
+   "query": "Issue a confined-space entry permit for digester tank T-114 (sludge-rake repair, 2 entrants)."
+  },
+  {
+   "game_id": "hse_spill_response-B7-bund-acid_release__spillb7",
+   "task_type": "environmental_compliance_record",
+   "query": "Document the acid release at bund B-7 and file the compliance report."
+  }
+ ]
+}

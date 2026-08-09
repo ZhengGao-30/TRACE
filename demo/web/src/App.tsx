@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Play, KeyRound, Radio, ShieldCheck, Loader2, WifiOff, Gauge, ArrowDown } from 'lucide-react'
+import { Play, KeyRound, Radio, ShieldCheck, Loader2, WifiOff, Gauge, ArrowDown, Columns2, ArrowRight, Scissors } from 'lucide-react'
+import { navigate } from './Router'
 import { api, subscribe, API_BASE } from './api'
 import type { DetectResult, GameInfo, Health, MatrixRow } from './api'
 import {
@@ -706,6 +707,60 @@ export default function App() {
             <ShieldCheck size={12} className="text-emerald-500 shrink-0 mt-0.5" />
             {t('robustPath')}
           </div>
+
+          {/* The question the demo itself cannot answer: what would this run have
+              looked like WITHOUT the watermark? Sits at the foot of the controls,
+              where someone who has just watched a run is most likely to ask it. */}
+          <button onClick={() => navigate('/compare')}
+            className="group relative w-full overflow-hidden rounded-2xl p-3 text-left
+                       bg-gradient-to-br from-l1-600 to-l1-500 text-white shadow-card
+                       ring-1 ring-l1-700/20 hover:shadow-lift transition-shadow
+                       duration-500 ease-fluid">
+            <span className="pointer-events-none absolute -right-6 -top-8 w-24 h-24 rounded-full
+                             bg-white/10 group-hover:bg-white/[0.16] transition-colors" />
+            <div className="relative flex items-start gap-2.5">
+              <span className="grid place-items-center w-8 h-8 rounded-xl bg-white/15 shrink-0">
+                <Columns2 size={15} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="text-[12.5px] font-bold leading-tight">
+                  {t('compareLink')}
+                </div>
+                <div className="text-[10.5px] text-white/70 leading-snug mt-0.5">
+                  {t('compareHint')}
+                </div>
+              </div>
+              <ArrowRight size={14}
+                className="shrink-0 mt-1 text-white/70 transition-transform duration-500
+                           ease-fluid group-hover:translate-x-0.5" />
+            </div>
+          </button>
+
+          {/* the other question the demo cannot answer: what happens once someone
+              edits the record afterwards. Told as a story rather than a matrix. */}
+          <button onClick={() => navigate('/threat')}
+            className="group relative w-full overflow-hidden rounded-2xl p-3 text-left
+                       bg-white ring-1 ring-slate-900/[0.06] shadow-card
+                       hover:ring-rose-200 hover:shadow-lift transition-all
+                       duration-500 ease-fluid">
+            <div className="flex items-start gap-2.5">
+              <span className="grid place-items-center w-8 h-8 rounded-xl shrink-0
+                               bg-rose-50 ring-1 ring-rose-100 text-rose-500">
+                <Scissors size={15} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="text-[12.5px] font-bold leading-tight text-slate-800">
+                  {t('threatLink')}
+                </div>
+                <div className="text-[10.5px] text-slate-400 leading-snug mt-0.5">
+                  {t('threatHint')}
+                </div>
+              </div>
+              <ArrowRight size={14}
+                className="shrink-0 mt-1 text-slate-300 transition-transform duration-500
+                           ease-fluid group-hover:translate-x-0.5 group-hover:text-rose-400" />
+            </div>
+          </button>
         </div>
 
         {/* centre: the room, with a user-draggable height */}
