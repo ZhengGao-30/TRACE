@@ -18,6 +18,12 @@ import type { GroupView } from './components/GroupCard'
 import DetectPanel from './components/DetectPanel'
 import AttackPanel from './components/AttackPanel'
 import RoomLegend from './components/RoomLegend'
+import WorkflowStrip from './components/WorkflowStrip'
+import GuidedRace from './components/GuidedRace'
+import GuidedCompare from './components/GuidedCompare'
+import GuidedSkip from './components/GuidedSkip'
+import { GuidedBanner, GuidedDetect, GuidedAttack } from './components/GuidedPanels'
+import { buildWorkflow } from './lib/guidedSteps'
 import Logo from './components/Logo'
 import { parseCommand } from './lib/room'
 import { useI18n } from './i18n'
@@ -103,6 +109,61 @@ export default function App() {
   const [busy, setBusy] = useState<string | null>(null)
   const feedRef = useRef<HTMLDivElement>(null)
 
+  // Guided view (default): workflow strip + plain-language panels for
+  // non-experts. Expert view: the original full dashboard. The toggle is in
+  // the header; all state and data flow are shared between the two.
+  const [view, setView] = useState<'guided' | 'expert'>(() =>
+    localStorage.getItem('trace.view') === 'expert' ? 'expert' : 'guided')
+  useEffect(() => { localStorage.setItem('trace.view', view) }, [view])
+  // null = auto-follow the active phase; '' = user collapsed everything
+  const [expandedPhase, setExpandedPhase] = useState<string | null>(null)
+  const [showTech, setShowTech] = useState(false)
+  const [showRace, setShowRace] = useState(false)
+  const [showCompare, setShowCompare] = useState(false)
+  const [showSkip, setShowSkip] = useState(false)
+  // bumped when the offline preview bundle loads, so the workflow strip recomputes
+  const [previewTick, setPreviewTick] = useState(0)
+
+  // The workflow strip: offline replays know every action up front (the static
+  // bundle is loaded before the first event streams); live runs grow the strip
+  // as decisions arrive.
+  const workflow = useMemo(() => {
+    const g = staticGame.current
+    const actions: string[] = g
+      ? g.events.filter((e: any) => e.kind === 'group').map((e: any) => String(e.chosen ?? ''))
+      : groups.map((x) => x.chosen ?? '')
+    const taskType = task?.type ?? (g?.summary as any)?.task_type
+    return buildWorkflow(actions, scenario, taskType)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [groups, gameId, scenario, task?.type, previewTick])
+
+  const current = groups.length - 1
+  const activePhaseId = useMemo(() => {
+    if (!workflow.length) return null
+    const hit = workflow.find((p) => p.steps.some((s) => s.i === current))
+    if (hit) return hit.id
+    return (workflow.find((p) => p.steps[p.steps.length - 1].i >= current)
+      ?? workflow[workflow.length - 1]).id
+  }, [workflow, current])
+  const expanded = expandedPhase ?? activePhaseId
+  const currentStep = current >= 0
+    ? workflow.flatMap((p) => p.steps).find((s) => s.i === current)
+    : undefined
+  const runFinished = !running && groups.length > 0 && !!(scene.done || hse.done)
+
+  // the race card follows the latest group that actually has a candidate draw
+  const raceGroup = useMemo(() => {
+    for (let i = groups.length - 1; i >= 0; i--) {
+      if (groups[i].race?.length) return groups[i]
+    }
+    return null
+  }, [groups])
+  const racePrevLabel = useMemo(() => {
+    if (!raceGroup) return null
+    const s = workflow.flatMap((p) => p.steps).find((x) => x.i === raceGroup.i - 1)
+    return s?.label ?? null
+  }, [raceGroup, workflow])
+
   // The picker only ever lists jobs from the selected scenario; rows baked
   // before scenarios existed are ALFWorld by default.
   const scenarioReplays = useMemo(
@@ -151,6 +212,21 @@ export default function App() {
     }
   }
   useEffect(() => { loadBackend() }, [])
+
+  // Guided view: pre-load the selected offline replay so the workflow strip
+  // and its phases are visible BEFORE the visitor presses start. This only
+  // fills staticGame (the preview source); start() still loads it again.
+  useEffect(() => {
+    if (mode !== 'offline' || !staticMode || !gameId || running || groups.length > 0) return
+    let dead = false
+    loadStaticGame(gameId).then((g) => {
+      if (dead) return
+      staticGame.current = g
+      setPreviewTick((n) => n + 1)
+    }).catch(() => {})
+    return () => { dead = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameId, staticMode, mode])
 
   // Remote viewer path: paste the presenter's public tunnel URL and reconnect.
   // Writing ?api=<url> makes resolveApiBase pick it up and persist it.
@@ -202,7 +278,7 @@ export default function App() {
 
   function reset() {
     setGroups([]); setDetect(null); setCurve([]); setRows([])
-    setFollow(false); setUnseen(0)
+    setFollow(false); setUnseen(0); setExpandedPhase(null)
     moveQ.current = []; walking.current = false
     setScene({ receptacles: [], visited: [], opened: [], step: 0 })
     setHse((h) => ({ ...h, command: undefined, confirm: false, step: 0,
@@ -504,7 +580,23 @@ export default function App() {
 
         <div className="flex-1" />
 
-        {/* key calibration: real key pair vs wrong key pair, nothing in between */}
+        {/* guided view for partners / expert dashboard for engineers */}
+        <div className="flex rounded-full bg-slate-100/80 ring-1 ring-slate-900/[0.04] p-0.5">
+          {(['guided', 'expert'] as const).map((v) => (
+            <button key={v} onClick={() => setView(v)}
+              className={[
+                'rounded-full px-3 py-1 text-[11px] font-semibold transition-all duration-500 ease-fluid',
+                view === v ? 'bg-white text-l1-700 shadow-sm ring-1 ring-slate-900/[0.05]'
+                           : 'text-slate-500 hover:text-slate-700',
+              ].join(' ')}>
+              {v === 'guided' ? 'Guided view' : 'Expert dashboard'}
+            </button>
+          ))}
+        </div>
+
+        {/* key calibration: real key pair vs wrong key pair, nothing in between
+            (expert dashboard only; guided view keeps it in technical details) */}
+        {view === 'expert' && (
         <div className="flex items-center gap-2.5">
           <KeyRound size={12} className="text-slate-400" />
           <div className="flex rounded-full bg-slate-100/80 ring-1 ring-slate-900/[0.04] p-0.5">
@@ -527,6 +619,7 @@ export default function App() {
             {activeKeys[0]} · {activeKeys[1]}
           </span>
         </div>
+        )}
       </header>
 
       {/* backend unreachable: explain + let a remote viewer paste the presenter's
@@ -568,9 +661,256 @@ export default function App() {
         </div>
       )}
 
-      {/* ---------- body ----------
-          The 3D room is the centrepiece, so it gets the whole main area; the
-          per-group trace becomes a horizontal timeline strip underneath it. */}
+      {/* ---------- guided body: workflow strip + plain-language panels ---------- */}
+      {view === 'guided' && (
+        <div className="p-3 space-y-3 max-w-[1500px] mx-auto">
+
+          {/* run controls: everything needed to start a replay, in one bar */}
+          <div className="card px-3.5 py-2.5 flex items-center gap-3 flex-wrap">
+            <div className="flex rounded-lg bg-slate-100 p-0.5">
+              <button onClick={() => setMode('live')} disabled={!health?.live || running}
+                className={[
+                  'flex items-center gap-1 rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors',
+                  mode === 'live' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700',
+                  !health?.live ? 'opacity-40 cursor-not-allowed' : '',
+                ].join(' ')}>
+                <Radio size={11} /> {t('modeLive')}
+              </button>
+              <button onClick={() => setMode('offline')} disabled={running}
+                className={[
+                  'flex items-center gap-1 rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors',
+                  mode === 'offline' ? 'bg-white text-slate-700 shadow-sm' : 'text-slate-500 hover:text-slate-700',
+                ].join(' ')}>
+                <WifiOff size={11} /> {t('modeOffline')}
+              </button>
+            </div>
+
+            {mode === 'offline' && (
+              <>
+                <div className="flex gap-1">
+                  {(['alfworld', 'hse'] as const).map((s) => (
+                    <button key={s} onClick={() => { if (!running) setScenario(s) }}
+                      disabled={running}
+                      title={t(s === 'hse' ? 'sc_hse_h' : 'sc_alfworld_h')}
+                      className={[
+                        'rounded-lg px-2.5 py-1.5 text-[11px] font-semibold ring-1 transition-colors disabled:opacity-50',
+                        scenario === s ? 'bg-l1-50 text-l1-700 ring-l1-200'
+                          : 'bg-white text-slate-500 ring-slate-200 hover:text-slate-700',
+                      ].join(' ')}>
+                      {t(s === 'hse' ? 'sc_hse' : 'sc_alfworld')}
+                    </button>
+                  ))}
+                </div>
+                <select value={gameId} onChange={(e) => setGameId(e.target.value)}
+                  className="rounded-lg bg-slate-50 px-2 py-1.5 text-[11.5px] max-w-[22rem]
+                             ring-1 ring-slate-200 outline-none focus:ring-l1-400">
+                  {scenarioReplays.map((r) => (
+                    <option key={r.game_id} value={r.game_id}>
+                      {r.success ? '✓' : '✗'} {r.task_type.replaceAll('_', ' ')} · {r.groups} steps
+                    </option>
+                  ))}
+                </select>
+                <div className="flex items-center gap-1.5">
+                  <Gauge size={11} className="text-slate-400 shrink-0" />
+                  <input type="range" min={0.5} max={4} step={0.5} value={speed}
+                    onChange={(e) => setSpeed(parseFloat(e.target.value))}
+                    className="w-20 accent-l1-500" />
+                  <span className="text-[10px] tabular-nums text-slate-500">{speed}×</span>
+                </div>
+              </>
+            )}
+
+            {mode === 'live' && (
+              <select value={taskId} onChange={(e) => setTaskId(+e.target.value)}
+                className="rounded-lg bg-slate-50 px-2 py-1.5 text-[11.5px]
+                           ring-1 ring-slate-200 outline-none focus:ring-l1-400">
+                {games.map((g) => (
+                  <option key={g.task_id} value={g.task_id}>#{g.task_id} · {g.task_type}</option>
+                ))}
+              </select>
+            )}
+
+            <button onClick={start}
+              disabled={running || (mode === 'live' ? !health?.live : !gameId)}
+              className="group flex items-center gap-2 rounded-full bg-l1-500 text-white
+                         text-[12px] font-semibold pl-4 pr-3 py-1.5
+                         shadow-[0_8px_20px_-8px_rgba(99,102,241,.6)]
+                         transition-all duration-500 ease-fluid hover:bg-l1-700
+                         active:scale-[0.98] disabled:opacity-40 disabled:shadow-none">
+              {running ? <Loader2 size={13} className="animate-spin" /> : <Play size={13} />}
+              {running ? t('runningNow') : mode === 'live' ? t('startLive') : t('startReplay')}
+            </button>
+
+            {task && (
+              <div className="rounded-lg bg-amber-50 px-2.5 py-1 ring-1 ring-amber-200 text-[11px] text-amber-900 max-w-[26rem] truncate"
+                   title={task.desc}>
+                <span className="font-semibold text-amber-600">{t('goal')}: </span>{task.desc}
+              </div>
+            )}
+          </div>
+
+          {/* workflow strip */}
+          {workflow.length > 0 && (
+            <WorkflowStrip phases={workflow} current={current} running={running}
+                           expanded={expanded}
+                           onToggle={(id) => setExpandedPhase(id === expanded ? '' : id)} />
+          )}
+
+          {/* status banner */}
+          <GuidedBanner
+            idle={groups.length === 0}
+            running={running}
+            finished={runFinished}
+            detected={!!detect && (detect.layer1.z > (health?.tau ?? 2) || detect.layer2.z > (health?.tau ?? 2))}
+            z1={detect?.layer1.z ?? 0} z2={detect?.layer2.z ?? 0}
+            tau={health?.tau ?? 2} attacked={rows.length > 0} />
+
+          {/* scene + plain-language panels */}
+          <div className="grid grid-cols-[minmax(0,1fr)_21rem] gap-3 items-start">
+            <div className="relative">
+              <div className="bezel shadow-lift" style={{ height: roomH }}>
+                <div className="bezel-core h-full overflow-hidden">
+                  {scenario === 'hse' ? (
+                    <HseSite s={hse} expanded={roomFocus} onArrive={onArrive}
+                             speed={mode === 'offline' ? speed : 1}
+                             onToggleExpand={() => setRoomFocus((v) => !v)} />
+                  ) : (
+                    <VoxelRoom s={scene} expanded={roomFocus} onArrive={onArrive}
+                               speed={mode === 'offline' ? speed : 1}
+                               onToggleExpand={() => setRoomFocus((v) => !v)} />
+                  )}
+                </div>
+              </div>
+
+              {/* overlays: current phase badge, mark-embedded pulse, caption */}
+              {workflow.length > 0 && current >= 0 && (
+                <div className="pointer-events-none absolute top-3 left-3 chip bg-white/90 backdrop-blur
+                                ring-1 ring-slate-200 text-slate-600">
+                  {(() => {
+                    const p = workflow.find((x) => x.id === activePhaseId)
+                    return p ? `Phase ${p.num} · ${p.title}` : ''
+                  })()}
+                </div>
+              )}
+              <AnimatePresence>
+                {running && current >= 0 && (
+                  <motion.div key={current}
+                    initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 380, damping: 18 }}
+                    className="pointer-events-none absolute top-3 right-3 chip bg-l1-500 text-white
+                               font-bold shadow-[0_4px_12px_rgba(99,102,241,.45)]">
+                    ◈ mark embedded
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              {(currentStep || task) && (
+                <div className="absolute bottom-3 left-3 right-3 max-w-[62%] rounded-xl bg-white/92 backdrop-blur
+                                ring-1 ring-slate-200 px-3.5 py-2.5 flex items-center gap-2.5">
+                  {currentStep && (
+                    <span className="shrink-0 rounded-lg bg-l1-50 text-l1-700 text-[11px] font-extrabold px-2 py-1">
+                      STEP {current + 1}
+                    </span>
+                  )}
+                  <span className="text-[12.5px] text-slate-600 leading-snug">
+                    {currentStep
+                      ? <>{currentStep.label} — a routine choice that <b className="text-l1-700">quietly carries the watermark</b>.</>
+                      : task?.desc}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className="sticky top-[3.75rem] space-y-2.5">
+              <GuidedDetect d={detect} tau={health?.tau ?? 2} running={running} />
+              <GuidedAttack rate={rate} setRate={setRate} busy={busy}
+                locked={!sid || running || groups.length === 0}
+                live={mode === 'live' && !!health?.live}
+                onAttack={runAttack}
+                attacked={rows.length > 0}
+                detected={!!detect && (detect.layer1.z > (health?.tau ?? 2) || detect.layer2.z > (health?.tau ?? 2))} />
+              <div className="flex gap-2">
+                <button onClick={() => navigate('/compare')}
+                  className="flex-1 card px-3 py-2 text-left text-[11px] font-semibold text-l1-700
+                             hover:shadow-lift transition-shadow duration-500 ease-fluid">
+                  <Columns2 size={12} className="inline mr-1.5 -mt-0.5" />{t('compareLink')} →
+                </button>
+                <button onClick={() => navigate('/threat')}
+                  className="flex-1 card px-3 py-2 text-left text-[11px] font-semibold text-rose-600
+                             hover:shadow-lift transition-shadow duration-500 ease-fluid">
+                  <Scissors size={12} className="inline mr-1.5 -mt-0.5" />{t('threatLink')} →
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* how each step is chosen: the keyed lottery, simplified */}
+          <GuidedRace g={raceGroup} prevLabel={racePrevLabel} scenario={scenario}
+                      open={showRace} onToggle={() => setShowRace((v) => !v)} />
+
+          {/* with/without the watermark: same task, two dice */}
+          <GuidedCompare groups={groups} scenario={scenario} ready={runFinished}
+                         open={showCompare} onToggle={() => setShowCompare((v) => !v)} />
+
+          {/* HSE only: what if the agent skips steps — the mini patrol */}
+          {scenario === 'hse' && (
+            <GuidedSkip groups={groups} scenario={scenario} ready={runFinished}
+                        tau={health?.tau ?? 2}
+                        open={showSkip} onToggle={() => setShowSkip((v) => !v)} />
+          )}
+
+          {/* technical details: the full expert instruments, collapsed */}
+          <button onClick={() => setShowTech((v) => !v)}
+            className="w-full card px-4 py-2.5 flex items-center justify-between text-[12px]
+                       text-slate-500 hover:text-slate-700 border border-dashed border-slate-300
+                       transition-colors">
+            <span>{showTech ? '▾' : '▸'}&nbsp; Technical details — z-scores, candidate tables, key calibration</span>
+            <span className="text-[11px] text-slate-300">for the engineering team</span>
+          </button>
+          {showTech && (
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3 items-start">
+                <div className="space-y-2">
+                  <div className="card p-2.5 flex items-center gap-2.5">
+                    <KeyRound size={12} className="text-slate-400" />
+                    <div className="flex rounded-full bg-slate-100/80 ring-1 ring-slate-900/[0.04] p-0.5">
+                      {(['right', 'wrong'] as const).map((m) => (
+                        <button key={m} onClick={() => switchKey(m)} disabled={!sid}
+                          className={[
+                            'rounded-full px-3 py-1 text-[11px] font-semibold transition-all',
+                            keyMode === m
+                              ? (m === 'right' ? 'bg-white text-l1-700 shadow-sm' : 'bg-rose-500 text-white shadow-sm')
+                              : 'text-slate-500 hover:text-slate-700',
+                            !sid ? 'opacity-40 cursor-not-allowed' : '',
+                          ].join(' ')}>
+                          {m === 'right' ? t('rightKey') : t('wrongKey')}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <DetectPanel d={detect} curve={curve} />
+                </div>
+                <AttackPanel attacks={health?.attacks ?? []} rate={rate} setRate={setRate}
+                  onAttack={runAttack} onMatrix={runMatrix} rows={rows} busy={busy}
+                  tau={health?.tau ?? 2} live={mode === 'live' && !!health?.live} />
+              </div>
+              {groups.length > 0 && (
+                <div ref={feedRef}
+                     className="grid gap-2 [grid-template-columns:repeat(auto-fill,minmax(23rem,1fr))]">
+                  <AnimatePresence initial={false}>
+                    {groups.map((g) => (
+                      <GroupCard key={g.i} g={g}
+                                 active={running && g.i === groups.length - 1} />
+                    ))}
+                  </AnimatePresence>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ---------- body (expert dashboard) ---------- */}
+      {view === 'expert' && (
       <div className="grid grid-cols-[13rem_minmax(0,1fr)_20rem] gap-3 p-3 items-start">
 
         {/* left: task picker (spans both rows) */}
@@ -826,6 +1166,7 @@ export default function App() {
             tau={health?.tau ?? 2} live={mode === 'live' && !!health?.live} />
         </div>
       </div>
+      )}
 
       {/* jump-to-newest badge: appears only when the reader has scrolled away */}
       <AnimatePresence>
