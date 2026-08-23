@@ -4,6 +4,7 @@ import Landing from './site/Landing'
 import AttackStory from './story/AttackStory'
 import ComparePage from './story/ComparePage'
 import Reel from './story/Reel'
+import AcrossDomains from './story/AcrossDomains'
 
 /** Minimal hash router — deploys anywhere (GitHub Pages friendly), zero deps. */
 function useHashRoute() {
@@ -23,6 +24,7 @@ export function navigate(to: string) {
 
 export default function Router() {
   const route = useHashRoute()
+  if (route.startsWith('/across-domains')) return <AcrossDomains />
   if (route.startsWith('/threat')) return <Reel />
   if (route.startsWith('/compare')) return <ComparePage />
   if (route.startsWith('/attack')) return <AttackStory />

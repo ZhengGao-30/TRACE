@@ -13,10 +13,10 @@ import type { DetectResult } from '../api'
 // ---------------------------------------------------------------------------
 
 export function GuidedBanner({
-  idle, running, finished, detected, z1, z2, tau, attacked,
+  idle, running, finished, detected, z1, z2, tau, attacked, hse = false,
 }: {
   idle: boolean; running: boolean; finished: boolean; detected: boolean
-  z1: number; z2: number; tau: number; attacked: boolean
+  z1: number; z2: number; tau: number; attacked: boolean; hse?: boolean
 }) {
   // evidence bar: how far the stronger channel has climbed (soft max at 12)
   const pct = Math.max(0, Math.min(1, Math.max(z1, z2) / 12))
@@ -74,7 +74,9 @@ export function GuidedBanner({
           <div className="text-[15px] font-extrabold text-emerald-800">This record carries our watermark</div>
           <div className="text-[12px] text-emerald-700/90 mt-0.5">
             {attacked
-              ? '…even after the log was attacked. With the wrong key, the same check finds nothing.'
+              ? hse
+                ? '…even after the record was tampered with. With the wrong key, the same check finds nothing.'
+                : '…even after the log was attacked. With the wrong key, the same check finds nothing.'
               : 'Verified with the correct keys. With a wrong key, the same check finds nothing.'}
           </div>
         </div>
@@ -188,26 +190,32 @@ export function GuidedDetect({ d, tau, running }: { d: DetectResult | null; tau:
 // attack challenge card
 // ---------------------------------------------------------------------------
 
-const GUIDED_ATTACKS: { kind: string; label: string; needsLLM: boolean }[] = [
-  { kind: 'deletion', label: 'Delete part of the log', needsLLM: false },
-  { kind: 'strip_redundant', label: 'Surgically strip records', needsLLM: false },
-  { kind: 'semantic_rewrite', label: 'Rewrite the wording', needsLLM: true },
+const GUIDED_ATTACKS: { kind: string; label: string; labelHse: string; needsLLM: boolean }[] = [
+  { kind: 'deletion', label: 'Delete part of the log', labelHse: 'Delete part of the record', needsLLM: false },
+  { kind: 'strip_redundant', label: 'Surgically strip records', labelHse: 'Surgically strip records', needsLLM: false },
+  { kind: 'semantic_rewrite', label: 'Rewrite the wording', labelHse: 'Rewrite the readings', needsLLM: true },
 ]
 
 export function GuidedAttack({
-  rate, setRate, busy, locked, live, onAttack, attacked, detected,
+  rate, setRate, busy, locked, live, onAttack, attacked, detected, hse = false,
 }: {
   rate: number; setRate: (v: number) => void; busy: string | null
   locked: boolean; live: boolean; onAttack: (kind: string) => void
-  attacked: boolean; detected: boolean
+  attacked: boolean; detected: boolean; hse?: boolean
 }) {
   return (
     <div className="card p-4 ring-rose-200/70 bg-gradient-to-b from-white to-rose-50/40">
-      <h3 className="text-[13.5px] font-extrabold text-rose-700">Try to break it yourself</h3>
+      <h3 className="text-[13.5px] font-extrabold text-rose-700">
+        {hse ? 'Try to cover it up' : 'Try to break it yourself'}
+      </h3>
       <p className="text-[11px] text-slate-400 leading-snug mt-0.5">
-        {locked
-          ? 'When the run finishes, attack the log — the way someone covering their tracks would — and see if the mark survives.'
-          : 'Attack the log the way someone covering their tracks would, then see if the mark survives.'}
+        {hse
+          ? locked
+            ? 'When the run finishes, edit the record — the way someone hiding skipped checks would — and see if the mark still holds.'
+            : 'Edit the record the way someone hiding skipped checks would, then see if the mark still holds.'
+          : locked
+            ? 'When the run finishes, attack the log — the way someone covering their tracks would — and see if the mark survives.'
+            : 'Attack the log the way someone covering their tracks would, then see if the mark survives.'}
       </p>
 
       <div className="flex items-center gap-2.5 mt-3 mb-2.5">
@@ -238,7 +246,7 @@ export function GuidedAttack({
                       : 'bg-rose-50 text-rose-700 ring-1 ring-rose-200 hover:bg-rose-100',
                   ].join(' ')}>
                   {busy === a.kind && <Loader2 size={11} className="animate-spin" />}
-                  {a.label}
+                  {hse ? a.labelHse : a.label}
                   {a.needsLLM && !live && <span className="ml-auto text-[9px]">needs live mode</span>}
                 </button>
               )
@@ -254,7 +262,9 @@ export function GuidedAttack({
               ].join(' ')}>
               {detected
                 ? <><ShieldCheck size={15} /> Still detected. The mark survives.</>
-                : <>⚠️ This attack broke through — both checks fell below the line.</>}
+                : hse
+                  ? <>⚠️ This edit broke through — both checks fell below the line.</>
+                  : <>⚠️ This attack broke through — both checks fell below the line.</>}
             </motion.div>
           )}
         </>

@@ -21,11 +21,11 @@ function Cell({ z, tau }: { z: number; tau: number }) {
 }
 
 export default function AttackPanel({
-  attacks, rate, setRate, onAttack, onMatrix, rows, busy, tau, live,
+  attacks, rate, setRate, onAttack, onMatrix, rows, busy, tau, live, hse = false,
 }: {
   attacks: string[]; rate: number; setRate: (v: number) => void
   onAttack: (kind: string) => void; onMatrix: () => void
-  rows: MatrixRow[]; busy: string | null; tau: number; live: boolean
+  rows: MatrixRow[]; busy: string | null; tau: number; live: boolean; hse?: boolean
 }) {
   const { t } = useI18n()
   const [hover, setHover] = useState<string | null>(null)
@@ -34,7 +34,7 @@ export default function AttackPanel({
     <div className="space-y-2">
       <div className="card p-2.5">
         <div className="flex items-center justify-between mb-1.5">
-          <span className="eyebrow">{t('attackStrength')}</span>
+          <span className="eyebrow">{hse ? 'Tamper strength' : t('attackStrength')}</span>
           <span className="text-[11px] font-semibold text-slate-700 tabular-nums">
             {(rate * 100).toFixed(0)}%
           </span>

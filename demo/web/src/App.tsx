@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Play, KeyRound, Radio, ShieldCheck, Loader2, WifiOff, Gauge, ArrowDown, Columns2, ArrowRight, Scissors } from 'lucide-react'
+import {
+  Play, KeyRound, Radio, ShieldCheck, Loader2, WifiOff, Gauge, ArrowDown,
+  Columns2, ArrowRight, Scissors, Home, House, Factory, BookOpen,
+} from 'lucide-react'
 import { navigate } from './Router'
 import { api, subscribe, API_BASE } from './api'
 import type { DetectResult, GameInfo, Health, MatrixRow } from './api'
@@ -62,6 +65,11 @@ export default function App() {
   // benchmark; HSE are permit-to-work / compliance records, which need a
   // different centre view (a record, not a room).
   const [scenario, setScenario] = useState<'alfworld' | 'hse'>('alfworld')
+  function chooseScenario(next: 'alfworld' | 'hse') {
+    if (running) return
+    setMode('offline')
+    setScenario(next)
+  }
   const [speed, setSpeed] = useState(1)
   // presentation mode: collapse the timeline strip so the room fills the height
   const [roomFocus, setRoomFocus] = useState(false)
@@ -548,7 +556,7 @@ export default function App() {
                          bg-white/70 backdrop-blur-xl ring-1 ring-slate-900/[0.05]
                          shadow-[0_1px_0_rgba(255,255,255,.6),0_8px_24px_-18px_rgba(15,23,42,.25)]">
         {/* logo tile — click to return to the project site */}
-        <a href="#/" title="← TRACE home" className="flex items-center gap-3 group">
+        <a href="#/" title="← TRACE home" className="flex shrink-0 items-center gap-3 group">
           <div className="bezel p-1 group-hover:shadow-lift transition-shadow duration-500 ease-fluid">
             <div className="bezel-core grid place-items-center w-8 h-8
                             bg-gradient-to-br from-l1-50 to-white">
@@ -559,14 +567,63 @@ export default function App() {
             <div className="font-display text-[15px] font-extrabold text-slate-900 tracking-[-0.02em]">
               <span className="text-l1-500">TRACE</span> Watermark
             </div>
-            <div className="text-[9px] text-slate-400 mt-1 tracking-wide">
+            <div className="hidden 2xl:block text-[9px] text-slate-400 mt-1 tracking-wide">
               {t('appSub')}
             </div>
           </div>
         </a>
 
+        {/* Global menu: product home, domain scenarios, and narrative attacks.
+            Internal benchmark names stay in the code; visitors see plain English. */}
+        <nav className="ml-4 flex items-center gap-1 rounded-xl bg-slate-100/80 p-1
+                        ring-1 ring-slate-900/[0.05]" aria-label="Primary navigation">
+          <button onClick={() => navigate('/')}
+            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5
+                       text-[10.5px] font-semibold text-slate-500 transition-colors
+                       hover:bg-white hover:text-slate-800 hover:shadow-sm">
+            <Home size={12} /> Home
+          </button>
+
+          <div className="mx-0.5 h-5 w-px bg-slate-200" />
+          <span className="px-1 text-[8.5px] font-bold uppercase tracking-[.14em] text-slate-400">
+            Scenarios
+          </span>
+          <button onClick={() => chooseScenario('alfworld')} disabled={running}
+            title="Everyday household tasks used in the paper benchmark"
+            className={[
+              'inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[10.5px]',
+              'font-semibold ring-1 transition-all disabled:cursor-not-allowed disabled:opacity-50',
+              scenario === 'alfworld'
+                ? 'bg-white text-l1-700 ring-l1-200 shadow-sm'
+                : 'bg-transparent text-slate-500 ring-transparent hover:bg-white hover:text-slate-800',
+            ].join(' ')}>
+            <House size={12} /> Household Tasks
+          </button>
+          <button onClick={() => chooseScenario('hse')} disabled={running}
+            title="HSE permits, industrial safety, and environmental compliance"
+            className={[
+              'inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[10.5px]',
+              'font-semibold ring-1 transition-all disabled:cursor-not-allowed disabled:opacity-50',
+              scenario === 'hse'
+                ? 'bg-white text-amber-700 ring-amber-200 shadow-sm'
+                : 'bg-transparent text-slate-500 ring-transparent hover:bg-white hover:text-slate-800',
+            ].join(' ')}>
+            <Factory size={12} /> Industrial Safety (HSE)
+          </button>
+
+          <div className="mx-0.5 h-5 w-px bg-slate-200" />
+          <button onClick={() => navigate('/across-domains')}
+            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5
+                       text-[10.5px] font-semibold text-rose-600 transition-colors
+                       hover:bg-white hover:text-rose-700 hover:shadow-sm">
+            <BookOpen size={12} /> General Attack Scenarios
+          </button>
+        </nav>
+
+        <div className="flex-1 min-w-2" />
+
         <span className={[
-          'chip ml-2 ring-1',
+          'chip ring-1 shrink-0',
           mode === 'live' ? 'bg-emerald-50 text-emerald-700 ring-emerald-200'
             : 'bg-slate-100 text-slate-600 ring-slate-200',
         ].join(' ')}>
@@ -574,11 +631,6 @@ export default function App() {
             ? <><Radio size={10} className="animate-pulse" /> {t('live')}</>
             : <><WifiOff size={10} /> {t('offline')}</>}
         </span>
-        <span className="chip bg-slate-100/70 text-slate-500 ring-1 ring-slate-200/70">
-          {t('realtimeNote')}
-        </span>
-
-        <div className="flex-1" />
 
         {/* guided view for partners / expert dashboard for engineers */}
         <div className="flex rounded-full bg-slate-100/80 ring-1 ring-slate-900/[0.04] p-0.5">
@@ -597,7 +649,7 @@ export default function App() {
         {/* key calibration: real key pair vs wrong key pair, nothing in between
             (expert dashboard only; guided view keeps it in technical details) */}
         {view === 'expert' && (
-        <div className="flex items-center gap-2.5">
+        <div className="hidden 2xl:flex items-center gap-2.5">
           <KeyRound size={12} className="text-slate-400" />
           <div className="flex rounded-full bg-slate-100/80 ring-1 ring-slate-900/[0.04] p-0.5">
             {(['right', 'wrong'] as const).map((m) => (
@@ -687,20 +739,6 @@ export default function App() {
 
             {mode === 'offline' && (
               <>
-                <div className="flex gap-1">
-                  {(['alfworld', 'hse'] as const).map((s) => (
-                    <button key={s} onClick={() => { if (!running) setScenario(s) }}
-                      disabled={running}
-                      title={t(s === 'hse' ? 'sc_hse_h' : 'sc_alfworld_h')}
-                      className={[
-                        'rounded-lg px-2.5 py-1.5 text-[11px] font-semibold ring-1 transition-colors disabled:opacity-50',
-                        scenario === s ? 'bg-l1-50 text-l1-700 ring-l1-200'
-                          : 'bg-white text-slate-500 ring-slate-200 hover:text-slate-700',
-                      ].join(' ')}>
-                      {t(s === 'hse' ? 'sc_hse' : 'sc_alfworld')}
-                    </button>
-                  ))}
-                </div>
                 <select value={gameId} onChange={(e) => setGameId(e.target.value)}
                   className="rounded-lg bg-slate-50 px-2 py-1.5 text-[11.5px] max-w-[22rem]
                              ring-1 ring-slate-200 outline-none focus:ring-l1-400">
@@ -763,7 +801,7 @@ export default function App() {
             finished={runFinished}
             detected={!!detect && (detect.layer1.z > (health?.tau ?? 2) || detect.layer2.z > (health?.tau ?? 2))}
             z1={detect?.layer1.z ?? 0} z2={detect?.layer2.z ?? 0}
-            tau={health?.tau ?? 2} attacked={rows.length > 0} />
+            tau={health?.tau ?? 2} attacked={rows.length > 0} hse={scenario === 'hse'} />
 
           {/* scene + plain-language panels */}
           <div className="grid grid-cols-[minmax(0,1fr)_21rem] gap-3 items-start">
@@ -827,7 +865,8 @@ export default function App() {
                 live={mode === 'live' && !!health?.live}
                 onAttack={runAttack}
                 attacked={rows.length > 0}
-                detected={!!detect && (detect.layer1.z > (health?.tau ?? 2) || detect.layer2.z > (health?.tau ?? 2))} />
+                detected={!!detect && (detect.layer1.z > (health?.tau ?? 2) || detect.layer2.z > (health?.tau ?? 2))}
+                hse={scenario === 'hse'} />
               <div className="flex gap-2">
                 <button onClick={() => navigate('/compare')}
                   className="flex-1 card px-3 py-2 text-left text-[11px] font-semibold text-l1-700
@@ -891,7 +930,8 @@ export default function App() {
                 </div>
                 <AttackPanel attacks={health?.attacks ?? []} rate={rate} setRate={setRate}
                   onAttack={runAttack} onMatrix={runMatrix} rows={rows} busy={busy}
-                  tau={health?.tau ?? 2} live={mode === 'live' && !!health?.live} />
+                  tau={health?.tau ?? 2} live={mode === 'live' && !!health?.live}
+                  hse={scenario === 'hse'} />
               </div>
               {groups.length > 0 && (
                 <div ref={feedRef}
@@ -964,32 +1004,6 @@ export default function App() {
               </>
             ) : (
               <>
-                {/* scenario switch: which domain the bundle replays */}
-                <div className="mb-2">
-                  <div className="text-[9px] font-semibold text-slate-400 mb-1 tracking-wide">
-                    {t('scenario')}
-                  </div>
-                  <div className="flex gap-1">
-                    {(['alfworld', 'hse'] as const).map((s) => (
-                      <button key={s} onClick={() => { if (!running) setScenario(s) }}
-                        disabled={running}
-                        title={t(s === 'hse' ? 'sc_hse_h' : 'sc_alfworld_h')}
-                        className={[
-                          'flex-1 rounded-lg px-2 py-1.5 text-[11px] font-semibold',
-                          'ring-1 transition-colors disabled:opacity-50',
-                          scenario === s
-                            ? 'bg-l1-50 text-l1-700 ring-l1-200'
-                            : 'bg-white text-slate-500 ring-slate-200 hover:text-slate-700',
-                        ].join(' ')}>
-                        {t(s === 'hse' ? 'sc_hse' : 'sc_alfworld')}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="text-[9px] text-slate-400 mt-1 leading-snug">
-                    {t(scenario === 'hse' ? 'sc_hse_h' : 'sc_alfworld_h')}
-                  </div>
-                </div>
-
                 <div className="text-[10px] font-semibold text-slate-500 mb-1.5 tracking-wide">
                   {t('offlineHint', { n: scenarioReplays.length })}
                 </div>
@@ -1045,7 +1059,9 @@ export default function App() {
 
           <div className="card p-2 flex items-start gap-1.5 text-[10px] text-slate-400">
             <ShieldCheck size={12} className="text-emerald-500 shrink-0 mt-0.5" />
-            {t('robustPath')}
+            {scenario === 'hse'
+              ? 'detection reads the executed stream · candidate sets come from the per-group record, which cannot be edited after the fact'
+              : t('robustPath')}
           </div>
 
           {/* The question the demo itself cannot answer: what would this run have
@@ -1163,7 +1179,8 @@ export default function App() {
           {/* LLM-backed attacks need the relay -- off in offline mode */}
           <AttackPanel attacks={health?.attacks ?? []} rate={rate} setRate={setRate}
             onAttack={runAttack} onMatrix={runMatrix} rows={rows} busy={busy}
-            tau={health?.tau ?? 2} live={mode === 'live' && !!health?.live} />
+            tau={health?.tau ?? 2} live={mode === 'live' && !!health?.live}
+            hse={scenario === 'hse'} />
         </div>
       </div>
       )}

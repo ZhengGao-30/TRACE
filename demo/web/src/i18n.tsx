@@ -10,7 +10,7 @@ import type { ReactNode } from 'react'
 const DICT = {
   // --- shell -------------------------------------------------------------
   appName: 'TRACE',
-  appSub: 'Two-Channel Robust Attribution Watermark · distortion-free · ALFWorld',
+  appSub: 'Two-Channel Robust Attribution Watermark · distortion-free',
   paperTitle: 'TRACE: A Two-Channel Robust Attribution Watermark via Complementary Embeddings for LLM-Agent Trajectories',
   live: 'LIVE · running now',
   offline: 'OFFLINE · replaying a logged run',
@@ -34,7 +34,7 @@ const DICT = {
   // --- task picker -------------------------------------------------------
   modeLive: 'Live',
   modeOffline: 'Offline',
-  liveHint: 'ALFWorld games · {n} local · real LLM calls',
+  liveHint: 'Household task games · {n} local · real LLM calls',
   offlineHint: 'Logged real trajectories · {n} · no LLM calls',
   startLive: 'Run live',
   startReplay: 'Start replay',
@@ -99,7 +99,7 @@ const DICT = {
 
   // --- mobile gate -------------------------------------------------------
   mobileTitle: 'The interactive demo is built for desktop',
-  mobileBody: 'The live trajectory, 3D room and attack panels need a wider screen. Open this page on a computer for the full demo. The project site itself reads fine on mobile.',
+  mobileBody: 'The live trajectory, 3D room and interactive panels need a wider screen. Open this page on a computer for the full demo. The project site itself reads fine on mobile.',
   mobileBack: '← Back to the project site',
   menu: 'Menu',
 
@@ -122,10 +122,10 @@ const DICT = {
   docketLegend: 'blocks = records in that step · the tally channel',
   recordClosed: 'record closed',
   scenario: 'Scenario',
-  sc_alfworld: 'ALFWorld',
-  sc_alfworld_h: 'household benchmark, as run in the paper',
-  sc_hse: 'HSE',
-  sc_hse_h: 'permit-to-work & environmental compliance',
+  sc_alfworld: 'Household Tasks',
+  sc_alfworld_h: 'everyday household tasks used in the paper benchmark',
+  sc_hse: 'Industrial Safety (HSE)',
+  sc_hse_h: 'HSE permits, industrial safety & environmental compliance',
 
   // --- room HUD ----------------------------------------------------------
   standby: 'standby…',
