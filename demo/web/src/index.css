@@ -79,3 +79,102 @@ body::before {
     transition-duration: 0.001ms !important;
   }
 }
+
+/* General Attack Lab — cinematic chapter language, translated into TRACE's
+   indigo/violet system rather than borrowing the reference site's palette. */
+.general-attack-page {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(80rem 52rem at 82% -12%, rgba(99, 102, 241, 0.16), transparent 62%),
+    radial-gradient(68rem 48rem at -8% 88%, rgba(139, 92, 246, 0.11), transparent 62%),
+    #070815;
+}
+
+.general-attack-page > main {
+  position: relative;
+  z-index: 2;
+}
+
+.general-attack-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.18;
+  background-image:
+    linear-gradient(rgba(199, 210, 254, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(199, 210, 254, 0.055) 1px, transparent 1px);
+  background-size: 84px 84px;
+  mask-image: radial-gradient(circle at 50% 42%, black, transparent 78%);
+  -webkit-mask-image: radial-gradient(circle at 50% 42%, black, transparent 78%);
+}
+
+.general-attack-page::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: var(--grain);
+  mix-blend-mode: screen;
+}
+
+.general-attack-ambient {
+  position: fixed;
+  z-index: 0;
+  top: -28rem;
+  left: 50%;
+  width: min(92vw, 90rem);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  pointer-events: none;
+  transform: translateX(-50%);
+  background: conic-gradient(from 205deg,
+    rgba(99, 102, 241, 0.2),
+    rgba(139, 92, 246, 0.04),
+    rgba(129, 140, 248, 0.2),
+    rgba(99, 102, 241, 0.2));
+  filter: blur(90px);
+  animation: generalAttackDrift 18s ease-in-out infinite alternate;
+}
+
+.general-attack-cursor-light {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    28rem circle at var(--attack-pointer-x, 72vw) var(--attack-pointer-y, 30vh),
+    rgba(129, 140, 248, 0.12),
+    rgba(139, 92, 246, 0.035) 36%,
+    transparent 72%
+  );
+  mix-blend-mode: screen;
+}
+
+.general-attack-card-media {
+  animation: generalAttackMediaDrift 9s cubic-bezier(0.32, 0.72, 0, 1) infinite alternate;
+  will-change: transform;
+}
+
+@keyframes generalAttackDrift {
+  from { transform: translateX(-50%) rotate(-7deg) scale(0.94); opacity: 0.66; }
+  to { transform: translateX(-50%) rotate(8deg) scale(1.08); opacity: 0.92; }
+}
+
+@keyframes generalAttackMediaDrift {
+  from { transform: scale(1.012) translate3d(-0.35%, 0.35%, 0); }
+  to { transform: scale(1.045) translate3d(0.45%, -0.4%, 0); }
+}
+
+@media (max-width: 640px) {
+  .general-attack-page::before { background-size: 54px 54px; opacity: 0.12; }
+  .general-attack-ambient { top: -14rem; width: 125vw; }
+}
+
+@media (pointer: coarse) {
+  .general-attack-cursor-light { display: none; }
+}
