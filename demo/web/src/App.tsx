@@ -22,6 +22,8 @@ import DetectPanel from './components/DetectPanel'
 import AttackPanel from './components/AttackPanel'
 import RoomLegend from './components/RoomLegend'
 import WorkflowStrip from './components/WorkflowStrip'
+import PairedWorkflowStrip from './components/PairedWorkflowStrip'
+import type { PairedWorkflowData } from './components/PairedWorkflowStrip'
 import GuidedRace from './components/GuidedRace'
 import GuidedCompare from './components/GuidedCompare'
 import GuidedSkip from './components/GuidedSkip'
@@ -131,6 +133,25 @@ export default function App() {
   const [showSkip, setShowSkip] = useState(false)
   // bumped when the offline preview bundle loads, so the workflow strip recomputes
   const [previewTick, setPreviewTick] = useState(0)
+  // HSE replays have a real paired baseline run. It wraps the shared workflow
+  // with TRACE actions above and ordinary unwatermarked actions below.
+  const [pairedWorkflow, setPairedWorkflow] = useState<PairedWorkflowData | null>(null)
+
+  useEffect(() => {
+    if (scenario !== 'hse' || !gameId) {
+      setPairedWorkflow(null)
+      return
+    }
+    let dead = false
+    fetch(asset(`static/compare/${gameId}.json`), { cache: 'no-cache' })
+      .then((response) => {
+        if (!response.ok) throw new Error(`paired trajectory ${response.status}`)
+        return response.json()
+      })
+      .then((data: PairedWorkflowData) => { if (!dead) setPairedWorkflow(data) })
+      .catch(() => { if (!dead) setPairedWorkflow(null) })
+    return () => { dead = true }
+  }, [scenario, gameId])
 
   // The workflow strip: offline replays know every action up front (the static
   // bundle is loaded before the first event streams); live runs grow the strip
@@ -789,9 +810,15 @@ export default function App() {
 
           {/* workflow strip */}
           {workflow.length > 0 && (
-            <WorkflowStrip phases={workflow} current={current} running={running}
-                           expanded={expanded}
-                           onToggle={(id) => setExpandedPhase(id === expanded ? '' : id)} />
+            pairedWorkflow ? (
+              <PairedWorkflowStrip phases={workflow} pair={pairedWorkflow}
+                current={current} running={running} expanded={expanded}
+                onToggle={(id) => setExpandedPhase(id === expanded ? '' : id)} />
+            ) : (
+              <WorkflowStrip phases={workflow} current={current} running={running}
+                expanded={expanded}
+                onToggle={(id) => setExpandedPhase(id === expanded ? '' : id)} />
+            )
           )}
 
           {/* status banner */}
