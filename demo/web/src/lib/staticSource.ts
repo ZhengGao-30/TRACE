@@ -64,17 +64,19 @@ function nearest<T extends { rate: number }>(list: T[] | undefined, rate: number
 export function staticAttack(g: StaticGame, kind: string, rate: number) {
   const before = g.detect.right
   const pick = nearest(g.attacks[kind], rate)
+  if (!pick) throw new Error('No recorded evaluation exists for this attack.')
   return {
     attack: kind,
-    rate: pick ? pick.rate : rate,
+    rate: pick.rate,
     before,
-    after: pick ? pick.after : before,
-    surviving_groups: pick ? pick.surviving_groups : 0,
+    after: pick.after,
+    surviving_groups: pick.surviving_groups,
   }
 }
 
 /** Mirror of GET /api/matrix, served from the baked bundle. */
 export function staticMatrix(g: StaticGame, rate: number): MatrixRow[] {
   const pick = nearest(g.matrix, rate)
-  return pick ? pick.rows : []
+  if (!pick) throw new Error('No recorded attack matrix exists for this run.')
+  return pick.rows
 }

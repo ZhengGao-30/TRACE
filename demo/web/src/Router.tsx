@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react'
 import App from './App'
 import Landing from './site/Landing'
-import AttackStory from './story/AttackStory'
-import ComparePage from './story/ComparePage'
-import Reel from './story/Reel'
 import AcrossDomains from './story/AcrossDomains'
 
 /** Minimal hash router — deploys anywhere (GitHub Pages friendly), zero deps. */
 function useHashRoute() {
-  const [route, setRoute] = useState(() => window.location.hash.replace(/^#/, '') || '/')
+  const [route, setRoute] = useState(() => ({ path: window.location.hash.replace(/^#/, '') || '/', revision: 0 }))
   useEffect(() => {
-    const on = () => setRoute(window.location.hash.replace(/^#/, '') || '/')
+    // App's in-place case selection uses replaceState. Count actual navigation
+    // events too, even when the next hash equals an earlier hook snapshot.
+    const on = () => setRoute(previous => ({ path: window.location.hash.replace(/^#/, '') || '/', revision: previous.revision + 1 }))
     window.addEventListener('hashchange', on)
     return () => window.removeEventListener('hashchange', on)
   }, [])
@@ -23,10 +22,8 @@ export function navigate(to: string) {
 }
 
 export default function Router() {
-  const route = useHashRoute()
+  const { path: hash, revision } = useHashRoute()
+  const route = hash.split('?')[0]
   if (route.startsWith('/across-domains')) return <AcrossDomains />
-  if (route.startsWith('/threat')) return <Reel />
-  if (route.startsWith('/compare')) return <ComparePage />
-  if (route.startsWith('/attack')) return <AttackStory />
-  return route.startsWith('/demo') ? <App /> : <Landing />
+  return route.startsWith('/demo') ? <App key={`${revision}:${hash}`} /> : <Landing />
 }

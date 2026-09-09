@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   Play, KeyRound, Radio, ShieldCheck, Loader2, WifiOff, Gauge, ArrowDown,
-  Columns2, ArrowRight, Scissors, Home, House, Factory, BookOpen,
+  Home, House, Factory, BookOpen,
 } from 'lucide-react'
 import { navigate } from './Router'
 import { api, subscribe, API_BASE } from './api'
@@ -13,9 +13,9 @@ import {
 import type { StaticGame } from './lib/staticSource'
 import VoxelRoom from './three/VoxelRoom'
 import type { SceneState } from './three/VoxelRoom'
-import HseSite from './three/HseSite'
-import type { HseSceneState } from './three/HseSite'
-import { siteFor, stationFor } from './lib/hseSite'
+import ConstructionReviewScene from './components/ConstructionReviewScene'
+import ConstructionWorkflowPending from './components/ConstructionWorkflowPending'
+import EntryAttributionPanel from './components/EntryAttributionPanel'
 import GroupCard from './components/GroupCard'
 import type { GroupView } from './components/GroupCard'
 import DetectPanel from './components/DetectPanel'
@@ -25,14 +25,60 @@ import WorkflowStrip from './components/WorkflowStrip'
 import PairedWorkflowStrip from './components/PairedWorkflowStrip'
 import type { PairedWorkflowData } from './components/PairedWorkflowStrip'
 import GuidedRace from './components/GuidedRace'
-import GuidedCompare from './components/GuidedCompare'
-import GuidedSkip from './components/GuidedSkip'
 import { GuidedBanner, GuidedDetect, GuidedAttack } from './components/GuidedPanels'
 import { buildWorkflow } from './lib/guidedSteps'
+import type { WorkflowAction } from './lib/guidedSteps'
 import Logo from './components/Logo'
 import { parseCommand } from './lib/room'
 import { useI18n } from './i18n'
 import { asset } from './lib/asset'
+import { CONSTRUCTION_CASES, constructionPolicyCopy } from './site/content'
+
+function demoOptions() {
+  return new URLSearchParams(window.location.hash.split('?')[1] ?? '')
+}
+
+function syncDemoAddress(scenario: 'alfworld' | 'hse', gameId: string) {
+  const url = new URL(window.location.href)
+  const params = demoOptions()
+  params.set('scenario', scenario)
+  if (gameId) {
+    const sample = scenario === 'hse' ? CONSTRUCTION_CASES.find((item) => item.gameId === gameId) : undefined
+    params.set('case', sample?.key ?? gameId)
+  } else params.delete('case')
+  url.hash = `/demo?${params.toString()}`
+  // Update refresh/share targets without firing hashchange or restarting a run.
+  window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`)
+}
+
+function replayOptions(rows: any[], scenario: 'alfworld' | 'hse'): any[] {
+  if (scenario !== 'hse') return rows.filter((row) => (row.scenario ?? 'alfworld') === scenario)
+  return CONSTRUCTION_CASES.map((sample) => {
+    const recorded = rows.find((row) => row.game_id === sample.gameId
+      && row.task_type === sample.taskType && (['api', 'codex_llm'].includes(constructionPolicyCopy(row).source ?? '')
+        || (constructionPolicyCopy(row).source === 'scenario_policy' && row.run_kind === 'controlled_fault_demo')))
+    return recorded ? { ...recorded, case_title: recorded.case_title ?? sample.title, previewOnly: false } : {
+      game_id: sample.gameId, case_title: sample.title, task_type: sample.taskType,
+      scenario: 'hse', previewOnly: true,
+    }
+  })
+}
+
+function replayOptionLabel(row: any, index: number): string {
+  if (row.previewOnly) return `${row.case_title} · 3D preview · agent run pending`
+  if (row.task_type === 'construction_ppe_shift') return `${row.case_title} · ${row.groups} steps · Controlled fault · ${constructionPolicyCopy(row).label}`
+  const title = row.task_type === 'construction_ppe_entry_check'
+    ? row.case_title ?? `Entry check · Sample ${index + 1}` : row.task_type.replaceAll('_', ' ')
+  if (row.task_type === 'construction_ppe_entry_check') return `${title} · ${row.groups} steps · ${constructionPolicyCopy(row).label}`
+  return `${row.success ? '✓' : '✗'} ${title} · ${row.groups} steps${row.policy_source === 'codex_llm' ? ' · Codex LLM replay' : ''}`
+}
+
+function constructionReplayNote(row: any): string {
+  const policy = constructionPolicyCopy(row)
+  return row?.task_type === 'construction_ppe_shift'
+    ? `Controlled fault demo · ${policy.label}. ${policy.detail} Injected controller actions and physical events are excluded from watermark detection; the fault is not a natural LLM failure. Recorded replay, not a live session.`
+    : `Recorded entry check · ${policy.label}. ${policy.detail} Recorded replay, not a live session.`
+}
 
 export default function App() {
   const { t } = useI18n()
@@ -63,14 +109,33 @@ export default function App() {
   const [mode, setMode] = useState<'live' | 'offline'>('offline')
   const [taskId, setTaskId] = useState(0)
   const [gameId, setGameId] = useState<string>('')
-  // Which domain the offline bundle is replaying. ALFWorld is the paper's
-  // benchmark; HSE are permit-to-work / compliance records, which need a
-  // different centre view (a record, not a room).
-  const [scenario, setScenario] = useState<'alfworld' | 'hse'>('alfworld')
+  // HSE replays the on-duty entry agent, then the resulting site event log.
+  const [scenario, setScenario] = useState<'alfworld' | 'hse'>(() => demoOptions().get('scenario') === 'hse' ? 'hse' : 'alfworld')
+  const scenarioReplays = useMemo(() => replayOptions(replays, scenario), [replays, scenario])
+  const selectedReplay = scenarioReplays.find((row) => row.game_id === gameId)
+  const constructionPreview = scenario === 'hse' && (!selectedReplay || selectedReplay.previewOnly)
+  const controlledShift = selectedReplay?.task_type === 'construction_ppe_shift'
+  const constructionSourceNote = constructionReplayNote(selectedReplay)
   function chooseScenario(next: 'alfworld' | 'hse') {
     if (running) return
+    if (next === scenario) { syncDemoAddress(next, gameId); return }
+    const nextId = replayOptions(replays, next)[0]?.game_id ?? ''
+    reset()
+    staticGame.current = null
+    setTask(null)
+    setGameId(nextId)
     setMode('offline')
     setScenario(next)
+    syncDemoAddress(next, nextId)
+  }
+  function chooseReplay(id: string) {
+    if (running) return
+    reset()
+    staticGame.current = null
+    setTask(null)
+    setPairedWorkflow(null)
+    setGameId(id)
+    syncDemoAddress(scenario, id)
   }
   const [speed, setSpeed] = useState(1)
   // presentation mode: collapse the timeline strip so the room fills the height
@@ -100,14 +165,17 @@ export default function App() {
   const [sid, setSid] = useState<string | null>(null)
   const [running, setRunning] = useState(false)
 
-  const [groups, setGroups] = useState<GroupView[]>([])
+  const [groups, setGroups] = useState<(GroupView & WorkflowAction)[]>([])
   const [scene, setScene] = useState<SceneState>({
     receptacles: [], visited: [], opened: [], step: 0,
   })
   const [task, setTask] = useState<{ desc: string; type: string } | null>(null)
-  // HSE centre view: the plant site the robot works, plus the record it builds.
-  const [hse, setHse] = useState<HseSceneState>({ visited: [], step: 0, lines: [] })
+  const [hse, setHse] = useState({ taskType: '', done: false, success: false })
   const [detect, setDetect] = useState<DetectResult | null>(null)
+  // The detector can show clean-key calibration or an attacked record. Keep
+  // the attack card's last evaluated outcome independent of that selection.
+  const [lastAttackResult, setLastAttackResult] = useState<DetectResult | null>(null)
+  const [detectTarget, setDetectTarget] = useState<'original' | 'attacked'>('original')
   const [curve, setCurve] = useState<{ groups: number; z1: number; z2: number }[]>([])
 
   // Key calibration is a two-way switch: the real key pair vs the wrong key
@@ -117,6 +185,7 @@ export default function App() {
   const [rate, setRate] = useState(0.3)
   const [rows, setRows] = useState<MatrixRow[]>([])
   const [busy, setBusy] = useState<string | null>(null)
+  const [instrumentError, setInstrumentError] = useState<string | null>(null)
   const feedRef = useRef<HTMLDivElement>(null)
 
   // Guided view (default): workflow strip + plain-language panels for
@@ -129,8 +198,6 @@ export default function App() {
   const [expandedPhase, setExpandedPhase] = useState<string | null>(null)
   const [showTech, setShowTech] = useState(false)
   const [showRace, setShowRace] = useState(false)
-  const [showCompare, setShowCompare] = useState(false)
-  const [showSkip, setShowSkip] = useState(false)
   // bumped when the offline preview bundle loads, so the workflow strip recomputes
   const [previewTick, setPreviewTick] = useState(0)
   // HSE replays have a real paired baseline run. It wraps the shared workflow
@@ -138,11 +205,12 @@ export default function App() {
   const [pairedWorkflow, setPairedWorkflow] = useState<PairedWorkflowData | null>(null)
 
   useEffect(() => {
-    if (scenario !== 'hse' || !gameId) {
+    if (scenario !== 'hse' || !gameId || constructionPreview) {
       setPairedWorkflow(null)
       return
     }
     let dead = false
+    setPairedWorkflow(null)
     fetch(asset(`static/compare/${gameId}.json`), { cache: 'no-cache' })
       .then((response) => {
         if (!response.ok) throw new Error(`paired trajectory ${response.status}`)
@@ -151,20 +219,22 @@ export default function App() {
       .then((data: PairedWorkflowData) => { if (!dead) setPairedWorkflow(data) })
       .catch(() => { if (!dead) setPairedWorkflow(null) })
     return () => { dead = true }
-  }, [scenario, gameId])
+  }, [scenario, gameId, constructionPreview])
 
   // The workflow strip: offline replays know every action up front (the static
   // bundle is loaded before the first event streams); live runs grow the strip
   // as decisions arrive.
   const workflow = useMemo(() => {
     const g = staticGame.current
-    const actions: string[] = g
-      ? g.events.filter((e: any) => e.kind === 'group').map((e: any) => String(e.chosen ?? ''))
-      : groups.map((x) => x.chosen ?? '')
-    const taskType = task?.type ?? (g?.summary as any)?.task_type
-    return buildWorkflow(actions, scenario, taskType)
+    const actions: WorkflowAction[] = g
+      ? g.events.filter((e: any) => e.kind === 'group')
+      : groups
+    const taskType = (g?.summary as any)?.task_type ?? task?.type
+    return buildWorkflow(actions, scenario, taskType, pairedWorkflow?.stages)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groups, gameId, scenario, task?.type, previewTick])
+  }, [groups, gameId, scenario, task?.type, previewTick, pairedWorkflow])
+
+  const constructionReview = scenario === 'hse'
 
   const current = groups.length - 1
   const activePhaseId = useMemo(() => {
@@ -182,6 +252,8 @@ export default function App() {
 
   // the race card follows the latest group that actually has a candidate draw
   const raceGroup = useMemo(() => {
+    const latest = groups[groups.length - 1]
+    if (latest?.event_kind === 'injected_action') return latest
     for (let i = groups.length - 1; i >= 0; i--) {
       if (groups[i].race?.length) return groups[i]
     }
@@ -193,16 +265,13 @@ export default function App() {
     return s?.label ?? null
   }, [raceGroup, workflow])
 
-  // The picker only ever lists jobs from the selected scenario; rows baked
-  // before scenarios existed are ALFWorld by default.
-  const scenarioReplays = useMemo(
-    () => replays.filter((r) => (r.scenario ?? 'alfworld') === scenario),
-    [replays, scenario])
-
   useEffect(() => {
     if (!scenarioReplays.length) return
     if (!scenarioReplays.some((r) => r.game_id === gameId)) {
-      setGameId(scenarioReplays[0].game_id)
+      const requested = demoOptions().get('case')
+      const requestedId = CONSTRUCTION_CASES.find((sample) => sample.key === requested)?.gameId
+      const selected = requested ? scenarioReplays.find((r) => r.game_id === (requestedId ?? requested) || r.game_id.includes(`-${requested}-`)) : null
+      setGameId((selected ?? scenarioReplays[0]).game_id)
     }
   }, [scenarioReplays, gameId])
 
@@ -215,7 +284,11 @@ export default function App() {
       manifest = await loadStaticManifest()
       setStaticMode(true)
       setReplays(manifest.games)
-      if (manifest.games.length) setGameId(manifest.games[0].game_id)
+      const available = replayOptions(manifest.games, scenario)
+      const requested = demoOptions().get('case')
+      const requestedId = CONSTRUCTION_CASES.find((sample) => sample.key === requested)?.gameId
+      const selected = requested ? available.find((row) => row.game_id === (requestedId ?? requested) || row.game_id.includes(`-${requested}-`)) : null
+      setGameId((selected ?? available[0])?.game_id ?? '')
     } catch { /* no bundle deployed */ }
 
     // Probe with a timeout so a hung localhost:8000 (possible on a stranger's
@@ -227,7 +300,7 @@ export default function App() {
       setHealth(h)
       setConnErr(false)
       if (h.live) {
-        setMode('live')
+        setMode(scenario === 'hse' ? 'offline' : 'live')
         api.games().then((g) => setGames(g.games)).catch(() => {})
       }
     } catch {
@@ -246,16 +319,18 @@ export default function App() {
   // and its phases are visible BEFORE the visitor presses start. This only
   // fills staticGame (the preview source); start() still loads it again.
   useEffect(() => {
-    if (mode !== 'offline' || !staticMode || !gameId || running || groups.length > 0) return
+    if (mode !== 'offline' || !staticMode || !gameId || constructionPreview || running || groups.length > 0) return
     let dead = false
     loadStaticGame(gameId).then((g) => {
       if (dead) return
       staticGame.current = g
+      if (g.summary?.query) setTask({ desc: g.summary.query, type: g.summary.task_type })
+      if (scenario === 'hse') setHse((previous) => ({ ...previous, taskType: g.summary?.task_type }))
       setPreviewTick((n) => n + 1)
     }).catch(() => {})
     return () => { dead = true }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameId, staticMode, mode])
+  }, [gameId, staticMode, mode, constructionPreview])
 
   // Remote viewer path: paste the presenter's public tunnel URL and reconnect.
   // Writing ?api=<url> makes resolveApiBase pick it up and persist it.
@@ -306,18 +381,62 @@ export default function App() {
   }
 
   function reset() {
+    reviewGeneration.current += 1
+    sessionUnsubscribe.current?.()
+    sessionUnsubscribe.current = null
     setGroups([]); setDetect(null); setCurve([]); setRows([])
+    setLastAttackResult(null); setDetectTarget('original')
+    setSid(null)
+    setKeyMode('right'); setBusy(null); setInstrumentError(null)
+    setRunning(false)
+    sessionStatic.current = false
     setFollow(false); setUnseen(0); setExpandedPhase(null)
     moveQ.current = []; walking.current = false
+    queue.current = []
+    if (timer.current != null) { window.clearInterval(timer.current); timer.current = null }
+    if (watchdog.current != null) { window.clearTimeout(watchdog.current); watchdog.current = null }
+    if (reviewWatchdog.current != null) { window.clearTimeout(reviewWatchdog.current); reviewWatchdog.current = null }
+    reviewPending.current = null
+    setReviewEpoch(reviewGeneration.current)
     setScene({ receptacles: [], visited: [], opened: [], step: 0 })
-    setHse((h) => ({ ...h, command: undefined, confirm: false, step: 0,
-                     visited: [], lines: [], done: false, success: false }))
+    setHse((h) => ({ ...h, done: false, success: false }))
   }
 
   // Offline replay arrives as one instant burst; pace it out so the room
   // animation reads like a real run. Live events are already paced by the LLM.
   const queue = useRef<any[]>([])
   const timer = useRef<number | null>(null)
+  const reviewGeneration = useRef(0)
+  const sessionUnsubscribe = useRef<(() => void) | null>(null)
+  const [reviewEpoch, setReviewEpoch] = useState(0)
+  const reviewPending = useRef<{ step: number; generation: number } | null>(null)
+  const reviewWatchdog = useRef<number | null>(null)
+
+  function releaseReviewStep(step: number, generation: number) {
+    const pending = reviewPending.current
+    if (!pending || pending.step !== step || pending.generation !== generation
+      || reviewGeneration.current !== generation) return
+    reviewPending.current = null
+    if (reviewWatchdog.current != null) { window.clearTimeout(reviewWatchdog.current); reviewWatchdog.current = null }
+  }
+
+  // Bind the callback to this run's generation. A late completion from a prior
+  // scene cannot release a same-numbered action in the newly selected run.
+  const onReviewActionComplete = useCallback((step: number) => {
+    releaseReviewStep(step, reviewEpoch)
+  }, [reviewEpoch])
+
+  function beginReviewStep(step: number) {
+    const generation = reviewGeneration.current
+    reviewPending.current = { step, generation }
+    if (reviewWatchdog.current != null) window.clearTimeout(reviewWatchdog.current)
+    // Covers the longest cross-site walk at the slowest supported speed, even
+    // if the visitor reduces speed while the current action is in progress.
+    // The fallback also releases replay if requestAnimationFrame pauses in a
+    // background tab or the canvas is unavailable.
+    reviewWatchdog.current = window.setTimeout(
+      () => releaseReviewStep(step, generation), 75000)
+  }
 
   // The ROOM paces the demo, not a stopwatch: every executed command goes into
   // this queue and the next one is only applied once the character has actually
@@ -353,19 +472,28 @@ export default function App() {
     timer.current = window.setInterval(() => {
       // stay in step with the room: don't run more than a couple of groups ahead
       if (moveQ.current.length > 2) return
+      const next = queue.current[0]
+      if (reviewPending.current && next && ['group', 'task_done', 'eof'].includes(next.kind)) return
       const e = queue.current.shift()
       if (!e) { window.clearInterval(timer.current!); timer.current = null; return }
       handle(e)
-    }, Math.max(50, 320 / speed))
+    }, Math.max(50, (scenario === 'hse' ? 120 : 320) / speed))
   }
 
   useEffect(() => () => {
+    reviewGeneration.current += 1
+    sessionUnsubscribe.current?.()
+    sessionUnsubscribe.current = null
     if (timer.current != null) window.clearInterval(timer.current)
     if (watchdog.current != null) window.clearTimeout(watchdog.current)
+    if (reviewWatchdog.current != null) window.clearTimeout(reviewWatchdog.current)
+    reviewPending.current = null
   }, [])
 
   async function start() {
+    if (constructionPreview) return
     reset(); setRunning(true)
+    const generation = reviewGeneration.current
     queue.current = []
     moveQ.current = []; walking.current = false
     if (timer.current != null) { window.clearInterval(timer.current); timer.current = null }
@@ -377,12 +505,14 @@ export default function App() {
     if (mode === 'offline' && staticMode) {
       try {
         const g = await loadStaticGame(gameId)
+        if (reviewGeneration.current !== generation) return
         staticGame.current = g
         sessionStatic.current = true
         setSid('static:' + gameId)
         g.events.forEach((e) => queue.current.push(e))
         drain()
       } catch {
+        if (reviewGeneration.current !== generation) return
         setRunning(false)
       }
       return
@@ -390,14 +520,23 @@ export default function App() {
 
     // LIVE (or offline with a backend but no bundle) goes through the backend.
     sessionStatic.current = false
-    const { session_id } = await api.run(
-      mode === 'live'
-        ? { task_id: taskId, arm: 'wm', mode: 'live' }
-        : { mode: 'replay', game_id: gameId })
-    setSid(session_id)
-    subscribe(session_id, (e) => {
-      if (mode === 'offline') { queue.current.push(e); drain() } else handle(e)
-    })
+    try {
+      const { session_id } = await api.run(
+        mode === 'live'
+          ? { task_id: taskId, arm: 'wm', mode: 'live' }
+          : { mode: 'replay', game_id: gameId })
+      if (reviewGeneration.current !== generation) return
+      setSid(session_id)
+      const unsubscribe = subscribe(session_id, (e) => {
+        if (reviewGeneration.current !== generation) return
+        if (mode === 'offline') { queue.current.push(e); drain() } else handle(e)
+      })
+      if (reviewGeneration.current !== generation) unsubscribe()
+      else sessionUnsubscribe.current = unsubscribe
+    } catch {
+      if (reviewGeneration.current !== generation) return
+      setRunning(false)
+    }
   }
 
   function handle(e: any) {
@@ -406,27 +545,25 @@ export default function App() {
       case 'task_start':
         setTask({ desc: e.query, type: e.task_type })
         setScene((s) => ({ ...s, receptacles: e.receptacles ?? [] }))
-        setHse((h) => ({ ...h, taskType: e.task_type, visited: [], lines: [] }))
+        setHse({ taskType: e.task_type, done: false, success: false })
         break
       case 'group': {
+        if (scenario === 'hse' && !constructionPreview) beginReviewStep(e.i)
         setGroups((g) => [...g, {
-          i: e.i, window: e.window, chosen: e.chosen, race: e.race, phi: e.phi,
+          i: e.i, timestamp: e.timestamp, window: e.window, chosen: e.chosen, race: e.race, phi: e.phi,
           nCandidates: e.n_candidates, k: e.k, green: e.green, l2hit: e.l2_hit,
-          roundNum: e.round_num, phase: e.phase, result: e.result,
+          roundNum: e.round_num, phase: e.phase, stage_id: e.stage_id, label: e.label, result: e.result, evidence_ids: e.evidence_ids,
+          event_kind: e.event_kind, detector_eligible: e.detector_eligible, wm_index: e.wm_index,
+          policy_source: e.policy_source, station_id: e.station_id,
+          world_state_before: e.world_state_before, world_state_after: e.world_state_after,
+          world_events: e.world_events, fault: e.fault,
           observations: (e.observations ?? []).map((o: any) => ({
             command: o.cmd, text: o.text, confirm: o.confirm,
           })),
         }])
-        // Both scenes pace the replay the same way: every executed action is
-        // queued, and the next one is released once the character has walked to
-        // its station and finished the beat.
-        if (scenario === 'hse') {
-          setHse((h) => ({
-            ...h,
-            lines: [...h.lines, { i: e.i, chosen: e.chosen, k: e.k, phase: e.phase }],
-          }))
-        }
-        ;(e.observations ?? []).forEach((o: any) =>
+        // Construction waits for one completed robot movement/inspection per
+        // main action. Its extra L2 observation never starts another movement.
+        if (scenario !== 'hse') (e.observations ?? []).forEach((o: any) =>
           enqueueMove(o.cmd, e.i, o.confirm))
         break
       }
@@ -466,9 +603,10 @@ export default function App() {
           observations: [...x.observations,
             { command: e.command, text: e.observation, confirm: !!e.confirm }],
         } : x))
-        enqueueMove(e.command, e.i, !!e.confirm, !!e.done)
+        if (scenario !== 'hse') enqueueMove(e.command, e.i, !!e.confirm, !!e.done)
         break
       case 'detect':
+        setDetectTarget('original')
         setDetect(e)
         setCurve((c) => [...c, { groups: (e.i ?? 0) + 1, z1: e.layer1.z, z2: e.layer2.z }])
         break
@@ -482,20 +620,9 @@ export default function App() {
     }
   }
 
-  /** Drive the 3D scene from one executed command (room or HSE site). */
+  /** Drive the household 3D scene from one executed command. */
   function applyCommand(command: string, step: number, confirm: boolean, done = false) {
-    if (scenario === 'hse') {
-      setHse((h) => {
-        const site = siteFor(h.taskType)
-        const st = site ? stationFor(site, command) : undefined
-        return {
-          ...h, command, confirm, step,
-          visited: st && !h.visited.includes(st.id) ? [...h.visited, st.id] : h.visited,
-          done: done || h.done,
-        }
-      })
-      return
-    }
+    if (scenario === 'hse') return
     const p = parseCommand(command)
     setScene((s) => {
       const visited = p.target && !s.visited.includes(p.target)
@@ -512,26 +639,39 @@ export default function App() {
   }
 
   async function switchKey(mode: 'right' | 'wrong') {
-    setKeyMode(mode)
-    if (!sid || !health) return
-    if (sessionStatic.current) {
-      const g = staticGame.current
-      if (g) setDetect(mode === 'right' ? g.detect.right : g.detect.wrong)
-      return
+    if (!sid || !health || running || busy || !groups.length || constructionPreview) return
+    if (sessionStatic.current && !staticGame.current) return
+    const generation = reviewGeneration.current
+    setBusy('__key'); setInstrumentError(null)
+    try {
+      const k = health.keys
+      const result = sessionStatic.current
+        ? (mode === 'right' ? staticGame.current!.detect.right : staticGame.current!.detect.wrong)
+        : await api.detect(sid,
+          mode === 'right' ? k.key1 : k.wrong_key1,
+          mode === 'right' ? k.key2 : k.wrong_key2)
+      if (reviewGeneration.current !== generation) return
+      setKeyMode(mode); setDetectTarget('original'); setDetect(result)
+    } catch {
+      if (reviewGeneration.current === generation) setInstrumentError('Key calibration could not be completed. The previous result has been kept.')
+    } finally {
+      if (reviewGeneration.current === generation) setBusy(null)
     }
-    const k = health.keys
-    setDetect(await api.detect(sid,
-      mode === 'right' ? k.key1 : k.wrong_key1,
-      mode === 'right' ? k.key2 : k.wrong_key2))
   }
 
   async function runAttack(kind: string) {
-    if (!sid) return
-    setBusy(kind)
+    if (!sid || running || busy || !groups.length || constructionPreview) return
+    if (sessionStatic.current && !staticGame.current) return
+    const generation = reviewGeneration.current
+    setBusy(kind); setInstrumentError(null)
     try {
-      const r = sessionStatic.current && staticGame.current
-        ? staticAttack(staticGame.current, kind, rate)
+      const r = sessionStatic.current
+        ? staticAttack(staticGame.current!, kind, rate)
         : await api.attack(sid, kind, rate)
+      if (reviewGeneration.current !== generation) return
+      setKeyMode('right')
+      setDetectTarget('attacked')
+      setLastAttackResult(r.after)
       setDetect(r.after)
       setRows((rs) => {
         const base = rs.length ? rs : [{
@@ -548,18 +688,29 @@ export default function App() {
         }
         return [...base.filter((x) => x.attack !== kind), row]
       })
-    } finally { setBusy(null) }
+    } catch {
+      if (reviewGeneration.current === generation) setInstrumentError('This attack could not be evaluated. No new result has been added.')
+    } finally {
+      if (reviewGeneration.current === generation) setBusy(null)
+    }
   }
 
   async function runMatrix() {
-    if (!sid) return
-    setBusy('__matrix')
+    if (!sid || running || busy || !groups.length || constructionPreview) return
+    if (sessionStatic.current && !staticGame.current) return
+    const generation = reviewGeneration.current
+    setBusy('__matrix'); setInstrumentError(null)
     try {
-      const rows = sessionStatic.current && staticGame.current
-        ? staticMatrix(staticGame.current, rate)
+      const rows = sessionStatic.current
+        ? staticMatrix(staticGame.current!, rate)
         : (await api.matrix(sid, rate)).rows
+      if (reviewGeneration.current !== generation) return
       setRows(rows)
-    } finally { setBusy(null) }
+    } catch {
+      if (reviewGeneration.current === generation) setInstrumentError('The attack matrix could not be evaluated. The previous results have been kept.')
+    } finally {
+      if (reviewGeneration.current === generation) setBusy(null)
+    }
   }
 
   const activeKeys = health
@@ -567,6 +718,50 @@ export default function App() {
         ? [health.keys.key1, health.keys.key2]
         : [health.keys.wrong_key1, health.keys.wrong_key2])
     : [0, 0]
+
+  const instrumentsLocked = !sid || running || groups.length === 0
+  const detectionContextText = `${detectTarget === 'attacked' ? 'Attacked record' : 'Original record'} · ${keyMode === 'right' ? 'correct keys' : 'wrong keys'}`
+  const detectionContext = detect ? (
+    <div className="px-1 text-[10px] font-semibold text-slate-500">Detector: {detectionContextText}</div>
+  ) : null
+  const keyCalibration = (
+    <div className="card p-2.5 flex flex-wrap items-center gap-2">
+      <KeyRound size={12} className="text-slate-400" />
+      <span className="text-[10px] font-semibold text-slate-500">Key calibration · original record</span>
+      <div className="flex rounded-full bg-slate-100/80 ring-1 ring-slate-900/[0.04] p-0.5">
+        {(['right', 'wrong'] as const).map((m) => (
+          <button key={m} onClick={() => switchKey(m)} disabled={instrumentsLocked || !!busy}
+            title={instrumentsLocked ? 'Available after a recorded run finishes.' : 'Check the original recorded run with this key pair.'}
+            className={[
+              'rounded-full px-3 py-1 text-[11px] font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed',
+              keyMode === m
+                ? (m === 'right' ? 'bg-white text-l1-700 shadow-sm' : 'bg-rose-500 text-white shadow-sm')
+                : 'text-slate-500 hover:text-slate-700',
+            ].join(' ')}>
+            {m === 'right' ? t('rightKey') : t('wrongKey')}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+
+  function renderInstruments(twoColumns: boolean) {
+    return (
+      <div className={twoColumns ? 'grid grid-cols-2 gap-3 items-start' : 'space-y-2'}>
+        <div className="space-y-2">
+          {keyCalibration}
+          {detectionContext}
+          <DetectPanel d={detect} curve={detectTarget === 'original' && keyMode === 'right' ? curve : []} />
+        </div>
+        <AttackPanel attacks={health?.attacks ?? []} rate={rate} setRate={setRate}
+          precomputedAttacks={constructionReview ? ['deletion', 'strip_redundant', 'semantic_rewrite'] : undefined}
+          locked={instrumentsLocked}
+          onAttack={runAttack} onMatrix={runMatrix} rows={rows} busy={busy}
+          tau={health?.tau ?? 2} live={mode === 'live' && !!health?.live}
+          hse={scenario === 'hse'} />
+      </div>
+    )
+  }
 
   if (narrow) return <MobileGate />
 
@@ -621,7 +816,7 @@ export default function App() {
             <House size={12} /> Household Tasks
           </button>
           <button onClick={() => chooseScenario('hse')} disabled={running}
-            title="HSE permits, industrial safety, and environmental compliance"
+            title="Entry decisions, site replay and record attribution"
             className={[
               'inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[10.5px]',
               'font-semibold ring-1 transition-all disabled:cursor-not-allowed disabled:opacity-50',
@@ -648,7 +843,9 @@ export default function App() {
           mode === 'live' ? 'bg-emerald-50 text-emerald-700 ring-emerald-200'
             : 'bg-slate-100 text-slate-600 ring-slate-200',
         ].join(' ')}>
-          {mode === 'live'
+          {constructionPreview
+            ? <><Factory size={10} /> 3D preview</>
+            : mode === 'live'
             ? <><Radio size={10} className="animate-pulse" /> {t('live')}</>
             : <><WifiOff size={10} /> {t('offline')}</>}
         </span>
@@ -674,7 +871,7 @@ export default function App() {
           <KeyRound size={12} className="text-slate-400" />
           <div className="flex rounded-full bg-slate-100/80 ring-1 ring-slate-900/[0.04] p-0.5">
             {(['right', 'wrong'] as const).map((m) => (
-              <button key={m} onClick={() => switchKey(m)} disabled={!sid}
+              <button key={m} onClick={() => switchKey(m)} disabled={instrumentsLocked || !!busy}
                 className={[
                   'rounded-full px-3 py-1 text-[11px] font-semibold',
                   'transition-all duration-500 ease-fluid active:scale-[0.97]',
@@ -682,7 +879,7 @@ export default function App() {
                     ? (m === 'right' ? 'bg-white text-l1-700 shadow-sm ring-1 ring-slate-900/[0.05]'
                                      : 'bg-rose-500 text-white shadow-sm')
                     : 'text-slate-500 hover:text-slate-700',
-                  !sid ? 'opacity-40 cursor-not-allowed' : '',
+                  instrumentsLocked || busy ? 'opacity-40 cursor-not-allowed' : '',
                 ].join(' ')}>
                 {m === 'right' ? t('rightKey') : t('wrongKey')}
               </button>
@@ -695,9 +892,11 @@ export default function App() {
         )}
       </header>
 
+      {instrumentError && <div role="alert" className="mx-3 mt-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-[12px] text-amber-800">{instrumentError}</div>}
+
       {/* backend unreachable: explain + let a remote viewer paste the presenter's
           public URL, instead of showing a silent empty page */}
-      {connErr && (
+      {connErr && !constructionPreview && (
         <div className="mx-3 mt-3 rounded-xl bg-amber-50 ring-1 ring-amber-200 px-4 py-3
                         flex items-start gap-3">
           <WifiOff size={16} className="mt-0.5 shrink-0 text-amber-600" />
@@ -741,11 +940,11 @@ export default function App() {
           {/* run controls: everything needed to start a replay, in one bar */}
           <div className="card px-3.5 py-2.5 flex items-center gap-3 flex-wrap">
             <div className="flex rounded-lg bg-slate-100 p-0.5">
-              <button onClick={() => setMode('live')} disabled={!health?.live || running}
+              <button onClick={() => setMode('live')} disabled={!health?.live || running || scenario === 'hse'}
                 className={[
                   'flex items-center gap-1 rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors',
                   mode === 'live' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700',
-                  !health?.live ? 'opacity-40 cursor-not-allowed' : '',
+                  !health?.live || scenario === 'hse' ? 'opacity-40 cursor-not-allowed' : '',
                 ].join(' ')}>
                 <Radio size={11} /> {t('modeLive')}
               </button>
@@ -754,18 +953,19 @@ export default function App() {
                   'flex items-center gap-1 rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors',
                   mode === 'offline' ? 'bg-white text-slate-700 shadow-sm' : 'text-slate-500 hover:text-slate-700',
                 ].join(' ')}>
-                <WifiOff size={11} /> {t('modeOffline')}
+                <WifiOff size={11} /> {constructionPreview ? '3D preview' : t('modeOffline')}
               </button>
             </div>
 
             {mode === 'offline' && (
               <>
-                <select value={gameId} onChange={(e) => setGameId(e.target.value)}
+                <select value={gameId} onChange={(e) => chooseReplay(e.target.value)} disabled={running}
                   className="rounded-lg bg-slate-50 px-2 py-1.5 text-[11.5px] max-w-[22rem]
                              ring-1 ring-slate-200 outline-none focus:ring-l1-400">
-                  {scenarioReplays.map((r) => (
+                  {!scenarioReplays.length && <option value="">No recorded LLM replay available yet</option>}
+                  {scenarioReplays.map((r, index) => (
                     <option key={r.game_id} value={r.game_id}>
-                      {r.success ? '✓' : '✗'} {r.task_type.replaceAll('_', ' ')} · {r.groups} steps
+                      {replayOptionLabel(r, index)}
                     </option>
                   ))}
                 </select>
@@ -790,14 +990,15 @@ export default function App() {
             )}
 
             <button onClick={start}
-              disabled={running || (mode === 'live' ? !health?.live : !gameId)}
+              disabled={running || constructionPreview || (mode === 'live' ? !health?.live : !gameId)}
+              title={constructionPreview ? 'A recorded LLM run is required before replaying agent actions.' : undefined}
               className="group flex items-center gap-2 rounded-full bg-l1-500 text-white
                          text-[12px] font-semibold pl-4 pr-3 py-1.5
                          shadow-[0_8px_20px_-8px_rgba(99,102,241,.6)]
                          transition-all duration-500 ease-fluid hover:bg-l1-700
                          active:scale-[0.98] disabled:opacity-40 disabled:shadow-none">
               {running ? <Loader2 size={13} className="animate-spin" /> : <Play size={13} />}
-              {running ? t('runningNow') : mode === 'live' ? t('startLive') : t('startReplay')}
+              {running ? t('runningNow') : constructionReview ? 'Start replay' : mode === 'live' ? t('startLive') : t('startReplay')}
             </button>
 
             {task && (
@@ -808,12 +1009,20 @@ export default function App() {
             )}
           </div>
 
+          {constructionPreview ? (
+            <div className="rounded-2xl border border-indigo-200 bg-indigo-50/60 px-4 py-3 text-[12px] leading-relaxed text-indigo-800">
+              <span className="font-semibold">3D preview · agent run pending.</span> Explore the entry-check scene. Recorded inspections, admission decisions and watermark scores appear only after a new pre-entry LLM run is available. The previous post-incident investigation records are not reused here.
+            </div>
+          ) : constructionReview && <div className="rounded-xl border border-indigo-100 bg-indigo-50/50 px-4 py-2 text-[11px] text-indigo-700">{constructionSourceNote}</div>}
+
           {/* workflow strip */}
+          {constructionPreview && <ConstructionWorkflowPending taskType={selectedReplay?.task_type} />}
           {workflow.length > 0 && (
             pairedWorkflow ? (
-              <PairedWorkflowStrip phases={workflow} pair={pairedWorkflow}
+              <PairedWorkflowStrip key={`${gameId}:${reviewEpoch}`} phases={workflow} pair={pairedWorkflow}
                 current={current} running={running} expanded={expanded}
-                onToggle={(id) => setExpandedPhase(id === expanded ? '' : id)} />
+                followReplay={expandedPhase === null} onFollow={() => setExpandedPhase(null)}
+                onToggle={(id) => setExpandedPhase(id)} />
             ) : (
               <WorkflowStrip phases={workflow} current={current} running={running}
                 expanded={expanded}
@@ -822,23 +1031,38 @@ export default function App() {
           )}
 
           {/* status banner */}
-          <GuidedBanner
+          {constructionPreview ? null : constructionReview ? (
+            <div className="card flex items-center gap-3 px-5 py-3.5">
+              <ShieldCheck size={23} className="shrink-0 text-indigo-500" />
+              <div>
+                <div className="text-[13px] font-extrabold text-slate-700">
+                  {controlledShift
+                    ? runFinished ? 'Duty record complete — inspect the outcome and source evidence below' : running ? 'Replaying the same robot’s duty shift' : 'Ready to replay the controlled duty shift'
+                    : runFinished ? 'Entry decision recorded — inspect the outcome below' : running ? 'Replaying the on-duty entry agent' : 'Ready to replay the entry check'}
+                </div>
+                <p className="mt-1 text-[11px] text-slate-500">
+                  {detect
+                    ? `${detectionContextText}: L1 z = ${detect.layer1.z.toFixed(2)} (n = ${detect.layer1.n}), L2 z = ${detect.layer2.z.toFixed(2)} (n = ${detect.layer2.n}); threshold ${health?.tau ?? 2}.`
+                    : controlledShift ? 'Inspect current evidence, retain the original recommendation, then follow the controller receipt and the robot’s observation/reporting duty. Unread evidence and future event details are withheld.'
+                      : 'Register the worker, inspect available observations, then assess and decide access. Executable actions are not automatically safe decisions.'}
+                </p>
+              </div>
+            </div>
+          ) : <GuidedBanner
             idle={groups.length === 0}
             running={running}
             finished={runFinished}
             detected={!!detect && (detect.layer1.z > (health?.tau ?? 2) || detect.layer2.z > (health?.tau ?? 2))}
             z1={detect?.layer1.z ?? 0} z2={detect?.layer2.z ?? 0}
-            tau={health?.tau ?? 2} attacked={rows.length > 0} hse={scenario === 'hse'} />
+            tau={health?.tau ?? 2} attacked={detectTarget === 'attacked'} />}
 
           {/* scene + plain-language panels */}
-          <div className="grid grid-cols-[minmax(0,1fr)_21rem] gap-3 items-start">
+          <div className={constructionReview ? 'space-y-3' : 'grid grid-cols-[minmax(0,1fr)_21rem] gap-3 items-start'}>
             <div className="relative">
-              <div className="bezel shadow-lift" style={{ height: roomH }}>
+              <div className="bezel shadow-lift" style={{ height: constructionReview ? Math.max(520, roomH) : roomH }}>
                 <div className="bezel-core h-full overflow-hidden">
                   {scenario === 'hse' ? (
-                    <HseSite s={hse} expanded={roomFocus} onArrive={onArrive}
-                             speed={mode === 'offline' ? speed : 1}
-                             onToggleExpand={() => setRoomFocus((v) => !v)} />
+                    <ConstructionReviewScene pair={pairedWorkflow} groups={groups} running={running} caseId={gameId} speed={speed} replayEpoch={reviewEpoch} onActionComplete={onReviewActionComplete} />
                   ) : (
                     <VoxelRoom s={scene} expanded={roomFocus} onArrive={onArrive}
                                speed={mode === 'offline' ? speed : 1}
@@ -848,7 +1072,7 @@ export default function App() {
               </div>
 
               {/* overlays: current phase badge, mark-embedded pulse, caption */}
-              {workflow.length > 0 && current >= 0 && (
+              {scenario !== 'hse' && workflow.length > 0 && current >= 0 && (
                 <div className="pointer-events-none absolute top-3 left-3 chip bg-white/90 backdrop-blur
                                 ring-1 ring-slate-200 text-slate-600">
                   {(() => {
@@ -858,17 +1082,17 @@ export default function App() {
                 </div>
               )}
               <AnimatePresence>
-                {running && current >= 0 && (
+                {scenario !== 'hse' && running && current >= 0 && (
                   <motion.div key={current}
                     initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }}
                     transition={{ type: 'spring', stiffness: 380, damping: 18 }}
                     className="pointer-events-none absolute top-3 right-3 chip bg-l1-500 text-white
                                font-bold shadow-[0_4px_12px_rgba(99,102,241,.45)]">
-                    ◈ mark embedded
+                    {constructionReview ? '◈ read-only log copy added' : '◈ mark embedded'}
                   </motion.div>
                 )}
               </AnimatePresence>
-              {(currentStep || task) && (
+              {scenario !== 'hse' && (currentStep || task) && (
                 <div className="absolute bottom-3 left-3 right-3 max-w-[62%] rounded-xl bg-white/92 backdrop-blur
                                 ring-1 ring-slate-200 px-3.5 py-2.5 flex items-center gap-2.5">
                   {currentStep && (
@@ -878,34 +1102,27 @@ export default function App() {
                   )}
                   <span className="text-[12.5px] text-slate-600 leading-snug">
                     {currentStep
-                      ? <>{currentStep.label} — a routine choice that <b className="text-l1-700">quietly carries the watermark</b>.</>
+                      ? constructionReview ? currentStep.label : <>{currentStep.label} — a routine choice that <b className="text-l1-700">quietly carries the watermark</b>.</>
                       : task?.desc}
                   </span>
                 </div>
               )}
             </div>
 
-            <div className="sticky top-[3.75rem] space-y-2.5">
-              <GuidedDetect d={detect} tau={health?.tau ?? 2} running={running} />
+            {constructionReview && <EntryAttributionPanel pair={pairedWorkflow} available={runFinished} />}
+            <div className={constructionReview ? 'grid grid-cols-2 gap-3 items-start' : 'sticky top-[3.75rem] space-y-2.5'}>
+              <div className="space-y-2">
+                {detectionContext}
+                <GuidedDetect d={detect} tau={health?.tau ?? 2} running={running} />
+              </div>
               <GuidedAttack rate={rate} setRate={setRate} busy={busy}
+                precomputedAttacks={constructionReview ? ['deletion', 'strip_redundant', 'semantic_rewrite'] : undefined}
                 locked={!sid || running || groups.length === 0}
                 live={mode === 'live' && !!health?.live}
                 onAttack={runAttack}
-                attacked={rows.length > 0}
-                detected={!!detect && (detect.layer1.z > (health?.tau ?? 2) || detect.layer2.z > (health?.tau ?? 2))}
+                attacked={lastAttackResult !== null}
+                detected={!!lastAttackResult && (lastAttackResult.layer1.z > (lastAttackResult.tau ?? health?.tau ?? 2) || lastAttackResult.layer2.z > (lastAttackResult.tau ?? health?.tau ?? 2))}
                 hse={scenario === 'hse'} />
-              <div className="flex gap-2">
-                <button onClick={() => navigate('/compare')}
-                  className="flex-1 card px-3 py-2 text-left text-[11px] font-semibold text-l1-700
-                             hover:shadow-lift transition-shadow duration-500 ease-fluid">
-                  <Columns2 size={12} className="inline mr-1.5 -mt-0.5" />{t('compareLink')} →
-                </button>
-                <button onClick={() => navigate('/threat')}
-                  className="flex-1 card px-3 py-2 text-left text-[11px] font-semibold text-rose-600
-                             hover:shadow-lift transition-shadow duration-500 ease-fluid">
-                  <Scissors size={12} className="inline mr-1.5 -mt-0.5" />{t('threatLink')} →
-                </button>
-              </div>
             </div>
           </div>
 
@@ -913,16 +1130,6 @@ export default function App() {
           <GuidedRace g={raceGroup} prevLabel={racePrevLabel} scenario={scenario}
                       open={showRace} onToggle={() => setShowRace((v) => !v)} />
 
-          {/* with/without the watermark: same task, two dice */}
-          <GuidedCompare groups={groups} scenario={scenario} ready={runFinished}
-                         open={showCompare} onToggle={() => setShowCompare((v) => !v)} />
-
-          {/* HSE only: what if the agent skips steps — the mini patrol */}
-          {scenario === 'hse' && (
-            <GuidedSkip groups={groups} scenario={scenario} ready={runFinished}
-                        tau={health?.tau ?? 2}
-                        open={showSkip} onToggle={() => setShowSkip((v) => !v)} />
-          )}
 
           {/* technical details: the full expert instruments, collapsed */}
           <button onClick={() => setShowTech((v) => !v)}
@@ -934,32 +1141,7 @@ export default function App() {
           </button>
           {showTech && (
             <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3 items-start">
-                <div className="space-y-2">
-                  <div className="card p-2.5 flex items-center gap-2.5">
-                    <KeyRound size={12} className="text-slate-400" />
-                    <div className="flex rounded-full bg-slate-100/80 ring-1 ring-slate-900/[0.04] p-0.5">
-                      {(['right', 'wrong'] as const).map((m) => (
-                        <button key={m} onClick={() => switchKey(m)} disabled={!sid}
-                          className={[
-                            'rounded-full px-3 py-1 text-[11px] font-semibold transition-all',
-                            keyMode === m
-                              ? (m === 'right' ? 'bg-white text-l1-700 shadow-sm' : 'bg-rose-500 text-white shadow-sm')
-                              : 'text-slate-500 hover:text-slate-700',
-                            !sid ? 'opacity-40 cursor-not-allowed' : '',
-                          ].join(' ')}>
-                          {m === 'right' ? t('rightKey') : t('wrongKey')}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <DetectPanel d={detect} curve={curve} />
-                </div>
-                <AttackPanel attacks={health?.attacks ?? []} rate={rate} setRate={setRate}
-                  onAttack={runAttack} onMatrix={runMatrix} rows={rows} busy={busy}
-                  tau={health?.tau ?? 2} live={mode === 'live' && !!health?.live}
-                  hse={scenario === 'hse'} />
-              </div>
+              {renderInstruments(true)}
               {groups.length > 0 && (
                 <div ref={feedRef}
                      className="grid gap-2 [grid-template-columns:repeat(auto-fill,minmax(23rem,1fr))]">
@@ -978,7 +1160,7 @@ export default function App() {
 
       {/* ---------- body (expert dashboard) ---------- */}
       {view === 'expert' && (
-      <div className="grid grid-cols-[13rem_minmax(0,1fr)_20rem] gap-3 p-3 items-start">
+      <div className={`grid gap-3 p-3 items-start ${constructionReview ? 'grid-cols-[13rem_minmax(0,1fr)] max-w-[1500px] mx-auto' : 'grid-cols-[13rem_minmax(0,1fr)_20rem]'}`}>
 
         {/* left: task picker (spans both rows) */}
         <div className="sticky top-[3.75rem] flex flex-col gap-3
@@ -986,13 +1168,13 @@ export default function App() {
           <div className="card p-2.5">
             {/* mode switch: live episode vs offline replay of a logged run */}
             <div className="flex rounded-lg bg-slate-100 p-0.5 mb-2">
-              <button onClick={() => setMode('live')} disabled={!health?.live || running}
+              <button onClick={() => setMode('live')} disabled={!health?.live || running || scenario === 'hse'}
                 className={[
                   'flex-1 flex items-center justify-center gap-1 rounded-md py-1',
                   'text-[11px] font-semibold transition-colors',
                   mode === 'live' ? 'bg-white text-emerald-600 shadow-sm'
                     : 'text-slate-500 hover:text-slate-700',
-                  !health?.live ? 'opacity-40 cursor-not-allowed' : '',
+                  !health?.live || scenario === 'hse' ? 'opacity-40 cursor-not-allowed' : '',
                 ].join(' ')}>
                 <Radio size={11} /> {t('modeLive')}
               </button>
@@ -1003,14 +1185,14 @@ export default function App() {
                   mode === 'offline' ? 'bg-white text-slate-700 shadow-sm'
                     : 'text-slate-500 hover:text-slate-700',
                 ].join(' ')}>
-                <WifiOff size={11} /> {t('modeOffline')}
+                <WifiOff size={11} /> {constructionPreview ? '3D preview' : t('modeOffline')}
               </button>
             </div>
 
             {staticMode && !health?.live && (
               <div className="mb-2 rounded-lg bg-slate-50 ring-1 ring-slate-200 px-2 py-1.5
                               text-[10px] leading-snug text-slate-500">
-                {t('staticNote')}
+                {constructionPreview ? '3D scene preview is available. The recorded LLM agent run is pending.' : constructionReview ? constructionSourceNote : t('staticNote')}
               </div>
             )}
 
@@ -1032,16 +1214,17 @@ export default function App() {
             ) : (
               <>
                 <div className="text-[10px] font-semibold text-slate-500 mb-1.5 tracking-wide">
-                  {t('offlineHint', { n: scenarioReplays.length })}
+                  {constructionPreview ? 'Choose a construction scene' : t('offlineHint', { n: scenarioReplays.length })}
                 </div>
-                <select value={gameId} onChange={(e) => setGameId(e.target.value)}
+                <select value={gameId} onChange={(e) => chooseReplay(e.target.value)} disabled={running}
                   className="w-full rounded-lg bg-slate-50 px-2 py-1.5 text-[11px]
                              ring-1 ring-slate-200 outline-none focus:ring-l1-400">
-                  {scenarioReplays.map((r) => (
+                  {!scenarioReplays.length && <option value="">No recorded LLM replay available yet</option>}
+                  {scenarioReplays.map((r, index) => (
                     <option key={r.game_id} value={r.game_id}>
-                      {r.success ? '✓' : '✗'} {r.task_type} · {r.groups}{t('groupsUnit')}
-                      {' '}· z₁={r.z1.toFixed(1)}
-                      {' '}· z₂={r.z2.toFixed(1)}
+                      {replayOptionLabel(r, index)}
+                      {!r.previewOnly && Number.isFinite(r.z1) ? ` · z₁=${r.z1.toFixed(1)}` : ''}
+                      {!r.previewOnly && Number.isFinite(r.z2) ? ` · z₂=${r.z2.toFixed(1)}` : ''}
                     </option>
                   ))}
                 </select>
@@ -1058,14 +1241,15 @@ export default function App() {
 
             {/* island CTA with a nested button-in-button icon */}
             <button onClick={start}
-              disabled={running || (mode === 'live' ? !health?.live : !gameId)}
+              disabled={running || constructionPreview || (mode === 'live' ? !health?.live : !gameId)}
+              title={constructionPreview ? 'A recorded LLM run is required before replaying agent actions.' : undefined}
               className="group mt-2.5 w-full flex items-center justify-between gap-1.5
                          rounded-full bg-l1-500 text-white text-[12px] font-semibold
                          pl-4 pr-1.5 py-1.5 shadow-[0_8px_20px_-8px_rgba(99,102,241,.6)]
                          transition-all duration-500 ease-fluid
                          hover:bg-l1-700 active:scale-[0.98] disabled:opacity-40
                          disabled:shadow-none">
-              <span>{running ? t('runningNow') : mode === 'live' ? t('startLive') : t('startReplay')}</span>
+              <span>{running ? t('runningNow') : constructionReview ? 'Start replay' : mode === 'live' ? t('startLive') : t('startReplay')}</span>
               <span className="grid place-items-center w-7 h-7 rounded-full bg-white/15
                                transition-transform duration-500 ease-fluid
                                group-hover:translate-x-0.5 group-hover:scale-105">
@@ -1086,77 +1270,33 @@ export default function App() {
 
           <div className="card p-2 flex items-start gap-1.5 text-[10px] text-slate-400">
             <ShieldCheck size={12} className="text-emerald-500 shrink-0 mt-0.5" />
-            {scenario === 'hse'
+            {constructionPreview
+              ? 'The robot represents the on-duty entry checker. Recorded decisions and their site consequences appear only after a new LLM run.'
+              : scenario === 'hse'
               ? 'detection reads the executed stream · candidate sets come from the per-group record, which cannot be edited after the fact'
               : t('robustPath')}
           </div>
 
-          {/* The question the demo itself cannot answer: what would this run have
-              looked like WITHOUT the watermark? Sits at the foot of the controls,
-              where someone who has just watched a run is most likely to ask it. */}
-          <button onClick={() => navigate('/compare')}
-            className="group relative w-full overflow-hidden rounded-2xl p-3 text-left
-                       bg-gradient-to-br from-l1-600 to-l1-500 text-white shadow-card
-                       ring-1 ring-l1-700/20 hover:shadow-lift transition-shadow
-                       duration-500 ease-fluid">
-            <span className="pointer-events-none absolute -right-6 -top-8 w-24 h-24 rounded-full
-                             bg-white/10 group-hover:bg-white/[0.16] transition-colors" />
-            <div className="relative flex items-start gap-2.5">
-              <span className="grid place-items-center w-8 h-8 rounded-xl bg-white/15 shrink-0">
-                <Columns2 size={15} />
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="text-[12.5px] font-bold leading-tight">
-                  {t('compareLink')}
-                </div>
-                <div className="text-[10.5px] text-white/70 leading-snug mt-0.5">
-                  {t('compareHint')}
-                </div>
-              </div>
-              <ArrowRight size={14}
-                className="shrink-0 mt-1 text-white/70 transition-transform duration-500
-                           ease-fluid group-hover:translate-x-0.5" />
-            </div>
-          </button>
-
-          {/* the other question the demo cannot answer: what happens once someone
-              edits the record afterwards. Told as a story rather than a matrix. */}
-          <button onClick={() => navigate('/threat')}
-            className="group relative w-full overflow-hidden rounded-2xl p-3 text-left
-                       bg-white ring-1 ring-slate-900/[0.06] shadow-card
-                       hover:ring-rose-200 hover:shadow-lift transition-all
-                       duration-500 ease-fluid">
-            <div className="flex items-start gap-2.5">
-              <span className="grid place-items-center w-8 h-8 rounded-xl shrink-0
-                               bg-rose-50 ring-1 ring-rose-100 text-rose-500">
-                <Scissors size={15} />
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="text-[12.5px] font-bold leading-tight text-slate-800">
-                  {t('threatLink')}
-                </div>
-                <div className="text-[10.5px] text-slate-400 leading-snug mt-0.5">
-                  {t('threatHint')}
-                </div>
-              </div>
-              <ArrowRight size={14}
-                className="shrink-0 mt-1 text-slate-300 transition-transform duration-500
-                           ease-fluid group-hover:translate-x-0.5 group-hover:text-rose-400" />
-            </div>
-          </button>
         </div>
 
         {/* centre: the room, with a user-draggable height */}
         <div className="space-y-3">
+          {constructionPreview ? <ConstructionWorkflowPending taskType={selectedReplay?.task_type} /> : constructionReview && workflow.length > 0 && (
+            pairedWorkflow
+              ? <PairedWorkflowStrip key={`${gameId}:${reviewEpoch}`} phases={workflow} pair={pairedWorkflow}
+                  current={current} running={running} expanded={expanded}
+                  followReplay={expandedPhase === null} onFollow={() => setExpandedPhase(null)}
+                  onToggle={(id) => setExpandedPhase(id)} />
+              : <WorkflowStrip phases={workflow} current={current} running={running}
+                  expanded={expanded} onToggle={(id) => setExpandedPhase(id === expanded ? '' : id)} />
+          )}
           <div>
             {/* the room sits inside a machined double-bezel tray */}
             <div className="bezel shadow-lift"
-                 style={{ height: roomFocus ? 'calc(100vh - 6rem)' : roomH }}>
+                 style={{ height: roomFocus ? 'calc(100vh - 6rem)' : constructionReview ? Math.max(520, roomH) : roomH }}>
               <div className="bezel-core h-full overflow-hidden">
                 {scenario === 'hse' ? (
-                  <HseSite s={hse} expanded={roomFocus} onArrive={onArrive}
-                           speed={mode === 'offline' ? speed : 1}
-                           onToggleExpand={() => setRoomFocus((v) => !v)} />
+                  <ConstructionReviewScene pair={pairedWorkflow} groups={groups} running={running} caseId={gameId} speed={speed} replayEpoch={reviewEpoch} onActionComplete={onReviewActionComplete} />
                 ) : (
                   <VoxelRoom s={scene} expanded={roomFocus} onArrive={onArrive}
                              speed={mode === 'offline' ? speed : 1}
@@ -1174,7 +1314,18 @@ export default function App() {
             )}
           </div>
 
-          {groups.length === 0 ? (
+          {constructionReview && <>
+            <EntryAttributionPanel pair={pairedWorkflow} available={runFinished} />
+            {renderInstruments(true)}
+            <GuidedRace g={raceGroup} prevLabel={racePrevLabel} scenario={scenario}
+              open={showRace} onToggle={() => setShowRace((v) => !v)} />
+          </>}
+
+          {constructionPreview ? (
+            <div className="card px-4 py-3 text-[11px] leading-relaxed text-slate-500">
+              <b className="text-indigo-600">3D preview · agent run pending.</b> Scene exploration does not produce an agent trajectory. The action log and watermark results will appear with a recorded LLM run.
+            </div>
+          ) : groups.length === 0 ? (
             <div className="card h-40 flex items-center justify-center text-center">
               <div>
                 <div className="grid place-items-center mb-2 opacity-80">
@@ -1200,15 +1351,10 @@ export default function App() {
         </div>
 
         {/* right: detection + attacks, pinned while the page scrolls */}
-        <div className="sticky top-[3.75rem] space-y-2
+        {!constructionReview && <div className="sticky top-[3.75rem] space-y-2
                         max-h-[calc(100vh-4.5rem)] overflow-y-auto pr-1">
-          <DetectPanel d={detect} curve={curve} />
-          {/* LLM-backed attacks need the relay -- off in offline mode */}
-          <AttackPanel attacks={health?.attacks ?? []} rate={rate} setRate={setRate}
-            onAttack={runAttack} onMatrix={runMatrix} rows={rows} busy={busy}
-            tau={health?.tau ?? 2} live={mode === 'live' && !!health?.live}
-            hse={scenario === 'hse'} />
-        </div>
+          {renderInstruments(false)}
+        </div>}
       </div>
       )}
 

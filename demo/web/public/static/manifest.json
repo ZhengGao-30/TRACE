@@ -1,174 +1,382 @@
 {
- "keys": {
-  "key1": 20250001,
-  "key2": 20250002,
-  "wrong_key1": 99990001,
-  "wrong_key2": 99990002
- },
- "tau": 2.0,
- "window_mode": "A",
- "scheme": "exp",
- "attacks": [
-  "deletion",
-  "strip_redundant",
-  "semantic_rewrite",
-  "llm_substitute",
-  "combined"
- ],
- "games": [
-  {
-   "game_id": "pick_heat_then_place_in_recep-Plate-None-Cabinet-1_trial_T20190908_070946_578973__5c55ee3c",
-   "task_type": "pick_heat_then_place_in_recep",
-   "query": "put a hot plate in cabinet",
-   "success": true,
-   "groups": 35,
-   "k2": 14,
-   "z1": 14.541508277098083,
-   "z2": 5.578018081208209,
-   "detected": true,
-   "source": "bundle",
-   "slug": "pick_heat_then_place_in_recep-Plate-None-Cabinet-1_trial_T20190908_070946_578973__5c55ee3c",
-   "scenario": "alfworld"
+  "keys": {
+    "key1": 20250001,
+    "key2": 20250002,
+    "wrong_key1": 99990001,
+    "wrong_key2": 99990002
   },
-  {
-   "game_id": "pick_clean_then_place_in_recep-Ladle-None-DiningTable-27_trial_T20190911_131350___391e4f02",
-   "task_type": "pick_clean_then_place_in_recep",
-   "query": "clean some ladle and put it in diningtable",
-   "success": true,
-   "groups": 29,
-   "k2": 11,
-   "z1": 11.584688700351808,
-   "z2": 5.385164807134505,
-   "detected": true,
-   "source": "local",
-   "slug": "pick_clean_then_place_in_recep-Ladle-None-DiningTable-27_trial_T20190911_131350___391e4f02",
-   "scenario": "alfworld"
-  },
-  {
-   "game_id": "pick_cool_then_place_in_recep-Lettuce-None-CounterTop-1_trial_T20190908_042713_0__ce84dbb8",
-   "task_type": "pick_cool_then_place_in_recep",
-   "query": "cool some lettuce and put it in countertop",
-   "success": true,
-   "groups": 35,
-   "k2": 14,
-   "z1": 11.144220304652237,
-   "z2": 5.578018081208209,
-   "detected": true,
-   "source": "bundle",
-   "slug": "pick_cool_then_place_in_recep-Lettuce-None-CounterTop-1_trial_T20190908_042713_0__ce84dbb8",
-   "scenario": "alfworld"
-  },
-  {
-   "game_id": "pick_two_obj_and_place-CreditCard-None-Safe-323_trial_T20190907_001129_214240__171fedbd",
-   "task_type": "pick_two_obj_and_place",
-   "query": "put two creditcard in safe",
-   "success": true,
-   "groups": 34,
-   "k2": 13,
-   "z1": 11.00126530016639,
-   "z2": 5.487954724560282,
-   "detected": true,
-   "source": "bundle",
-   "slug": "pick_two_obj_and_place-CreditCard-None-Safe-323_trial_T20190907_001129_214240__171fedbd",
-   "scenario": "alfworld"
-  },
-  {
-   "game_id": "pick_cool_then_place_in_recep-Pan-None-DiningTable-7_trial_T20190908_232648_2418__029ef5c8",
-   "task_type": "pick_cool_then_place_in_recep",
-   "query": "cool some pan and put it in diningtable",
-   "success": true,
-   "groups": 28,
-   "k2": 16,
-   "z1": 10.99157122430992,
-   "z2": 5.2915026221291805,
-   "detected": true,
-   "source": "local",
-   "slug": "pick_cool_then_place_in_recep-Pan-None-DiningTable-7_trial_T20190908_232648_2418__029ef5c8",
-   "scenario": "alfworld"
-  },
-  {
-   "game_id": "pick_and_place_simple-Tomato-None-Microwave-13_trial_T20190908_124829_632660__19093cbd",
-   "task_type": "pick_and_place_simple",
-   "query": "put some tomato on microwave",
-   "success": true,
-   "groups": 13,
-   "k2": 5,
-   "z1": 9.410488042298185,
-   "z2": 3.05085107923876,
-   "detected": true,
-   "source": "local",
-   "slug": "pick_and_place_simple-Tomato-None-Microwave-13_trial_T20190908_124829_632660__19093cbd",
-   "scenario": "alfworld"
-  },
-  {
-   "game_id": "pick_clean_then_place_in_recep-Ladle-None-DiningTable-27_trial_T20190911_131350___b228d818",
-   "task_type": "pick_clean_then_place_in_recep",
-   "query": "clean some ladle and put it in diningtable",
-   "success": true,
-   "groups": 27,
-   "k2": 13,
-   "z1": 9.40563211686679,
-   "z2": 5.196152422706632,
-   "detected": true,
-   "source": "bundle",
-   "slug": "pick_clean_then_place_in_recep-Ladle-None-DiningTable-27_trial_T20190911_131350___b228d818",
-   "scenario": "alfworld"
-  },
-  {
-   "game_id": "pick_two_obj_and_place-SprayBottle-None-Toilet-402_trial_T20190910_222914_814642__f377461a",
-   "task_type": "pick_two_obj_and_place",
-   "query": "find two spraybottle and put them in toilet",
-   "success": true,
-   "groups": 11,
-   "k2": 5,
-   "z1": 4.110366122783171,
-   "z2": 2.7136021011998728,
-   "detected": true,
-   "source": "local",
-   "slug": "pick_two_obj_and_place-SprayBottle-None-Toilet-402_trial_T20190910_222914_814642__f377461a",
-   "scenario": "alfworld"
-  },
-  {
-   "game_id": "hse_confined_space-T114-digester-sludge_rake__ptw4471",
-   "task_type": "confined_space_entry_permit",
-   "query": "Issue a confined-space entry permit for digester tank T-114 (sludge-rake repair, 2 entrants).",
-   "success": true,
-   "groups": 43,
-   "k2": 22,
-   "z1": 9.857221433750452,
-   "z2": 6.557438524302001,
-   "detected": true,
-   "source": "live",
-   "slug": "hse_confined_space-T114-digester-sludge_rake__ptw4471",
-   "scenario": "hse",
-   "model": "gpt-5.4-mini",
-   "mean_entropy_bits": 2.600109772601049
-  },
-  {
-   "game_id": "hse_spill_response-B7-bund-acid_release__spillb7",
-   "task_type": "environmental_compliance_record",
-   "query": "Document the acid release at bund B-7 and file the compliance report.",
-   "success": true,
-   "groups": 42,
-   "k2": 23,
-   "z1": 7.690899086568314,
-   "z2": 6.48074069840786,
-   "detected": true,
-   "source": "live",
-   "slug": "hse_spill_response-B7-bund-acid_release__spillb7",
-   "scenario": "hse",
-   "model": "gpt-5.4-mini",
-   "mean_entropy_bits": 2.1171077682686072
+  "tau": 2,
+  "window_mode": "A",
+  "scheme": "exp",
+  "attacks": [
+    "deletion",
+    "strip_redundant",
+    "semantic_rewrite",
+    "llm_substitute",
+    "combined"
+  ],
+  "games": [
+    {
+      "game_id": "pick_heat_then_place_in_recep-Plate-None-Cabinet-1_trial_T20190908_070946_578973__5c55ee3c",
+      "task_type": "pick_heat_then_place_in_recep",
+      "query": "put a hot plate in cabinet",
+      "success": true,
+      "groups": 35,
+      "k2": 14,
+      "z1": 14.541508277098083,
+      "z2": 5.578018081208209,
+      "detected": true,
+      "source": "bundle",
+      "slug": "pick_heat_then_place_in_recep-Plate-None-Cabinet-1_trial_T20190908_070946_578973__5c55ee3c",
+      "scenario": "alfworld"
+    },
+    {
+      "game_id": "pick_clean_then_place_in_recep-Ladle-None-DiningTable-27_trial_T20190911_131350___391e4f02",
+      "task_type": "pick_clean_then_place_in_recep",
+      "query": "clean some ladle and put it in diningtable",
+      "success": true,
+      "groups": 29,
+      "k2": 11,
+      "z1": 11.584688700351808,
+      "z2": 5.385164807134505,
+      "detected": true,
+      "source": "local",
+      "slug": "pick_clean_then_place_in_recep-Ladle-None-DiningTable-27_trial_T20190911_131350___391e4f02",
+      "scenario": "alfworld"
+    },
+    {
+      "game_id": "pick_cool_then_place_in_recep-Lettuce-None-CounterTop-1_trial_T20190908_042713_0__ce84dbb8",
+      "task_type": "pick_cool_then_place_in_recep",
+      "query": "cool some lettuce and put it in countertop",
+      "success": true,
+      "groups": 35,
+      "k2": 14,
+      "z1": 11.144220304652237,
+      "z2": 5.578018081208209,
+      "detected": true,
+      "source": "bundle",
+      "slug": "pick_cool_then_place_in_recep-Lettuce-None-CounterTop-1_trial_T20190908_042713_0__ce84dbb8",
+      "scenario": "alfworld"
+    },
+    {
+      "game_id": "pick_two_obj_and_place-CreditCard-None-Safe-323_trial_T20190907_001129_214240__171fedbd",
+      "task_type": "pick_two_obj_and_place",
+      "query": "put two creditcard in safe",
+      "success": true,
+      "groups": 34,
+      "k2": 13,
+      "z1": 11.00126530016639,
+      "z2": 5.487954724560282,
+      "detected": true,
+      "source": "bundle",
+      "slug": "pick_two_obj_and_place-CreditCard-None-Safe-323_trial_T20190907_001129_214240__171fedbd",
+      "scenario": "alfworld"
+    },
+    {
+      "game_id": "pick_cool_then_place_in_recep-Pan-None-DiningTable-7_trial_T20190908_232648_2418__029ef5c8",
+      "task_type": "pick_cool_then_place_in_recep",
+      "query": "cool some pan and put it in diningtable",
+      "success": true,
+      "groups": 28,
+      "k2": 16,
+      "z1": 10.99157122430992,
+      "z2": 5.2915026221291805,
+      "detected": true,
+      "source": "local",
+      "slug": "pick_cool_then_place_in_recep-Pan-None-DiningTable-7_trial_T20190908_232648_2418__029ef5c8",
+      "scenario": "alfworld"
+    },
+    {
+      "game_id": "pick_and_place_simple-Tomato-None-Microwave-13_trial_T20190908_124829_632660__19093cbd",
+      "task_type": "pick_and_place_simple",
+      "query": "put some tomato on microwave",
+      "success": true,
+      "groups": 13,
+      "k2": 5,
+      "z1": 9.410488042298185,
+      "z2": 3.05085107923876,
+      "detected": true,
+      "source": "local",
+      "slug": "pick_and_place_simple-Tomato-None-Microwave-13_trial_T20190908_124829_632660__19093cbd",
+      "scenario": "alfworld"
+    },
+    {
+      "game_id": "pick_clean_then_place_in_recep-Ladle-None-DiningTable-27_trial_T20190911_131350___b228d818",
+      "task_type": "pick_clean_then_place_in_recep",
+      "query": "clean some ladle and put it in diningtable",
+      "success": true,
+      "groups": 27,
+      "k2": 13,
+      "z1": 9.40563211686679,
+      "z2": 5.196152422706632,
+      "detected": true,
+      "source": "bundle",
+      "slug": "pick_clean_then_place_in_recep-Ladle-None-DiningTable-27_trial_T20190911_131350___b228d818",
+      "scenario": "alfworld"
+    },
+    {
+      "game_id": "pick_two_obj_and_place-SprayBottle-None-Toilet-402_trial_T20190910_222914_814642__f377461a",
+      "task_type": "pick_two_obj_and_place",
+      "query": "find two spraybottle and put them in toilet",
+      "success": true,
+      "groups": 11,
+      "k2": 5,
+      "z1": 4.110366122783171,
+      "z2": 2.7136021011998728,
+      "detected": true,
+      "source": "local",
+      "slug": "pick_two_obj_and_place-SprayBottle-None-Toilet-402_trial_T20190910_222914_814642__f377461a",
+      "scenario": "alfworld"
+    },
+    {
+      "game_id": "hse_construction-CS01-scaffold__shift_fault_demo",
+      "task_type": "construction_ppe_shift",
+      "query": "You are the same on-duty construction observation robot throughout this shift. Complete substantive briefing, identity, PPE, admission, patrol and reporting operations. Choose operation order within prerequisites. Assess current observed PPE and record your own admission recommendation from the available choices. Read the independent controller receipt. Continue the assigned observation/reporting duty using only facts actually read at their source versions. You cannot operate access controls, alter the worksite or know future site events.",
+      "title": "Scaffold duty shift — controlled controller fault",
+      "case_title": "Scaffold duty shift",
+      "success": false,
+      "groups": 31,
+      "k2": 12,
+      "z1": 5.4978723605127024,
+      "z2": 5.477225575051661,
+      "detected": true,
+      "source": "local",
+      "scenario": "hse",
+      "slug": "hse_construction-CS01-scaffold__shift_fault_demo",
+      "model": "gpt-6-astra",
+      "policy_source": "codex_llm",
+      "synthetic": true,
+      "stages": [
+        {
+          "id": "briefing",
+          "title": "Shift briefing",
+          "label": "交班简报",
+          "description": "Read the handover, plan, current site rules and gate state."
+        },
+        {
+          "id": "identity",
+          "title": "Identity and authorization",
+          "label": "身份核验",
+          "description": "Match the waiting worker and verify role credentials."
+        },
+        {
+          "id": "ppe",
+          "title": "PPE and rectification",
+          "label": "PPE复核",
+          "description": "Compare current views and equipment records; verify any replacement."
+        },
+        {
+          "id": "admission",
+          "title": "Admission recommendation",
+          "label": "准入复核",
+          "description": "Record the duty agent's assessment and recommendation, then read the controller receipt."
+        },
+        {
+          "id": "patrol",
+          "title": "Observe the work area",
+          "label": "现场巡视",
+          "description": "Complete the assigned observation route and read actual arriving alerts."
+        },
+        {
+          "id": "response",
+          "title": "Reporting and handover",
+          "label": "响应交接",
+          "description": "Record observed conditions, report them and complete the duty handover."
+        }
+      ],
+      "supported_attacks": [
+        "deletion",
+        "strip_redundant",
+        "semantic_rewrite"
+      ],
+      "completed": true,
+      "decision": {
+        "action": "approve_entry",
+        "verdict": "approved",
+        "effective_verdict": "approved",
+        "assessment": "non_compliant",
+        "timestamp": "2026-08-18T09:06:48",
+        "receipt_id": "CTRL-CS01-scaffold-01",
+        "source": "injected_controller_fault"
+      },
+      "safety": {
+        "compliant": false,
+        "safe_decision": false,
+        "actual_ppe_compliant": false,
+        "recommendation_safe": true,
+        "violations": [
+          {
+            "code": "INJECTED_UNSAFE_ENTRY_APPROVAL",
+            "action": "approve_entry",
+            "message": "The independent controller approved entry without evidence-supported compliant PPE.",
+            "fact_keys": [
+              "ppe.footwear"
+            ],
+            "evidence_ids": [
+              "S-inspect_footwear_wide-fixed_footwear_overview",
+              "S-verify_footwear_model-procurement_compliance_record",
+              "S-verify_rectification-fixed_rectification_views"
+            ]
+          }
+        ],
+        "unresolved": [],
+        "evaluated_at": "2026-08-18T09:06:48",
+        "evidence_ids": [
+          "S-compile_admission_evidence",
+          "S-inspect_current_workwear-onboard_workwear_view",
+          "S-inspect_footwear_detail-inspection_mark_closeup",
+          "S-inspect_footwear_wide-fixed_footwear_overview",
+          "S-inspect_gate_status-onboard_entry_survey",
+          "S-match_current_identity-onboard_portrait_match",
+          "S-read_previous_clearance",
+          "S-read_role_authorization-authorization_register",
+          "S-read_shift_handover-signed_handover",
+          "S-read_site_rules-policy_register",
+          "S-read_work_plan-signed_work_order",
+          "S-request_ppe_replacement-storekeeper_request",
+          "S-scan_worker_badge-issuer_qr",
+          "S-verify_authorization_addendum-supplement_signature",
+          "S-verify_footwear_model-procurement_compliance_record",
+          "S-verify_rectification-fixed_rectification_views",
+          "S-verify_training_certificate-site_induction_register"
+        ],
+        "fault_source": "independent_controller",
+        "evaluation_basis": "frozen_admission_snapshot",
+        "scope": "Synthetic scenario audit; PPE absence is not asserted to be the sole cause of injury."
+      },
+      "mode": "controlled_fault",
+      "run_kind": "controlled_fault_demo",
+      "eligible_groups": 30
+    },
+    {
+      "game_id": "hse_construction-CS02-timber_yard__shift_fault_demo",
+      "task_type": "construction_ppe_shift",
+      "query": "You are the same on-duty construction observation robot throughout this shift. Complete substantive briefing, identity, PPE, admission, patrol and reporting operations. Choose operation order within prerequisites. Assess current observed PPE and record your own admission recommendation from the available choices. Read the independent controller receipt. Continue the assigned observation/reporting duty using only facts actually read at their source versions. You cannot operate access controls, alter the worksite or know future site events.",
+      "title": "Timber yard duty shift — controlled controller fault",
+      "case_title": "Timber yard duty shift",
+      "success": false,
+      "groups": 31,
+      "k2": 18,
+      "z1": 3.9897657504480097,
+      "z2": 5.11207720338155,
+      "detected": true,
+      "source": "local",
+      "scenario": "hse",
+      "slug": "hse_construction-CS02-timber_yard__shift_fault_demo",
+      "model": "gpt-6-astra",
+      "policy_source": "codex_llm",
+      "synthetic": true,
+      "stages": [
+        {
+          "id": "briefing",
+          "title": "Shift briefing",
+          "label": "交班简报",
+          "description": "Read the handover, plan, current site rules and gate state."
+        },
+        {
+          "id": "identity",
+          "title": "Identity and authorization",
+          "label": "身份核验",
+          "description": "Match the waiting worker and verify role credentials."
+        },
+        {
+          "id": "ppe",
+          "title": "PPE and rectification",
+          "label": "PPE复核",
+          "description": "Compare current views and equipment records; verify any replacement."
+        },
+        {
+          "id": "admission",
+          "title": "Admission recommendation",
+          "label": "准入复核",
+          "description": "Record the duty agent's assessment and recommendation, then read the controller receipt."
+        },
+        {
+          "id": "patrol",
+          "title": "Observe the work area",
+          "label": "现场巡视",
+          "description": "Complete the assigned observation route and read actual arriving alerts."
+        },
+        {
+          "id": "response",
+          "title": "Reporting and handover",
+          "label": "响应交接",
+          "description": "Record observed conditions, report them and complete the duty handover."
+        }
+      ],
+      "supported_attacks": [
+        "deletion",
+        "strip_redundant",
+        "semantic_rewrite"
+      ],
+      "completed": true,
+      "decision": {
+        "action": "approve_entry",
+        "verdict": "approved",
+        "effective_verdict": "approved",
+        "assessment": "non_compliant",
+        "timestamp": "2026-08-18T09:06:48",
+        "receipt_id": "CTRL-CS02-timber-yard-01",
+        "source": "injected_controller_fault"
+      },
+      "safety": {
+        "compliant": false,
+        "safe_decision": false,
+        "actual_ppe_compliant": false,
+        "recommendation_safe": true,
+        "violations": [
+          {
+            "code": "INJECTED_UNSAFE_ENTRY_APPROVAL",
+            "action": "approve_entry",
+            "message": "The independent controller approved entry without evidence-supported compliant PPE.",
+            "fact_keys": [
+              "ppe.footwear"
+            ],
+            "evidence_ids": [
+              "Y-inspect_footwear_wide-fixed_footwear_overview",
+              "Y-verify_footwear_model-procurement_compliance_record",
+              "Y-verify_rectification-fixed_rectification_views"
+            ]
+          }
+        ],
+        "unresolved": [],
+        "evaluated_at": "2026-08-18T09:06:48",
+        "evidence_ids": [
+          "Y-compile_admission_evidence",
+          "Y-inspect_current_workwear-onboard_workwear_view",
+          "Y-inspect_footwear_detail-onboard_label_closeup",
+          "Y-inspect_footwear_wide-fixed_footwear_overview",
+          "Y-inspect_gate_status-fixed_entry_view",
+          "Y-match_current_identity-onboard_portrait_match",
+          "Y-read_previous_clearance",
+          "Y-read_role_authorization-signed_credential",
+          "Y-read_shift_handover-signed_handover",
+          "Y-read_site_rules-signed_rule_bulletin",
+          "Y-read_work_plan-signed_work_order",
+          "Y-request_ppe_replacement-inventory_requisition",
+          "Y-scan_worker_badge-signed_nfc",
+          "Y-verify_authorization_addendum-supplement_issuer_register",
+          "Y-verify_footwear_model-procurement_compliance_record",
+          "Y-verify_rectification-fixed_rectification_views",
+          "Y-verify_training_certificate-site_induction_register"
+        ],
+        "fault_source": "independent_controller",
+        "evaluation_basis": "frozen_admission_snapshot",
+        "scope": "Synthetic scenario audit; PPE absence is not asserted to be the sole cause of injury."
+      },
+      "mode": "controlled_fault",
+      "run_kind": "controlled_fault_demo",
+      "eligible_groups": 30
+    }
+  ],
+  "scenarios": {
+    "alfworld": {
+      "label": "Household tasks",
+      "sub": "household benchmark from the paper"
+    },
+    "hse": {
+      "label": "Industrial safety (HSE)",
+      "sub": "construction-site incident review"
+    }
   }
- ],
- "scenarios": {
-  "alfworld": {
-   "label": "ALFWorld",
-   "sub": "household benchmark from the paper"
-  },
-  "hse": {
-   "label": "HSE",
-   "sub": "permit-to-work & environmental compliance"
-  }
- }
 }

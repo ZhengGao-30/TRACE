@@ -27,7 +27,9 @@ export default function GuidedRace({
   open: boolean
   onToggle: () => void
 }) {
-  const [keyed, setKeyed] = useState(true)
+  const [keyedPreview, setKeyed] = useState(true)
+  const construction = scenario === 'hse'
+  const keyed = construction || keyedPreview
 
   const race = g?.race ?? []
   const minScore = race.length ? Math.min(...race.map((r) => r.score || 1e-9)) : 1
@@ -37,13 +39,13 @@ export default function GuidedRace({
   // from its own distribution p (the paper's Base arm). Re-sample whenever the
   // step changes.
   const sampled = useMemo(() => {
-    if (!race.length) return null
+    if (construction || !race.length) return null
     const tot = race.reduce((s, r) => s + r.p, 0) || 1
     let u = Math.random() * tot
     for (const r of race) { u -= r.p; if (u <= 0) return r.cmd }
     return race[race.length - 1].cmd
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [g?.i, race.length])
+  }, [g?.i, race.length, construction])
 
   // with key: keep the draw's own order (winner first). without: rank by p,
   // but keep the sampled pick visible even when it isn't in the top N.
@@ -85,7 +87,8 @@ export default function GuidedRace({
             <div className="card mt-2 p-5">
               {!g || !race.length ? (
                 <div className="text-[12px] text-slate-400 text-center py-4">
-                  Start a run — once the agent faces its first decision, the race appears here. 🏁
+                  {g?.event_kind === 'injected_action' ? 'This is an injected controller action, not a policy decision. There is no probability draw or watermark score; this row is excluded from detection.'
+                    : construction ? 'Replay a recorded policy action to inspect its candidate weights and keyed scores. The workflow above holds both recorded trajectories.' : 'Start a run — once the agent faces its first decision, the race appears here. 🏁'}
                 </div>
               ) : (
                 <>
@@ -98,15 +101,16 @@ export default function GuidedRace({
                     </h3>
                   </div>
                   <p className="text-[12px] text-slate-500 mb-3.5">
-                    The key deals every candidate a lottery ticket. The winning ticket gets the job.
+                    {g.policy_source === 'scenario_policy' && 'Authored scenario weights, not LLM probabilities. '}
+                    {construction && race.length === 1 ? 'Only one action is legal here. Layer 1 cannot change this decision.' : 'The key gives each legal candidate a ticket; the lowest −ln(r) / p score wins.'}
                   </p>
 
                   {/* the principle, in three beats */}
                   <div className="flex items-stretch gap-0 mb-4">
                     {[
-                      { ic: '🧾', t1: '① Candidates line up', t2: `The agent lists every reasonable next action — ${g.nCandidates ?? race.length} of them here.`, key: false },
-                      { ic: '🔑', t1: '② The key deals the tickets', t2: 'Each candidate draws a ticket generated from our secret key. Same key → same tickets, every time.', key: true },
-                      { ic: '🏆', t1: '③ The winning ticket runs', t2: 'One ticket wins and its action is executed — that is the ◈ seal being stamped.', key: false },
+                      { ic: '🧾', t1: '① Candidates line up', t2: `${construction ? 'The environment allows only unfinished checks with satisfied prerequisites' : 'The agent lists every reasonable next action'} — ${g.nCandidates ?? race.length} here.`, key: false },
+                      { ic: '🔑', t1: '② The key deals the tickets', t2: 'The same key, context and candidate produce the same ticket. The policy weights p are unchanged.', key: true },
+                      { ic: '🏆', t1: '③ The winning ticket runs', t2: 'Divide −ln(r) by the candidate weight p. Execute the candidate with the lowest score.', key: false },
                     ].map((s, i) => (
                       <div key={i} className="contents">
                         {i > 0 && <div className="self-center px-2 text-l1-200 text-[17px] font-extrabold">→</div>}
@@ -146,16 +150,16 @@ export default function GuidedRace({
                         ].join(' ')}>
                         🔑 with the watermark
                       </button>
-                      <button onClick={() => setKeyed(false)}
+                      {!construction && <button onClick={() => setKeyed(false)}
                         className={[
                           'rounded-full px-3 py-1 text-[11px] font-bold transition-all',
                           !keyed ? 'bg-white text-slate-700 shadow-sm' : 'text-slate-400 hover:text-slate-600',
                         ].join(' ')}>
                         🚫 without it
-                      </button>
+                      </button>}
                     </div>
                     <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400">
-                      {keyed ? '🎟️ live draw — tickets dealt by the key' : '🎲 plain luck — no tickets, nothing to replay'}
+                      {keyed ? construction ? 'Recorded keyed draw' : '🎟️ tickets dealt by the key' : 'Illustrative resample · not a recorded baseline step'}
                     </span>
                   </div>
 
@@ -230,14 +234,12 @@ export default function GuidedRace({
                   <div className="grid grid-cols-2 gap-3 mt-4 pt-3.5 border-t border-dashed border-slate-200">
                     <div className="rounded-xl bg-slate-50 px-3.5 py-2.5 text-[11.5px] leading-relaxed text-slate-500">
                       <div className="font-extrabold text-slate-700 text-[12px] mb-0.5">👀 To an outsider</div>
-                      Just a reasonable choice — the tickets look like ordinary luck, and the work goes on
-                      exactly as it should.
+                      {construction ? 'The environment keeps both runs in the same logical stages. Compare their actual actions and final reports in the workflow above.' : 'Just a reasonable choice — the tickets look like ordinary luck, and the work goes on.'}
                     </div>
                     <div className="rounded-xl bg-l2-50 ring-1 ring-l2-100 px-3.5 py-2.5 text-[11.5px]
                                     leading-relaxed text-l2-700">
                       <div className="font-extrabold text-[12px] mb-0.5">🔑 To the key holder</div>
-                      Re-deal the tickets with the key and every race replays exactly — a match proves
-                      this trajectory is ours ◈
+                      Recompute the keyed pattern from the recorded actions. Detection provides statistical evidence of origin, not proof that the report is factually correct.
                     </div>
                   </div>
                 </>

@@ -44,7 +44,7 @@ export default function ExpRace({
                 initial={{ width: 0 }} animate={{ width: `${Math.min(r.p * 100, 100)}%` }} />
             </div>
             <span className="w-9 text-[9px] text-slate-400 tabular-nums">
-              {r.p.toFixed(3)}
+              {r.p > 0 && r.p < 0.001 ? '<0.001' : r.p.toFixed(3)}
             </span>
 
             {/* r[b] : what the key rolled */}
@@ -57,7 +57,8 @@ export default function ExpRace({
             </span>
 
             {/* score : lower wins */}
-            <div className="flex-1 h-3 rounded bg-white ring-1 ring-slate-200 overflow-hidden">
+            <div className="flex-1 h-3 rounded bg-white ring-1 ring-slate-200 overflow-hidden"
+              title="Visual bar capped at score 40; the numeric label retains the recorded score.">
               <motion.div
                 className={r.win ? 'h-full bg-l1-500' : 'h-full bg-indigo-200'}
                 initial={{ width: 0 }}
@@ -68,7 +69,9 @@ export default function ExpRace({
             <span className={[
               'w-12 text-right text-[9px] tabular-nums',
               r.win ? 'text-l1-700 font-semibold' : 'text-slate-400',
-            ].join(' ')}>{r.score < 100 ? r.score.toFixed(2) : '∞'}</span>
+            ].join(' ')}>{Number.isFinite(r.score)
+              ? r.score >= 10000 ? r.score.toExponential(2) : r.score.toFixed(2)
+              : Number.isNaN(r.score) ? '—' : '∞'}</span>
           </div>
         ))}
       </div>

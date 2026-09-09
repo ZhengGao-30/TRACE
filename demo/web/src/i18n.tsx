@@ -61,7 +61,7 @@ const DICT = {
   // --- EXP race ----------------------------------------------------------
   raceTitle: 'Selection channel · distortion-free draw',
   raceCands: '{n} candidates · showing top {k}',
-  legendP: 'p[b] model prob',
+  legendP: 'p[b] action probability',
   legendR: 'r[b] keyed draw',
   legendScore: 'score = −log r / p (lowest wins)',
 
@@ -112,8 +112,6 @@ const DICT = {
   permitK2: 'two records',
   permitTallyNote: 'record count per step = the tally channel · rewriting words cannot change it',
   thisStep: 'this step',
-  compareLink: 'With vs without the watermark',
-  compareHint: 'The same HSE job, run by a standard agent and a TRACE agent',
   threatLink: 'What if someone edits the record?',
   threatHint: 'A permit, an incident, and a cover-up — told in nine panels',
   docketTitle: 'RECORD BEING BUILT',

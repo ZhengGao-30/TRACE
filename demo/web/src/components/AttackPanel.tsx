@@ -21,11 +21,11 @@ function Cell({ z, tau }: { z: number; tau: number }) {
 }
 
 export default function AttackPanel({
-  attacks, rate, setRate, onAttack, onMatrix, rows, busy, tau, live, hse = false,
+  attacks, rate, setRate, onAttack, onMatrix, rows, busy, tau, live, hse = false, precomputedAttacks, locked = false,
 }: {
   attacks: string[]; rate: number; setRate: (v: number) => void
   onAttack: (kind: string) => void; onMatrix: () => void
-  rows: MatrixRow[]; busy: string | null; tau: number; live: boolean; hse?: boolean
+  rows: MatrixRow[]; busy: string | null; tau: number; live: boolean; hse?: boolean; precomputedAttacks?: string[]; locked?: boolean
 }) {
   const { t } = useI18n()
   const [hover, setHover] = useState<string | null>(null)
@@ -39,16 +39,21 @@ export default function AttackPanel({
             {(rate * 100).toFixed(0)}%
           </span>
         </div>
-        <input type="range" min={0} max={0.9} step={0.05} value={rate}
+        <input type="range" min={0} max={0.9} step={0.05} value={rate} disabled={locked || !!busy}
                onChange={(e) => setRate(parseFloat(e.target.value))}
                className="w-full accent-rose-500" />
 
         <div className="mt-2 grid grid-cols-2 gap-1.5">
           {ATTACKS.map((k) => {
             const needsLLM = ['semantic_rewrite', 'llm_substitute', 'combined'].includes(k)
-            const disabled = needsLLM && !live
+            const precomputed = precomputedAttacks?.includes(k)
+            const unsupported = precomputedAttacks ? !precomputed : !attacks.includes(k)
+            const disabled = locked || unsupported || (needsLLM && !live && !precomputed)
+            const reason = unsupported ? 'This attack is not yet connected to this construction case.'
+              : locked ? 'Available after a recorded replay finishes.'
+              : needsLLM && !live && !precomputed ? 'Requires a connected live model.' : undefined
             return (
-              <button key={k} disabled={disabled || !!busy}
+              <button key={k} disabled={disabled || !!busy} title={reason}
                 onClick={() => onAttack(k)}
                 onMouseEnter={() => setHover(k)} onMouseLeave={() => setHover(null)}
                 className={[
@@ -61,26 +66,32 @@ export default function AttackPanel({
                 <span className="flex items-center gap-1">
                   {busy === k && <Loader2 size={11} className="animate-spin" />}
                   {t(`atk_${k}` as any)}
-                  {needsLLM && <span className="text-[8px] opacity-60">LLM</span>}
+                  {needsLLM && <span className="text-[8px] opacity-60">{precomputed ? 'scripted' : 'LLM'}</span>}
                 </span>
               </button>
             )
           })}
         </div>
         {hover && (
-          <div className="mt-1.5 text-[10px] text-slate-400">{t(`atk_${hover}_h` as any)}</div>
+          <div className="mt-1.5 text-[10px] text-slate-400">
+            {hse && hover === 'semantic_rewrite'
+              ? 'Scripted edit of observation prose; action IDs and counts stay unchanged.'
+              : t(`atk_${hover}_h` as any)}
+          </div>
         )}
-        <button onClick={onMatrix} disabled={!!busy}
+        {locked && <p className="mt-2 text-[10px] text-slate-400">Replay a recorded run to enable tampering and re-check its watermark.</p>}
+        {hse && precomputedAttacks && <p className="mt-2 text-[10px] text-slate-400">Deletion, record stripping and scripted prose edits are supported. Model-based action replacement is not connected for this case.</p>}
+        <button onClick={onMatrix} disabled={locked || !!busy}
           className="mt-2 w-full rounded-full bg-slate-900 text-white text-[11px] font-semibold
                      py-2 transition-all duration-500 ease-fluid hover:bg-slate-800
                      active:scale-[0.98] disabled:opacity-50">
-          {busy === '__matrix' ? t('runningMatrix') : t('runMatrix')}
+          {busy === '__matrix' ? t('runningMatrix') : hse ? 'Compare supported attacks' : t('runMatrix')}
         </button>
       </div>
 
       {rows.length > 0 && (
         <div className="card p-2.5">
-          <div className="eyebrow mb-2">{t('matrixTitle')}</div>
+          <div className="eyebrow mb-2">{hse ? 'Attack results · correct embedding keys' : t('matrixTitle')}</div>
           <div className="grid grid-cols-[1fr_auto_auto_auto] gap-1 items-center">
             <span />
             <span className="text-[9px] text-l1-700 font-semibold text-center px-1">{t('colSel')}</span>
@@ -104,7 +115,9 @@ export default function AttackPanel({
             ))}
           </div>
           <div className="mt-2 text-[9px] text-slate-400 leading-relaxed">
-            {t('matrixNote')}
+            {hse
+              ? 'Each row tests a separate edited copy with the correct embedding keys, regardless of the original-record key calibration above. Either or both channels may fall below the threshold. This scripted prose edit preserves action IDs and counts. The consistency check tests command membership, not factual truth.'
+              : t('matrixNote')}
           </div>
         </div>
       )}

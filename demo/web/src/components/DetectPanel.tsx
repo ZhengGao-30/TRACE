@@ -66,7 +66,7 @@ function Gauge({
 
       <div className="mt-2 space-y-1">
         <div className="flex items-center gap-1.5">
-          <span className="w-12 text-[9px] text-slate-500">{t('rightKey')}</span>
+          <span className="w-12 text-[9px] text-slate-500" title="The key pair selected in Key calibration">Selected</span>
           <div className="flex-1 h-2 rounded-full bg-white ring-1 ring-slate-200 overflow-hidden">
             <motion.div className={`h-full ${c.bar}`}
               animate={{ width: `${fill * 100}%` }} transition={{ duration: 0.6, ease: [0.32, 0.72, 0, 1] }} />
@@ -93,7 +93,14 @@ export default function DetectPanel({
   const { t } = useI18n()
   if (!d?.layer1 || !d?.layer2) {
     return (
-      <div className="card p-3 text-xs text-slate-400">{t('waiting')}</div>
+      <div className="card space-y-3 p-3">
+        <h3 className="text-xs font-semibold text-slate-700">Watermark detection</h3>
+        {[`z₁ · ${t('selChannel')}`, `z₂ · ${t('tallyChannel')}`].map((label) => <div key={label} className="rounded-xl bg-slate-50 p-3">
+          <div className="flex justify-between text-[11px]"><span className="text-slate-600">{label}</span><span className="text-slate-400">—</span></div>
+          <div className="mt-2 h-2 rounded-full border border-dashed border-slate-200" />
+        </div>)}
+        <p className="text-[10px] text-slate-400">{t('waiting')} No scores or key comparison are available before a recorded run.</p>
+      </div>
     )
   }
   // defensive: a missing field must not blank the whole dashboard

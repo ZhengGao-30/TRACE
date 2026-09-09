@@ -16,14 +16,25 @@ export interface GroupView {
   roundNum?: number
   observations: { command: string; text: string; confirm: boolean }[]
   thought?: string
-  /** HSE only: which permit phase this decision belongs to, and its outcome. */
+  /** HSE: on-duty decision time and stage, not the later physical site event. */
+  timestamp?: string
   phase?: string
   result?: string
+  event_kind?: string
+  detector_eligible?: boolean
+  wm_index?: number | null
+  policy_source?: string
+  station_id?: string
+  world_state_before?: unknown
+  world_state_after?: unknown
+  world_events?: unknown[]
+  fault?: unknown
 }
 
 export default function GroupCard({ g, active, compact = false }:
   { g: GroupView; active: boolean; compact?: boolean }) {
   const { t } = useI18n()
+  const injected = g.event_kind === 'injected_action'
   return (
     <motion.div
       layout
@@ -44,7 +55,7 @@ export default function GroupCard({ g, active, compact = false }:
             <span className="mono text-slate-700 truncate max-w-[11rem]">{g.chosen}</span>
           )}
         </div>
-        {g.k != null && (
+        {!injected && g.k != null && (
           <div className="flex items-center gap-1">
             <span className={[
               'chip',
@@ -62,6 +73,10 @@ export default function GroupCard({ g, active, compact = false }:
           </div>
         )}
       </div>
+
+      {g.timestamp && <div className="text-[10px] text-slate-400">{injected ? 'Injected controller action' : 'Recorded agent action'} · {g.timestamp}</div>}
+      {injected && <div className="rounded-lg bg-amber-50 px-2.5 py-2 text-[11px] text-amber-800">External fault injection — no policy draw or keyed score. Excluded from both watermark channels.</div>}
+      {g.policy_source === 'scenario_policy' && <div className="text-[10px] text-slate-500">Authored scenario weights, not LLM probabilities.</div>}
 
       {g.thought && (
         <div className="rounded-lg bg-slate-50 px-2.5 py-1.5 text-[11px] leading-relaxed

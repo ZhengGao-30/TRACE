@@ -18,7 +18,7 @@ export function GuidedBanner({
   idle: boolean; running: boolean; finished: boolean; detected: boolean
   z1: number; z2: number; tau: number; attacked: boolean; hse?: boolean
 }) {
-  // evidence bar: how far the stronger channel has climbed (soft max at 12)
+  // Current stronger-channel score (soft max at 12), not cumulative progress.
   const pct = Math.max(0, Math.min(1, Math.max(z1, z2) / 12))
 
   if (idle) {
@@ -46,8 +46,8 @@ export function GuidedBanner({
         <div className="flex-1 min-w-0">
           <div className="text-[15px] font-extrabold text-l1-700">Watermark embedding in progress</div>
           <div className="text-[12px] text-l1-600/80 mt-0.5">
-            Every finished step adds evidence.&nbsp;
-            <span className="text-slate-400">→ When the run finishes, this banner turns green: “Watermark detected ✓”.</span>
+            The detector checks the recorded choices and observation counts.&nbsp;
+            <span className="text-slate-400">Scores can rise or fall; detection is not guaranteed.</span>
           </div>
         </div>
         <div className="text-right shrink-0">
@@ -58,7 +58,7 @@ export function GuidedBanner({
               transition={{ duration: 0.6, ease: [0.32, 0.72, 0, 1] }} />
           </div>
           <div className="text-[11px] font-bold text-l1-700 mt-1">
-            {strong ? 'Strong · already past the line' : 'Accumulating…'}
+            {strong ? 'Currently past the line' : 'Checking evidence…'}
           </div>
         </div>
       </div>
@@ -113,9 +113,9 @@ export function GuidedBanner({
 // ---------------------------------------------------------------------------
 
 function Meter({
-  name, sub, z, zWrong, tau, tone, running, notePast, noteBuilding,
+  name, sub, z, zWrong, n, tau, tone, running, notePast, noteBuilding,
 }: {
-  name: string; sub: string; z: number; zWrong: number; tau: number
+  name: string; sub: string; z: number; zWrong: number; n?: number; tau: number
   tone: 'l1' | 'l2'; running: boolean; notePast: string; noteBuilding: string
 }) {
   const hit = z > tau
@@ -135,7 +135,7 @@ function Meter({
             : running ? 'bg-l1-100 text-l1-700'
             : 'bg-slate-100 text-slate-400',
         ].join(' ')}>
-          {hit ? '✓ PRESENT' : running ? '◌ BUILDING…' : '○ NOT FOUND'}
+          {hit ? '✓ PRESENT' : running ? '◌ CHECKING…' : '○ NOT FOUND'}
         </span>
       </div>
       <div className="relative h-3.5 mt-4 rounded-full bg-slate-100 ring-1 ring-slate-200">
@@ -150,9 +150,10 @@ function Meter({
         </div>
       </div>
       <div className="mt-1.5 text-[10.5px] text-slate-400">
+        <span className="font-medium text-slate-500">Effective {tone === 'l1' ? 'L1' : 'L2'} n = {Number.isInteger(n) && n! >= 0 ? n : '—'}.</span>{' '}
         {hit ? notePast : running ? noteBuilding : 'Not past the pass line.'}
-        {zWrong !== 0 && hit && (
-          <span className="text-slate-300"> · wrong key: nothing</span>
+        {hit && (
+          <span className="text-slate-400"> · wrong-key check: {zWrong > tau ? 'above threshold' : 'below threshold'}</span>
         )}
       </div>
     </div>
@@ -164,22 +165,27 @@ export function GuidedDetect({ d, tau, running }: { d: DetectResult | null; tau:
     <div className="card p-4">
       <h3 className="text-[13.5px] font-extrabold text-slate-800">Two independent checks</h3>
       <p className="text-[11px] text-slate-400 leading-snug mt-0.5 mb-4">
-        TRACE hides the mark twice, in two different ways. Either one alone is enough to prove origin.
+        TRACE checks two watermark patterns. A score above the threshold supports attribution; it does not verify the report's factual accuracy.
       </p>
       {!d?.layer1 || !d?.layer2 ? (
-        <div className="text-[11.5px] text-slate-300 py-3 text-center">
-          The checks appear here once the agent starts making decisions.
+        <div className="space-y-3">
+          {['Choice pattern · Layer 1', 'Count pattern · Layer 2'].map((label) => <div key={label} className="rounded-xl bg-slate-50 px-3 py-2.5">
+            <div className="flex justify-between text-[11px]"><span className="font-semibold text-slate-600">{label}</span><span className="text-slate-400">Awaiting record</span></div>
+            <div className="mt-2 h-2 rounded-full border border-dashed border-slate-200" />
+          </div>)}
+          <p className="text-[10px] text-slate-400">Scores populate as a recorded run replays. No detection result has been calculated yet.</p>
         </div>
       ) : (
         <div className="space-y-4">
           <Meter name="Choice pattern" sub="how the agent picks actions"
-                 z={d.layer1.z} zWrong={d.layer1.z_wrong ?? 0} tau={tau} tone="l1" running={running}
+                 z={d.layer1.z} zWrong={d.layer1.z_wrong ?? 0} n={d.layer1.n} tau={tau} tone="l1" running={running}
                  notePast="Past the pass line — the choices carry the mark."
-                 noteBuilding="Builds up as the agent makes choices." />
+                 noteBuilding="Checking the available choice evidence." />
           <Meter name="Count pattern" sub="the rhythm of the log's skeleton"
-                 z={d.layer2.z} zWrong={d.layer2.z_wrong ?? 0} tau={tau} tone="l2" running={running}
+                 z={d.layer2.z} zWrong={d.layer2.z_wrong ?? 0} n={d.layer2.n} tau={tau} tone="l2" running={running}
                  notePast="Past the pass line — the log's shape carries the mark."
-                 noteBuilding="Accumulates more slowly — it crosses the line as later phases complete." />
+                 noteBuilding="Checking the available count evidence." />
+          <p className="text-[10px] leading-relaxed text-slate-400">n counts detector-usable samples, not displayed steps. Scores can rise or fall; crossing the threshold is not guaranteed.</p>
         </div>
       )}
     </div>
@@ -197,11 +203,11 @@ const GUIDED_ATTACKS: { kind: string; label: string; labelHse: string; needsLLM:
 ]
 
 export function GuidedAttack({
-  rate, setRate, busy, locked, live, onAttack, attacked, detected, hse = false,
+  rate, setRate, busy, locked, live, onAttack, attacked, detected, hse = false, precomputedAttacks,
 }: {
   rate: number; setRate: (v: number) => void; busy: string | null
   locked: boolean; live: boolean; onAttack: (kind: string) => void
-  attacked: boolean; detected: boolean; hse?: boolean
+  attacked: boolean; detected: boolean; hse?: boolean; precomputedAttacks?: string[]
 }) {
   return (
     <div className="card p-4 ring-rose-200/70 bg-gradient-to-b from-white to-rose-50/40">
@@ -211,8 +217,8 @@ export function GuidedAttack({
       <p className="text-[11px] text-slate-400 leading-snug mt-0.5">
         {hse
           ? locked
-            ? 'When the run finishes, edit the record — the way someone hiding skipped checks would — and see if the mark still holds.'
-            : 'Edit the record the way someone hiding skipped checks would, then see if the mark still holds.'
+            ? 'After replay, delete or alter the agent’s recorded actions and check the remaining watermark evidence.'
+            : 'Delete or alter the agent-action record, then re-check its watermark. Original decisions, controller faults and site events are kept unchanged.'
           : locked
             ? 'When the run finishes, attack the log — the way someone covering their tracks would — and see if the mark survives.'
             : 'Attack the log the way someone covering their tracks would, then see if the mark survives.'}
@@ -227,16 +233,18 @@ export function GuidedAttack({
         </span>
       </div>
 
-      {locked ? (
+      {locked && (
         <div className="flex items-center gap-2 rounded-xl bg-slate-50 ring-1 ring-dashed ring-slate-200 px-3 py-2
                         text-[11.5px] font-semibold text-slate-400">
           <Lock size={12} /> Unlocks when the run finishes — then try to break the mark.
         </div>
-      ) : (
+      )}
+      {
         <>
           <div className="grid grid-cols-1 gap-1.5">
-            {GUIDED_ATTACKS.map((a) => {
-              const disabled = !!busy || (a.needsLLM && !live)
+            {GUIDED_ATTACKS.filter((a) => !precomputedAttacks || precomputedAttacks.includes(a.kind)).map((a) => {
+              const precomputed = precomputedAttacks?.includes(a.kind)
+              const disabled = locked || !!busy || (a.needsLLM && !live && !precomputed)
               return (
                 <button key={a.kind} disabled={disabled} onClick={() => onAttack(a.kind)}
                   className={[
@@ -246,8 +254,9 @@ export function GuidedAttack({
                       : 'bg-rose-50 text-rose-700 ring-1 ring-rose-200 hover:bg-rose-100',
                   ].join(' ')}>
                   {busy === a.kind && <Loader2 size={11} className="animate-spin" />}
-                  {hse ? a.labelHse : a.label}
-                  {a.needsLLM && !live && <span className="ml-auto text-[9px]">needs live mode</span>}
+                  {precomputed && a.kind === 'semantic_rewrite' ? 'Rewrite the recorded account' : hse ? a.labelHse : a.label}
+                  {precomputed && a.needsLLM && <span className="ml-auto text-[9px]">scripted edit</span>}
+                  {a.needsLLM && !live && !precomputed && <span className="ml-auto text-[9px]">needs live mode</span>}
                 </button>
               )
             })}
@@ -260,6 +269,7 @@ export function GuidedAttack({
                 detected ? 'bg-emerald-50 ring-1 ring-emerald-300 text-emerald-800'
                          : 'bg-rose-50 ring-1 ring-rose-300 text-rose-700',
               ].join(' ')}>
+              <span className="text-[9px] font-normal">Last edit · correct keys</span>
               {detected
                 ? <><ShieldCheck size={15} /> Still detected. The mark survives.</>
                 : hse
@@ -268,7 +278,7 @@ export function GuidedAttack({
             </motion.div>
           )}
         </>
-      )}
+      }
     </div>
   )
 }
