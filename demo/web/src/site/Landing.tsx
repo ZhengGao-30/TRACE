@@ -1,16 +1,15 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { motion, useSpring, useMotionValue } from 'framer-motion'
 import type { ReactNode } from 'react'
 import {
   ArrowRight, ArrowUpRight, FileText, PlayCircle, Check,
-  HardHat, ClipboardList, Wind, ShieldCheck, Wrench, Cpu, ExternalLink, Box,
+  HardHat, ClipboardList, Wind, ShieldCheck, Wrench, Cpu, ExternalLink, AlertTriangle,
   Menu, X,
 } from 'lucide-react'
 import { navigate } from '../Router'
 import Logo from '../components/Logo'
-import { SITE, BIBTEX, CONSTRUCTION_CASES, constructionRunSummary } from './content'
+import { SITE, BIBTEX } from './content'
 import { asset } from '../lib/asset'
-import { loadStaticManifest } from '../lib/staticSource'
 
 const EASE = [0.32, 0.72, 0, 1] as const
 
@@ -83,14 +82,6 @@ export default function Landing() {
   const L = (s: string) => s
   const [copied, setCopied] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [constructionSourceSummary, setConstructionSourceSummary] = useState(() => constructionRunSummary([]))
-  useEffect(() => {
-    let active = true
-    loadStaticManifest().then((manifest) => {
-      if (active) setConstructionSourceSummary(constructionRunSummary(manifest.games))
-    }).catch(() => { /* Keep source-neutral copy when records are unavailable. */ })
-    return () => { active = false }
-  }, [])
 
   const nav = [
     ['#hse', SITE.nav.hse], ['#scenarios', SITE.nav.scenarios],
@@ -250,29 +241,13 @@ export default function Landing() {
         </div>
       </Section>
 
-      {/* ---------------- synthetic construction incident reviews ---------------- */}
+      {/* ---------------- scenarios (two channels + infographics) ---------------- */}
       <Section id="scenarios" className="py-16">
         <Head eyebrow={L(SITE.scenarios.eyebrow)} title={L(SITE.scenarios.title)} lede={L(SITE.scenarios.lede)} />
-        <div className="mt-9 grid gap-5 md:grid-cols-2">
-          {CONSTRUCTION_CASES.filter((sample) => sample.taskType === 'construction_ppe_shift').map((sample, index) => (
-            <ConstructionCaseCard key={sample.key} s={index === 0 ? SITE.scenarios.sel : SITE.scenarios.tally}
-              caseId={sample.key} yard={index === 1} />
-          ))}
-        </div>
-        <Reveal delay={0.1}>
-          <div className="mt-6 rounded-2xl border border-indigo-100 bg-white/80 px-5 py-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[.12em] text-indigo-500">Follow the duty record</p>
-            <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-[12px] text-slate-600">
-              {['Inspect', 'Recommend', 'Controller fault', 'Observe & report', 'Trace source'].map((stage, index) => (
-                <div key={stage} className="flex items-center gap-3">
-                  {index > 0 && <ArrowRight size={11} className="text-indigo-200" />}
-                  <span><span className="mr-1.5 text-indigo-400">{index + 1}</span>{stage}</span>
-                </div>
-              ))}
-            </div>
-            <p className="mt-3 text-[11px] leading-relaxed text-slate-400">{constructionSourceSummary}</p>
-          </div>
-        </Reveal>
+        <ChannelBlock s={SITE.scenarios.sel} tone="l1" L={L}
+          img={asset("paper/scenario1_selection.png")} />
+        <ChannelBlock s={SITE.scenarios.tally} tone="l2" flip L={L}
+          img={asset("paper/scenario2_tally.png")} />
       </Section>
 
       {/* ---------------- why it's hard (insight) ---------------- */}
@@ -631,48 +606,74 @@ type Scn = {
 }
 type LStr = string
 
-function ConstructionCaseCard({ s, caseId, yard }: { s: Scn; caseId: 'CS01' | 'CS02'; yard: boolean }) {
+function ChannelBlock({ s, tone, img, flip, L }: {
+  s: Scn; tone: 'l1' | 'l2'; img: string; flip?: boolean
+  L: (o: LStr) => string
+}) {
+  const c = tone === 'l1'
+    ? { chip: 'bg-l1-500/[0.1] text-l1-700', dot: 'bg-l1-500', num: 'bg-l1-500',
+        take: 'bg-l1-50 ring-l1-100 text-l1-700' }
+    : { chip: 'bg-l2-500/[0.1] text-l2-700', dot: 'bg-l2-500', num: 'bg-l2-500',
+        take: 'bg-l2-50 ring-l2-100 text-l2-700' }
   return (
-    <Reveal delay={yard ? 0.08 : 0} className="h-full">
-      <motion.article whileHover={{ y: -4 }} transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-        className="flex h-full flex-col overflow-hidden rounded-[1.65rem] border border-slate-200/80 bg-white shadow-[0_16px_45px_-35px_rgba(67,56,202,.4)]">
-        <div className="relative h-44 overflow-hidden border-b border-slate-100 bg-gradient-to-br from-indigo-50 via-white to-violet-50" aria-hidden="true">
-          <div className="absolute inset-0 opacity-40" style={{ backgroundImage: 'radial-gradient(#c7d2fe .7px, transparent .7px)', backgroundSize: '16px 16px' }} />
-          <div className="absolute left-5 top-4 flex items-center gap-1.5 rounded-full border border-white bg-white/80 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[.12em] text-indigo-500">
-            <Box size={11} />3D scene
+    <Reveal>
+      <div className={`mt-12 grid lg:grid-cols-2 gap-8 lg:gap-10 items-start
+                       ${flip ? 'lg:[direction:rtl]' : ''}`}>
+        {/* left: the full narrative */}
+        <div className="lg:[direction:ltr]">
+          <div className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1
+                           text-[11px] font-semibold uppercase tracking-[0.14em] ${c.chip}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${c.dot}`} />{L(s.badge)}
           </div>
-          <span className="absolute right-5 top-4 font-mono text-[10px] text-slate-400">{caseId}</span>
-          <div className="absolute bottom-6 left-1/2 h-5 w-60 -translate-x-1/2 skew-x-[-24deg] rounded-md border border-indigo-200/70 bg-indigo-100/70 shadow-[0_10px_20px_-10px_rgba(99,102,241,.4)]" />
-          {yard ? (
-            <div className="absolute bottom-10 left-1/2 h-20 w-44 -translate-x-1/2">
-              {[0, 1, 2].map((level) => <div key={level} className="absolute left-1 right-1 h-4 -skew-x-12 rounded border border-amber-300/80 bg-gradient-to-b from-amber-100 to-amber-200/90 shadow-sm" style={{ bottom: level * 20 }} />)}
-              <div className="absolute -left-2 -top-2 bottom-0 w-2 rounded-sm bg-indigo-300" />
-              <div className="absolute -right-2 -top-2 bottom-0 w-2 rounded-sm bg-indigo-300" />
+          <h3 className="mt-4 font-display font-bold text-[24px] leading-snug text-slate-900">
+            {L(s.title)}
+          </h3>
+          <p className="mt-4 text-[15px] leading-[1.75] text-slate-600">{L(s.lead)}</p>
+
+          {/* the process the agent runs */}
+          <div className="mt-6">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+              {L(s.workLabel)}
             </div>
-          ) : (
-            <div className="absolute bottom-10 left-1/2 h-24 w-40 -translate-x-1/2">
-              {[0, 1, 2].map((post) => <div key={post} className="absolute bottom-0 top-0 w-1.5 rounded-sm bg-indigo-300 shadow-[2px_0_0_#e0e7ff]" style={{ left: post * 76 }} />)}
-              <div className="absolute left-0 right-0 top-2 h-2 rounded-sm border border-amber-300 bg-amber-200" />
-              <div className="absolute bottom-2 left-0 right-0 h-1 rounded-sm bg-indigo-200" />
-              <div className="absolute bottom-1 left-[2px] h-1 w-[108px] origin-left -rotate-45 rounded-sm bg-indigo-200" />
-              <div className="absolute bottom-1 left-[78px] h-1 w-[108px] origin-left -rotate-45 rounded-sm bg-indigo-200" />
-            </div>
-          )}
-          <div className="absolute bottom-5 right-7 flex h-10 w-10 items-center justify-center rounded-[.9rem] border border-indigo-100 bg-white shadow-lg shadow-indigo-100/60"><Cpu size={20} className="text-indigo-500" /></div>
-        </div>
-        <div className="flex flex-1 flex-col p-6 sm:p-7">
-          <p className="text-[10px] font-semibold uppercase tracking-[.13em] text-indigo-500">{s.badge}</p>
-          <h3 className="mt-2 font-display text-[23px] font-bold tracking-tight text-slate-900">{s.title}</h3>
-          <p className="mt-3 text-[13px] leading-[1.8] text-slate-500">{s.lead}</p>
-          <div className="mt-5 flex items-center gap-2 border-t border-slate-100 pt-4 text-[11px] text-slate-500">
-            <ClipboardList size={13} className="text-indigo-400" />{yard ? 'An additional source resolves the obscured view' : 'PPE, falling timber and source checks'}
+            <ol className="mt-3 grid sm:grid-cols-2 gap-2">
+              {s.steps.map((st, i) => (
+                <li key={i} className="flex items-center gap-2.5 rounded-xl bg-white
+                                       ring-1 ring-slate-900/[0.05] px-3 py-2">
+                  <span className={`grid place-items-center w-5 h-5 rounded-full ${c.num}
+                                    text-white text-[10px] font-bold shrink-0`}>{i + 1}</span>
+                  <span className="text-[12.5px] text-slate-700">{L(st)}</span>
+                </li>
+              ))}
+            </ol>
           </div>
-          <button onClick={() => navigate(`/demo?scenario=hse&case=${caseId}`)}
-            className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-indigo-600 px-4 py-2.5 text-[12px] font-semibold text-white transition-colors hover:bg-indigo-700">
-            <PlayCircle size={15} />Open 3D scene<ArrowRight size={13} />
-          </button>
+
+          <p className="mt-6 text-[15px] leading-[1.75] text-slate-600">{L(s.how)}</p>
+
+          {/* under-attack callout */}
+          <div className="mt-5 rounded-xl bg-rose-50/70 ring-1 ring-rose-200/60 p-4">
+            <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase
+                            tracking-[0.14em] text-rose-600">
+              <AlertTriangle size={13} />{L(s.attackLabel)}
+            </div>
+            <p className="mt-2 text-[14px] leading-[1.65] text-slate-700">{L(s.attack)}</p>
+          </div>
+
+          <div className={`mt-4 rounded-xl ring-1 px-4 py-3 text-[14px] font-semibold ${c.take}`}>
+            {L(s.takeaway)}
+          </div>
         </div>
-      </motion.article>
+
+        {/* right: the infographic */}
+        <figure className="lg:[direction:ltr] lg:sticky lg:top-20">
+          <div className="bezel shadow-lift">
+            <div className="bezel-core overflow-hidden p-2">
+              <img src={img} alt={L(s.badge)} className="w-full rounded-lg" loading="lazy" />
+            </div>
+          </div>
+          <figcaption className="mt-3 text-[12px] text-slate-400">{L(s.caption)}</figcaption>
+        </figure>
+      </div>
     </Reveal>
   )
 }
+

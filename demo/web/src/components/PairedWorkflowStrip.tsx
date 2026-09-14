@@ -5,6 +5,7 @@ import {
 } from 'lucide-react'
 import type { Phase, WorkflowStage } from '../lib/guidedSteps'
 import { buildWorkflow, totalSteps } from '../lib/guidedSteps'
+import { PPE_TASK, ppeActionLabel, ppeActionOptionLabel, ppeCheckLabel, type PPERecordFields, type PPECheck } from '../lib/ppeInspection'
 
 export interface PairedRaceRow {
   cmd?: string
@@ -15,8 +16,11 @@ export interface PairedRaceRow {
   win: boolean
 }
 
-export interface PairedTrajectoryStep {
+export interface PairedTrajectoryStep extends PPERecordFields {
   i: number
+  requirement_id?: string
+  procedure?: string
+  variant_id?: string
   wm_index?: number | null
   event_kind?: string
   detector_eligible?: boolean
@@ -94,6 +98,8 @@ export interface ControllerFault {
 }
 
 export interface IncidentReport {
+  checklist?: PPECheck[]
+  evaluation?: { actual_ppe_compliant: boolean; judgment_correct: boolean; expected_assessment: string; evidence_sufficient: boolean }
   status: string
   facts: Record<string, unknown>
   unresolved?: unknown[]
@@ -140,6 +146,7 @@ export interface PairedTrajectoryArm {
 }
 
 export interface PairedWorkflowData {
+  choice_replay?: import('../lib/ppeChoiceReplay').ChoiceReplayRecord
   game_id?: string
   case_id?: string
   task_type: string
@@ -184,8 +191,8 @@ export function isInjectedStep(step: PairedTrajectoryStep) {
 
 export function trajectorySource(pair: PairedWorkflowData) {
   const source = pair.provenance?.policy_source ?? pair.provenance?.agent_source ?? pair.provenance?.source
-  // A controller transaction is a separate provenance class. Do not let an
-  // arbitrary excluded normal action evade the regular source check.
+
+
   const decisions = [...pair.trace.steps, ...pair.standard.steps].filter((step) =>
     !isInjectedStep(step) && step.policy_source !== 'forced_rule')
   const verified = decisions.length > 0 && decisions.every((step) => step.policy_source === source)
@@ -238,10 +245,11 @@ export function probabilityValue(value: number) {
   return value > 0 && value < 0.001 ? '<0.001' : value.toFixed(3)
 }
 
-/** v3 logs include later physical observations; inspecting a baked future row
- * would reveal those observations before the replay reaches them. */
-export function canInspectAction(taskType: string, source: DecisionSource, index: number, current: number, running: boolean, total: number) {
-  if (taskType !== 'construction_ppe_shift') return true
+
+
+export function canInspectAction(taskType: string, source: DecisionSource, index: number, current: number, running: boolean, total: number, completedIndex?: number) {
+  if (taskType === PPE_TASK && completedIndex !== undefined) return index >= 0 && total > 0 && (source === 'trace' ? index <= completedIndex : !running && completedIndex >= total - 1)
+  if (taskType !== 'construction_ppe_shift' && taskType !== PPE_TASK) return true
   if (index < 0 || current < 0 || total <= 0) return false
   const finished = !running && current + 1 >= total
   if (source === 'standard') return finished
@@ -298,10 +306,10 @@ export function ActionWindow({ indices, steps, focus, source, selectedSource, cu
           if (!item) return null
           const locked = canInspect ? !canInspect(index) : false
           const selected = !locked && selectedSource === source && index === focus
-          // This is a map of two recorded trajectories, not a live-data feed.
-          // Progress controls highlighting and result access, never the names.
+
+
           const active = trace && running && index === current
-          const label = item.label
+          const label = ppeActionLabel(item.action, item.label, !locked)
           return (
             <div key={index} data-workflow-slot={index} className="relative min-w-0">
               {order > 0 && <span aria-hidden="true" className="absolute -left-3 top-1/2 w-3 -translate-y-1/2 text-center text-[10px] text-slate-300">›</span>}
@@ -311,7 +319,7 @@ export function ActionWindow({ indices, steps, focus, source, selectedSource, cu
                 aria-label={`${trace ? 'With' : 'Without'} watermark step ${index + 1}: ${label}`}
                 aria-current={active ? 'step' : undefined}
                 data-active={active}
-                title={active ? 'Playing now · decision details unlock on completion' : locked ? trace ? 'Recorded action · decision details unlock when this step completes' : 'Recorded comparison · decision details unlock after TRACE replay' : item.label}
+                title={label}
                 className={[
                   'flex h-12 w-full min-w-0 max-w-[240px] items-center gap-2 rounded-lg px-2.5 text-left text-[10.5px] transition-colors',
                   active
@@ -373,7 +381,7 @@ function ProbabilityBars({ step, trace }: { step: PairedTrajectoryStep; trace: b
           <div key={row.cmd} className="grid items-center gap-2 text-[9.5px]"
             style={{ gridTemplateColumns: 'minmax(130px, 1fr) minmax(90px, 1.25fr) 48px' }}>
             <span className={row.selected ? 'truncate font-extrabold text-indigo-700' : 'truncate text-slate-500'}>
-              {row.label}{row.selected ? ' ← selected' : ''}
+              {ppeActionOptionLabel(row.cmd, row.label)}{row.selected ? ' ← selected' : ''}
             </span>
             <span className="h-2 overflow-hidden rounded-full bg-slate-100">
               <motion.span initial={{ width: 0 }} animate={{ width: `${Math.max(4, row.p / maxProbability * 100)}%` }}
@@ -431,7 +439,7 @@ export function DecisionInspector({ source, step, phaseTitle, onClose }: {
             {injected ? <AlertCircle size={12} /> : trace ? <KeyRound size={12} /> : <Dices size={12} />}
             {injected ? 'Injected controller action' : trace ? 'Watermarked decision' : 'Ordinary decision'} · step {step.i + 1}
           </span>
-          <span className="truncate text-[10px] font-semibold text-slate-500">{step.label}</span>
+          <span className="truncate text-[10px] font-semibold text-slate-500">{ppeActionOptionLabel(step.action, step.label)}</span>
           <button onClick={onClose} aria-label="Close decision details"
             className="ml-auto rounded-full bg-white p-1.5 text-slate-400 ring-1 ring-slate-200 hover:text-slate-700">
             <X size={12} />
@@ -446,7 +454,7 @@ export function DecisionInspector({ source, step, phaseTitle, onClose }: {
                 <summary className="cursor-pointer text-[9px]">Why other actions are unavailable</summary>
                 <ul className="mt-1 space-y-1">
                   {step.blocked_actions.slice(0, 3).map((action, index) => (
-                    <li key={action.command ?? index}>{action.label}: {action.reason}</li>
+                    <li key={action.command ?? index}>{ppeActionOptionLabel(action.command, action.label)}: {action.reason}</li>
                   ))}
                 </ul>
               </details>
@@ -466,7 +474,7 @@ export function DecisionInspector({ source, step, phaseTitle, onClose }: {
             <div className="flex flex-col justify-center rounded-xl bg-white p-4 ring-1 ring-slate-200">
               <span className="text-[11px] font-extrabold text-slate-700">One executable action</span>
               <p className="mt-2 text-[10.5px] leading-relaxed text-slate-500">
-                In this recorded state, both samplers must select “{step.label}”.
+                In this recorded state, both samplers must select “{ppeActionOptionLabel(step.action, step.label)}”.
                 Layer 1 cannot change this decision.
               </p>
             </div>
@@ -484,7 +492,7 @@ export function DecisionInspector({ source, step, phaseTitle, onClose }: {
                 <span className="text-right text-slate-400">r</span><span className="text-right text-slate-400">score</span>
                 {scoreRows.map((row, index) => (
                   <div key={`${row.label}-${index}`} className="contents">
-                    <span className={row.win ? 'truncate font-extrabold text-indigo-700' : 'truncate text-slate-500'}>{row.label}</span>
+                    <span className={row.win ? 'truncate font-extrabold text-indigo-700' : 'truncate text-slate-500'}>{ppeActionOptionLabel(row.cmd, row.label)}</span>
                     <span className={row.win ? 'text-right font-bold text-indigo-700' : 'text-right text-slate-400'}>{probabilityValue(row.p)}</span>
                     <span className={row.win ? 'text-right font-bold text-indigo-700' : 'text-right text-slate-400'}>{row.r.toFixed(3)}</span>
                     <span className={row.win ? 'text-right font-extrabold text-indigo-700' : 'text-right text-slate-400'}>{row.score.toFixed(2)}{row.win ? ' ←' : ''}</span>
@@ -504,7 +512,7 @@ export function DecisionInspector({ source, step, phaseTitle, onClose }: {
                 <span className="text-slate-300">→</span>
                 <span className="rounded-lg bg-slate-100 px-2.5 py-2">ordinary sample</span>
                 <span className="text-slate-300">→</span>
-                <span className="rounded-lg bg-slate-800 px-2.5 py-2 text-white">{step.label}</span>
+                <span className="rounded-lg bg-slate-800 px-2.5 py-2 text-white">{ppeActionOptionLabel(step.action, step.label)}</span>
               </div>
               <p className="mt-4 text-[10.5px] leading-relaxed text-slate-500">
                 The action is sampled directly from {step.policy_source === 'scenario_policy' ? 'the authored scenario distribution' : "the Agent's original distribution"} p. No keyed score is applied.
@@ -520,7 +528,7 @@ export function DecisionInspector({ source, step, phaseTitle, onClose }: {
           {forced
             ? 'The environment requires this action next. There is no alternative for the sampler to choose.'
             : trace && winner
-            ? `TRACE kept p unchanged. “${winner?.label ?? step.label}” had the lowest keyed score${winner ? ` (${winner.score.toFixed(2)})` : ''}, so it was selected.`
+            ? `TRACE kept p unchanged. “${ppeActionOptionLabel(winner?.cmd ?? step.action, winner?.label ?? step.label)}” had the lowest keyed score${winner ? ` (${winner.score.toFixed(2)})` : ''}, so it was selected.`
             : trace ? 'The action is recorded, but its keyed-score explanation is unavailable.'
             : step.policy_source === 'scenario_policy' ? 'These are authored scenario weights, not LLM probabilities. TRACE does not rewrite them.'
               : 'The probability distribution comes directly from the Agent. TRACE does not rewrite it.'}
@@ -534,11 +542,12 @@ export function DecisionInspector({ source, step, phaseTitle, onClose }: {
 }
 
 export default function PairedWorkflowStrip({
-  phases, pair, current, running, expanded, onToggle, followReplay = false, onFollow,
+  phases, pair, current, running, expanded, onToggle, followReplay = false, onFollow, completedIndex,
 }: {
   phases: Phase[]
   pair: PairedWorkflowData
   current: number
+  completedIndex?: number
   running: boolean
   expanded: string | null
   onToggle: (id: string) => void
@@ -547,7 +556,7 @@ export default function PairedWorkflowStrip({
 }) {
   const total = totalSteps(phases)
   const shown = Math.max(0, Math.min(current + 1, total))
-  // The final action remains selected after playback has completed.
+
   const completionCursor = !running && shown === total ? current + 1 : current
   const [manualFocus, setManualFocus] = useState<Record<DecisionSource, number | null>>({ trace: null, standard: null })
   const [selectedSource, setSelectedSource] = useState<DecisionSource | null>(null)
@@ -555,8 +564,8 @@ export default function PairedWorkflowStrip({
     trace: buildWorkflow(pair.trace.steps, 'hse', pair.task_type, pair.stages),
     standard: buildWorkflow(pair.standard.steps, 'hse', pair.task_type, pair.stages),
   }), [pair])
-  // A stage absent from TRACE may still be present in the ordinary run. Keep
-  // the shared process visible without fabricating action rows for either arm.
+
+
   const displayPhases = useMemo(() => {
     const stageOrder = pair.stages?.length ? pair.stages : [...phases, ...armPhases.standard]
     return [...new Map(stageOrder.map((stage) => [stage.id, stage])).values()].map((stage, index): Phase => ({
@@ -583,14 +592,16 @@ export default function PairedWorkflowStrip({
   }
 
   const shift = pair.task_type === 'construction_ppe_shift'
+  const inspection = pair.task_type === PPE_TASK
+  const gated = shift || inspection
   const canInspect = (source: DecisionSource, index: number) =>
-    canInspectAction(pair.task_type, source, index, current, running, total)
+    canInspectAction(pair.task_type, source, index, current, running, total, completedIndex)
 
   function selectAction(source: DecisionSource, index: number) {
     const alreadyOpen = selectedSource === source && focus[source] === index
     if (followReplay) onToggle(selectedPhase!.id)
     setManualFocus((previous) => ({ ...previous, [source]: index }))
-    // Pagination may move focus into a future window, but must not open it.
+
     setSelectedSource(alreadyOpen || !canInspect(source, index) ? null : source)
   }
 
@@ -602,12 +613,12 @@ export default function PairedWorkflowStrip({
 
   if (!selectedPhase) return null
 
-  // Recheck on every render: retained selection state from a completed run must
-  // not expose a future result after reset or while the replay cursor changes.
+
+
   const inspectorAllowed = selectedSource !== null && canInspect(selectedSource, focus[selectedSource])
   const inspectedStep = selectedSource && inspectorAllowed ? pair[selectedSource].steps.find((step) => step.i === focus[selectedSource]) : null
   const entryCheck = pair.task_type === 'construction_ppe_entry_check'
-  const construction = shift || entryCheck || pair.task_type === 'construction_ppe_incident_review'
+  const construction = shift || inspection || entryCheck || pair.task_type === 'construction_ppe_incident_review'
   const agentSource = trajectorySource(pair)
   const agentLabel = agentSource.label
   const shiftPolicyNote = !agentSource.verified ? 'The source of normal action weights has not been verified.'
@@ -641,7 +652,7 @@ export default function PairedWorkflowStrip({
             {pair.synthetic ? 'Synthetic site scenario' : 'Recorded site scenario'} · {agentLabel}
           </p>
           <p className="mt-1 text-[10.5px] leading-relaxed text-slate-500">
-            {shift
+            {inspection ? `Pre-entry PPE inspection. ${shiftPolicyNote} Both runs use the same evidence and prerequisite rules. A correction receipt must be followed by fresh inspection. No access-control action or incident is part of this task.` : shift
               ? `Controlled fault demonstration. ${shiftPolicyNote} Single-action steps follow environment rules. A separate controller injects an admission transaction, excluded from detection. Site events advance with the recorded clock. The injected fault is not a naturally occurring LLM error.`
               : entryCheck
               ? 'Replay what the Agent observed, checked and decided at the time. Site events follow its entry decision; the Agent cannot see future events.'
@@ -655,9 +666,9 @@ export default function PairedWorkflowStrip({
 
       <ActionWindow indices={indices.trace} steps={pair.trace.steps} focus={focus.trace}
         source="trace" selectedSource={selectedSource} current={current} running={running} onSelect={selectAction}
-        canInspect={shift ? (index) => canInspect('trace', index) : undefined} />
+        canInspect={gated ? (index) => canInspect('trace', index) : undefined} />
 
-      {(!shift || inspectorAllowed) && <AnimatePresence initial={false} mode="wait">
+      {(!gated || inspectorAllowed) && <AnimatePresence initial={false} mode="wait">
         {selectedSource === 'trace' && inspectedStep && (
           <DecisionInspector key={`trace-${focus.trace}`} source="trace" step={inspectedStep} phaseTitle={selectedPhase.title}
             onClose={resumeFollow} />
@@ -706,9 +717,9 @@ export default function PairedWorkflowStrip({
 
       <ActionWindow indices={indices.standard} steps={pair.standard.steps} focus={focus.standard}
         source="standard" selectedSource={selectedSource} current={-1} onSelect={selectAction}
-        canInspect={shift ? (index) => canInspect('standard', index) : undefined} />
+        canInspect={gated ? (index) => canInspect('standard', index) : undefined} />
 
-      {(!shift || inspectorAllowed) && <AnimatePresence initial={false} mode="wait">
+      {(!gated || inspectorAllowed) && <AnimatePresence initial={false} mode="wait">
         {selectedSource === 'standard' && inspectedStep && (
           <DecisionInspector key={`standard-${focus.standard}`} source="standard" step={inspectedStep} phaseTitle={selectedPhase.title}
             onClose={resumeFollow} />
@@ -718,9 +729,28 @@ export default function PairedWorkflowStrip({
       <p className="mt-2 px-1 text-[9px] text-slate-400">
         Aligned by workflow stage, not by step number. Probabilities describe each action's recorded state; different states can have different distributions.
       </p>
-      {entryCheck || shift ? <EntryOutcomeComparison pair={pair} available={!running && total > 0 && shown === total} /> : <OutcomeComparison pair={pair} />}
+      {inspection ? <PPEOutcomeComparison pair={pair} available={!running && total > 0 && shown === total && completedIndex === total - 1} />
+        : entryCheck || shift ? <EntryOutcomeComparison pair={pair} available={!running && total > 0 && shown === total} /> : <OutcomeComparison pair={pair} />}
     </section>
   )
+}
+
+export function PPEOutcomeComparison({ pair, available }: { pair: PairedWorkflowData; available: boolean }) {
+  if (!available) return <p className="mt-3 rounded-xl bg-slate-50 p-3 text-xs text-slate-500">The current PPE findings and each agent’s conclusion appear after the replay.</p>
+  return <div className="mt-3 rounded-xl border border-indigo-100 bg-indigo-50/40 p-3">
+    <p className="text-xs font-bold text-slate-700">Recorded inspection results <span className="ml-2 font-normal text-slate-500">{pair.validation?.same_outcome ? 'Same inspection outcome' : 'Compare the two recorded outcomes'}</span></p>
+    <div className="mt-2 grid gap-2 sm:grid-cols-2">{(['trace', 'standard'] as const).map(source => {
+      const report = pair[source].report
+      return <div key={source} className="rounded-xl bg-white p-3 ring-1 ring-slate-200">
+        <p className={`text-xs font-bold ${source === 'trace' ? 'text-indigo-600' : 'text-slate-500'}`}>{source === 'trace' ? 'With watermark' : 'Without watermark'} · {pair[source].steps.length} actions</p>
+        <p className="mt-2 text-sm font-semibold text-slate-800">{decisionLabel(report?.decision)}</p>
+        <p className="mt-1 text-xs text-slate-600">Current PPE: {report?.evaluation ? report.evaluation.actual_ppe_compliant ? 'meets the supplied rules' : 'does not meet the supplied rules' : 'evaluation not recorded'}.</p>
+        <p className="mt-1 text-xs text-slate-600">Agent conclusion: {report?.evaluation ? report.evaluation.judgment_correct ? 'consistent with the observed evidence' : 'does not match the observed evidence' : 'not evaluated'}.</p>
+        <div className="mt-2 space-y-1">{report?.checklist?.map(row => <p key={row.id} className="flex items-center justify-between gap-2 text-xs text-slate-500"><span>{ppeCheckLabel(row.id, row.label)}</span><span className={row.status === 'pass' ? 'text-emerald-600' : 'text-amber-700'}>{row.status === 'pass' ? 'Meets rule' : row.status === 'fail' ? 'Issue' : 'Unverified'}</span></p>)}</div>
+      </div>
+    })}</div>
+    <p className="mt-2 text-xs leading-relaxed text-slate-500">Both runs use the same inspection rules. TRACE changes how an action is sampled, not the supplied probabilities or PPE evidence. Matching source keys does not prove a finding is correct.</p>
+  </div>
 }
 
 export function canonical(value: unknown): string {
@@ -749,7 +779,8 @@ export function effectiveEntryDecision(report?: IncidentReport): EntryDecision |
 }
 
 export function decisionLabel(decision?: EntryDecision): string {
-  const labels: Record<string, string> = { approved: 'Entry approved', denied: 'Entry denied', held: 'Entry held for review' }
+  const labels: Record<string, string> = { approved: 'Entry approved', denied: 'Entry denied', held: 'Entry held for review',
+    passed: 'PPE check passed', not_passed: 'PPE check not passed', pending: 'Further verification needed' }
   return decision?.verdict ? labels[decision.verdict] ?? displayFact(decision.verdict)
     : decision?.action ? displayFact(decision.action) : 'Decision not recorded'
 }
@@ -762,8 +793,8 @@ export function entryComparison(pair: PairedWorkflowData) {
   const trace = pair.trace.report
   const standard = pair.standard.report
   const available = !!trace && !!standard
-  // Completion/record validity and safety are separate axes. Different
-  // observations or outcomes do not make an execution record invalid.
+
+
   const valid = available && pair.trace.validation?.valid === true && pair.standard.validation?.valid === true
   const traceDecision = effectiveEntryDecision(trace)
   const standardDecision = effectiveEntryDecision(standard)

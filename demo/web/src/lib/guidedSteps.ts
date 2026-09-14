@@ -1,4 +1,6 @@
-/** Readable actions and business stages for the household and construction demos. */
+
+import { PPE_TASK, PPE_PHASES, ppeActionLabel } from './ppeInspection'
+
 export interface GuidedStep {
   i: number
   raw: string
@@ -16,9 +18,9 @@ export interface Phase {
   steps: GuidedStep[]
 }
 
-/** Preserve recorded business metadata; a position is not a business stage. */
+
 export interface WorkflowAction {
-  /** Display position in the execution log; never substitute wm_index. */
+
   i?: number
   wm_index?: number | null
   chosen?: string
@@ -48,12 +50,16 @@ interface HumanAction {
   obj: string
 }
 
-/** Household strings need readable labels; construction labels come from data. */
+
 export function humanize(raw: string, scenario: string): HumanAction {
   let match: RegExpMatchArray | null
   const make = (label: string, chip: string, verb: string, mkey = verb): HumanAction => ({
     label, chip, verb, mkey, obj: '', group: verb === 'go' ? 'Move around' : undefined,
   })
+  if (scenario === 'hse') {
+    const label = ppeActionLabel(raw, '')
+    if (label) return make(label, label, raw.split(' ')[0] ?? '')
+  }
   if (scenario === 'alfworld') {
     if ((match = raw.match(/^go to (.+)$/))) return make(`Go to the ${friendly(match[1])}`, 'Move', 'go')
     if ((match = raw.match(/^take (.+?) from (.+)$/))) return make(`Pick up the ${friendly(match[1])}`, `Pick up ${friendly(match[1])}`, 'take')
@@ -112,18 +118,18 @@ const HOUSEHOLD_PHASES: PhaseDef[] = [
   { id: 'place', title: 'Put it in place', desc: 'Place the object where it belongs.', verbs: ['put', 'move'] },
 ]
 
-/**
- * Construction stages are read from complete recorded groups, never inferred
- * from command wording or clamped to match the other arm's step position.
- * Only the legacy household recordings use command-based phase grouping.
- */
+
+
+
+
+
 export function buildWorkflow(
   actions: (string | WorkflowAction)[], scenario: string, taskType?: string, stages?: WorkflowStage[],
 ): Phase[] {
   const entryCheck = taskType === 'construction_ppe_entry_check'
   const shift = taskType === 'construction_ppe_shift'
-  const construction = shift || entryCheck || taskType === 'construction_ppe_incident_review'
-  const defs: PhaseDef[] = stages?.length
+  const construction = shift || entryCheck || taskType === PPE_TASK || taskType === 'construction_ppe_incident_review'
+  const defs: PhaseDef[] = taskType === PPE_TASK ? [...PPE_PHASES] : stages?.length
     ? stages.map((stage) => ({ ...stage, desc: stage.description ?? stage.desc ?? '' }))
     : shift ? [...SHIFT_PHASES] : entryCheck ? [...ENTRY_PHASES] : construction ? [...CONSTRUCTION_PHASES]
       : scenario === 'alfworld' ? [...HOUSEHOLD_PHASES]
@@ -153,7 +159,9 @@ export function buildWorkflow(
       if (assignments[i] !== phaseIndex) return
       const raw = record.chosen ?? record.action ?? ''
       const action = humanize(raw, scenario)
-      steps.push({ i: record.i ?? i, raw, label: record.label ?? action.label, chip: record.label ?? action.chip, group: action.group, mkey: action.mkey })
+      const label = taskType === PPE_TASK ? ppeActionLabel(raw, record.label ?? action.label) : record.label ?? action.label
+      const chip = taskType === PPE_TASK ? label : record.label ?? action.chip
+      steps.push({ i: record.i ?? i, raw, label, chip, group: action.group, mkey: action.mkey })
     })
     if (steps.length) phases.push({ id: def.id, num: phases.length + 1, title: def.title, desc: def.desc, steps })
   })

@@ -45,6 +45,8 @@ demo/web/dist/
 demo/web/node_modules/
 .vite/
 *.log
+.npm-cache/
+*.tsbuildinfo
 
 # ─────────────────────────────────────────────────────────────
 #  Local tooling / scratch — not part of the published site

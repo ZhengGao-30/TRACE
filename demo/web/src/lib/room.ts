@@ -1,10 +1,10 @@
-/**
- * ALFWorld command -> spatial scene.
- *
- * ALFWorld receptacles are addressed as "<kind> <n>" (cabinet 5, fridge 1, ...).
- * Every step's admissible set contains a `go to X` for each reachable receptacle,
- * so the room inventory is recovered from the commands themselves.
- */
+
+
+
+
+
+
+
 
 export type Kind =
   | 'cabinet' | 'drawer' | 'countertop' | 'fridge' | 'microwave' | 'sinkbasin'
@@ -14,10 +14,10 @@ export type Kind =
   | 'towelholder' | 'cart' | 'laundryhamper' | 'other'
 
 export interface Recep {
-  id: string          // "cabinet 5"
+  id: string
   kind: Kind
   n: number
-  x: number           // 0..1 floor coords
+  x: number
   y: number
   open?: boolean
   visited?: boolean
@@ -30,8 +30,8 @@ export type Verb =
 
 export interface ParsedCmd {
   verb: Verb
-  target?: string     // receptacle id
-  object?: string     // portable object id
+  target?: string
+  object?: string
   raw: string
 }
 
@@ -76,7 +76,7 @@ function kindOf(id: string): Kind {
   return (RECEP_KINDS as string[]).includes(base) ? (base as Kind) : 'other'
 }
 
-/** Parse one ALFWorld command into a verb + operands. */
+
 export function parseCommand(raw: string): ParsedCmd {
   const s = (raw || '').trim()
   let m: RegExpMatchArray | null
@@ -101,13 +101,13 @@ export function parseCommand(raw: string): ParsedCmd {
   return { verb: 'unknown', raw: s }
 }
 
-/**
- * Lay receptacles out around the room.
- *
- * Appliances hug the "wall" (top edge), storage runs down the two sides, and
- * big surfaces sit in the middle -- close enough to a real floor plan that the
- * walk reads as spatial, while staying deterministic for a given inventory.
- */
+
+
+
+
+
+
+
 const WALL: Kind[] = ['fridge', 'microwave', 'sinkbasin', 'stoveburner', 'toaster',
   'coffeemachine', 'toilet', 'bathtubbasin']
 const CENTER: Kind[] = ['diningtable', 'countertop', 'desk', 'bed', 'sofa',
@@ -123,17 +123,17 @@ export function layoutRoom(ids: string[]): Recep[] {
   const place = (i: { id: string; kind: Kind; n: number }, x: number, y: number) =>
     out.push({ id: i.id, kind: i.kind, n: i.n, x, y })
 
-  // top wall: appliances
+
   wall.forEach((i, k) => place(i, wall.length === 1 ? 0.5 : 0.10 + (0.80 * k) / Math.max(1, wall.length - 1), 0.09))
 
-  // left + right columns: cabinets / drawers / shelves
+
   const half = Math.ceil(side.length / 2)
   side.slice(0, half).forEach((i, k) =>
     place(i, 0.07, 0.26 + (0.66 * k) / Math.max(1, half - 1)))
   side.slice(half).forEach((i, k) =>
     place(i, 0.93, 0.26 + (0.66 * k) / Math.max(1, side.length - half - 1)))
 
-  // middle: big surfaces
+
   center.forEach((i, k) => {
     const cols = Math.min(3, center.length)
     const row = Math.floor(k / cols)
@@ -148,7 +148,7 @@ export function layoutRoom(ids: string[]): Recep[] {
 
 type Translate = (k: any, vars?: Record<string, string | number>) => string
 
-/** Human-readable one-liner for the action banner. */
+
 export function describe(p: ParsedCmd, t: Translate): string {
   const vars = { t: p.target ?? '', o: p.object ?? '' }
   return p.verb === 'unknown' ? p.raw : t(`v_${p.verb}`, vars)

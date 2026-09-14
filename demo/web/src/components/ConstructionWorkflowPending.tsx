@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ArrowRight, CheckCheck, ChevronDown, Dices, KeyRound, LockKeyhole } from 'lucide-react'
 import { SHIFT_PHASES, type WorkflowStage } from '../lib/guidedSteps'
+import { PPE_TASK, PPE_PHASES } from '../lib/ppeInspection'
 
 const STAGES = [
   { id: 'identify', title: 'Identify worker', description: 'Identify the worker and the site’s entry requirements using information available at that time.' },
@@ -8,12 +9,12 @@ const STAGES = [
   { id: 'decide', title: 'Decide entry', description: 'The Agent assesses compliance and decides whether to admit the worker. Executable does not mean safe: mistaken decisions can be recorded.' },
 ]
 
-/** The real workflow contract, not an invented trajectory or a successful run. */
+
 export default function ConstructionWorkflowPending({ taskType, stages }: { taskType?: string; stages?: WorkflowStage[] } = {}) {
   const [expanded, setExpanded] = useState<string | null>(null)
   const shift = taskType === 'construction_ppe_shift'
   const definitions = stages?.length ? stages.map((stage) => ({ ...stage, description: stage.description ?? stage.desc ?? '' }))
-    : shift ? SHIFT_PHASES.map((stage) => ({ ...stage, description: stage.desc })) : STAGES
+    : taskType === PPE_TASK ? PPE_PHASES.map((stage) => ({ ...stage, description: stage.desc })) : shift ? SHIFT_PHASES.map((stage) => ({ ...stage, description: stage.desc })) : STAGES
   const stage = definitions.find((item) => item.id === expanded)
 
   return (

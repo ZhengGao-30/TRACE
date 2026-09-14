@@ -1,15 +1,15 @@
-/**
- * Procedural 16x16 pixel textures, Minecraft style.
- *
- * The blocky charm comes almost entirely from low-res textures sampled with
- * NEAREST filtering -- flat colours never read as Minecraft. Everything here is
- * drawn on a canvas at load, so there are no external assets.
- */
+
+
+
+
+
+
+
 import * as THREE from 'three'
 
 const S = 16
 
-// deterministic per-texture noise so a reload looks identical
+
 function rng(seed: number) {
   let x = seed >>> 0
   return () => {
@@ -45,7 +45,7 @@ function make(seed: number, paint: Painter): THREE.CanvasTexture {
   return tex
 }
 
-/** speckled base: the workhorse for stone / concrete / wool */
+
 const speckle = (base: string, spread = 0.06): Painter => (ctx, r) => {
   for (let y = 0; y < S; y++) {
     for (let x = 0; x < S; x++) {
@@ -55,7 +55,7 @@ const speckle = (base: string, spread = 0.06): Painter => (ctx, r) => {
   }
 }
 
-/** horizontal planks with dark seams and grain streaks */
+
 const planks = (base: string): Painter => (ctx, r) => {
   for (let y = 0; y < S; y++) {
     const band = Math.floor(y / 4)
@@ -64,12 +64,12 @@ const planks = (base: string): Painter => (ctx, r) => {
       ctx.fillStyle = shade(base, tone + (r() - 0.5) * 0.05)
       ctx.fillRect(x, y, 1, 1)
     }
-    if (y % 4 === 3) {                       // seam between planks
+    if (y % 4 === 3) {
       ctx.fillStyle = shade(base, -0.16)
       ctx.fillRect(0, y, S, 1)
     }
   }
-  for (let i = 0; i < 5; i++) {              // grain
+  for (let i = 0; i < 5; i++) {
     const y = Math.floor(r() * S)
     const x = Math.floor(r() * (S - 5))
     ctx.fillStyle = shade(base, -0.08)
@@ -77,7 +77,7 @@ const planks = (base: string): Painter => (ctx, r) => {
   }
 }
 
-/** vertical wood, for legs and frames */
+
 const woodGrain = (base: string): Painter => (ctx, r) => {
   for (let x = 0; x < S; x++) {
     const tone = (x % 5 === 0 ? -0.07 : 0) + (r() - 0.5) * 0.04
@@ -88,7 +88,7 @@ const woodGrain = (base: string): Painter => (ctx, r) => {
   }
 }
 
-/** brushed metal: fine vertical streaks */
+
 const metal = (base: string): Painter => (ctx, r) => {
   for (let x = 0; x < S; x++) {
     const tone = (r() - 0.5) * 0.09
@@ -99,7 +99,7 @@ const metal = (base: string): Painter => (ctx, r) => {
   }
 }
 
-/** tiles with grout lines -- kitchen/bathroom walls */
+
 const tiles = (base: string): Painter => (ctx, r) => {
   for (let y = 0; y < S; y++) {
     for (let x = 0; x < S; x++) {
@@ -110,7 +110,7 @@ const tiles = (base: string): Painter => (ctx, r) => {
   }
 }
 
-/** glass: a light frame plus a diagonal glint */
+
 const glass: Painter = (ctx) => {
   ctx.fillStyle = 'rgba(180,220,240,0.55)'
   ctx.fillRect(0, 0, S, S)
@@ -121,7 +121,7 @@ const glass: Painter = (ctx) => {
   for (let i = 2; i < 9; i++) ctx.fillRect(i, 12 - i, 2, 1)
 }
 
-/** water: banded blue with ripples */
+
 const water: Painter = (ctx, r) => {
   for (let y = 0; y < S; y++) {
     for (let x = 0; x < S; x++) {
@@ -132,7 +132,7 @@ const water: Painter = (ctx, r) => {
   }
 }
 
-/** fabric / wool: soft cross weave */
+
 const wool = (base: string): Painter => (ctx, r) => {
   for (let y = 0; y < S; y++) {
     for (let x = 0; x < S; x++) {
@@ -150,7 +150,7 @@ function tex(key: string, seed: number, paint: Painter) {
   return t
 }
 
-/** Texture for a given palette colour. Keyed on the colour string used in blocks.ts. */
+
 export function textureFor(color: string): THREE.CanvasTexture {
   switch (color) {
     case '#b8894f': return tex('oak', 11, planks('#b8894f'))
@@ -173,20 +173,20 @@ export function textureFor(color: string): THREE.CanvasTexture {
   }
 }
 
-// --- room surfaces ---------------------------------------------------------
+
 export const FLOOR = () => tex('floor', 101, planks('#c8a27a'))
 export const WALL = () => tex('wall', 102, speckle('#e6e0d4', 0.035))
 export const WALL_LOWER = () => tex('wallLower', 103, tiles('#dfe6ea'))
 export const RUG = () => tex('rug', 104, wool('#9c6b5c'))
 export const CEILING = () => tex('ceil', 105, speckle('#f2efe8', 0.02))
 
-// --- player skin -----------------------------------------------------------
+
 export const SKIN = () => tex('skin', 201, speckle('#c68642', 0.03))
 export const SHIRT = () => tex('shirt', 202, wool('#3f6fc4'))
 export const PANTS = () => tex('pants', 203, wool('#2f3d5c'))
 export const HAIR = () => tex('hair', 204, speckle('#3a2a1c', 0.05))
 
-/** Shared lambert material per colour, textured. */
+
 const matCache = new Map<string, THREE.MeshLambertMaterial>()
 export function blockMaterial(color: string) {
   let m = matCache.get(color)

@@ -2,8 +2,9 @@ import { motion } from 'framer-motion'
 import ExpRace from './ExpRace'
 import type { RaceRow } from '../api'
 import { useI18n } from '../i18n'
+import type { PPERecordFields } from '../lib/ppeInspection'
 
-export interface GroupView {
+export interface GroupView extends PPERecordFields {
   i: number
   window?: string
   chosen?: string
@@ -16,7 +17,7 @@ export interface GroupView {
   roundNum?: number
   observations: { command: string; text: string; confirm: boolean }[]
   thought?: string
-  /** HSE: on-duty decision time and stage, not the later physical site event. */
+
   timestamp?: string
   phase?: string
   result?: string
@@ -47,7 +48,7 @@ export default function GroupCard({ g, active, compact = false }:
         active ? 'ring-2 ring-l1-400 animate-pulseRing' : 'hover:shadow-lift transition-shadow duration-500 ease-fluid',
       ].join(' ')}
     >
-      {/* header: group index + Layer-2 badge */}
+      {                                         }
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="eyebrow">{t('group')} · {g.i}</span>
@@ -91,7 +92,7 @@ export default function GroupCard({ g, active, compact = false }:
                  nCandidates={g.nCandidates ?? g.race.length} />
       )}
 
-      {/* executed observations; the second one is the Layer-2 confirm */}
+      {                                                                  }
       <div className="space-y-1">
         {(compact ? g.observations.slice(0, 2) : g.observations).map((o, idx) => (
           <div key={idx}

@@ -3,7 +3,7 @@ import type { Category } from '../three/blocks'
 
 const ORDER: Category[] = ['storage', 'appliance', 'surface', 'water', 'comfort', 'misc']
 
-/** Explains the floor-plate colours so a 34-receptacle room stays scannable. */
+
 export default function RoomLegend() {
   return (
     <div className="card p-2">

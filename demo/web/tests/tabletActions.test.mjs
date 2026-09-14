@@ -9,8 +9,8 @@ const compiled = ts.transpileModule(source, {
 }).outputText
 const scene = await import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`)
 
-// Independently reviewed business semantics, not extracted from TABLET_ACTIONS.
-// A record's source station must not turn a digital read into a site visit.
+
+
 const digital = new Set([
   'read_shift_handover', 'read_work_plan', 'read_site_rules', 'check_ppe_requirements',
   'read_role_authorization', 'verify_authorization_addendum', 'verify_training_certificate',

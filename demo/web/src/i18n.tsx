@@ -1,14 +1,14 @@
 import type { ReactNode } from 'react'
 
-/**
- * UI strings (English only).
- *
- * Terminology follows the PAPER, not the code:
- *   selection channel = which action is chosen  (code: layer1 / EXP)
- *   tally channel     = how many records a decision group holds (code: layer2)
- */
+
+
+
+
+
+
+
 const DICT = {
-  // --- shell -------------------------------------------------------------
+
   appName: 'TRACE',
   appSub: 'Two-Channel Robust Attribution Watermark · distortion-free',
   paperTitle: 'TRACE: A Two-Channel Robust Attribution Watermark via Complementary Embeddings for LLM-Agent Trajectories',
@@ -16,7 +16,7 @@ const DICT = {
   offline: 'OFFLINE · replaying a logged run',
   realtimeNote: 'detection & attacks computed live',
 
-  // --- backend connection ------------------------------------------------
+
   connErrTitle: 'Backend not reachable',
   connErrBody: 'This demo needs a running backend. If you are the presenter, open the TRACE Backend launcher, click Start, then Retry. If someone shared this demo with you, paste the backend URL they gave you below and click Connect.',
   connErrTrying: 'Currently trying: {api}',
@@ -25,13 +25,13 @@ const DICT = {
   connErrRetry: 'Retry',
   staticNote: 'Offline demo · real trajectories and detection are precomputed, no backend needed. Live mode (real-time LLM) needs a local backend.',
 
-  // --- channels ----------------------------------------------------------
+
   selChannel: 'selection channel',
   tallyChannel: 'tally channel',
   selSub: 'which action · keyed on local content · deletion-robust (resyncs)',
   tallySub: 'records per group · keyed on the log skeleton · rewrite-invariant',
 
-  // --- task picker -------------------------------------------------------
+
   modeLive: 'Live',
   modeOffline: 'Offline',
   liveHint: 'Household task games · {n} local · real LLM calls',
@@ -45,11 +45,11 @@ const DICT = {
   failed: 'failed',
   speed: 'Playback speed',
 
-  // --- keys --------------------------------------------------------------
+
   rightKey: 'Correct keys',
   wrongKey: 'Wrong keys',
 
-  // --- trace feed --------------------------------------------------------
+
   group: 'GROUP',
   emptyTitle: 'Pick a task to begin',
   emptySubLive: 'real LLM · real sampling · real detection',
@@ -58,14 +58,14 @@ const DICT = {
   executed: 'executed',
   confirmStep: 'tally channel · read-only · no decision in front',
 
-  // --- EXP race ----------------------------------------------------------
+
   raceTitle: 'Selection channel · distortion-free draw',
   raceCands: '{n} candidates · showing top {k}',
   legendP: 'p[b] action probability',
   legendR: 'r[b] keyed draw',
   legendScore: 'score = −log r / p (lowest wins)',
 
-  // --- detection ---------------------------------------------------------
+
   detected: 'DETECTED',
   notDetected: 'NOT DETECTED',
   waiting: 'waiting for the first decision group…',
@@ -74,7 +74,7 @@ const DICT = {
   auditRate: 'mismatch',
   robustPath: 'detection reads the executed stream · candidate sets come from the non-attackable per-group record',
 
-  // --- attacks -----------------------------------------------------------
+
   attackStrength: 'Attack strength',
   runMatrix: 'Run full orthogonality matrix',
   runningMatrix: 'running full matrix…',
@@ -97,13 +97,13 @@ const DICT = {
 
   newGroups: '{n} new groups · jump to latest',
 
-  // --- mobile gate -------------------------------------------------------
+
   mobileTitle: 'The interactive demo is built for desktop',
   mobileBody: 'The live trajectory, 3D room and interactive panels need a wider screen. Open this page on a computer for the full demo. The project site itself reads fine on mobile.',
   mobileBack: '← Back to the project site',
   menu: 'Menu',
 
-  // --- HSE permit / compliance record ------------------------------------
+
   permitStamped: 'steps stamped',
   permitClosed: 'record closed',
   permitIncomplete: 'not closed',
@@ -125,7 +125,7 @@ const DICT = {
   sc_hse: 'Industrial Safety (HSE)',
   sc_hse_h: 'HSE permits, industrial safety & environmental compliance',
 
-  // --- room HUD ----------------------------------------------------------
+
   standby: 'standby…',
   step: 'STEP {n}',
   holding: 'holding',
@@ -133,7 +133,7 @@ const DICT = {
   taskFailed: 'not completed',
   tallyReadOnly: 'tally · read-only',
 
-  // --- room verbs --------------------------------------------------------
+
   v_goto: 'go to {t}',
   v_open: 'open {t}',
   v_close: 'close {t}',
@@ -150,10 +150,10 @@ const DICT = {
 
 export type Key = keyof typeof DICT
 
-/**
- * The site is English-only. This provider is kept as a passthrough so the tree
- * shape stays stable (and a second language could be reintroduced here alone).
- */
+
+
+
+
 export function I18nProvider({ children }: { children: ReactNode }) {
   return <>{children}</>
 }

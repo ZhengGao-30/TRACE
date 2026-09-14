@@ -13,49 +13,6 @@
 type L = string
 const t = (en: string): L => en
 
-/** Scene metadata only. No generated trajectory, outcome or watermark scores. */
-export const CONSTRUCTION_CASES = [
-  { key: 'CS01', gameId: 'hse_construction-CS01-scaffold__shift_fault_demo', title: 'Scaffold duty shift', taskType: 'construction_ppe_shift' },
-  { key: 'CS02', gameId: 'hse_construction-CS02-timber_yard__shift_fault_demo', title: 'Timber-yard duty shift', taskType: 'construction_ppe_shift' },
-] as const
-
-type RecordedPolicyMetadata = {
-  policy_source?: string
-  provenance?: { policy_source?: string; agent_source?: string; source?: string }
-}
-
-/** Describe the recorded source, not a source inferred from the scenario. */
-export function constructionPolicyCopy(record?: RecordedPolicyMetadata | null) {
-  const source = record?.provenance?.policy_source ?? record?.provenance?.agent_source
-    ?? record?.provenance?.source ?? record?.policy_source
-  if (source === 'codex_llm') return {
-    source, label: 'Codex LLM replay',
-    detail: 'Codex LLM-elicited action weights from synthetic text observations, normalized before sampling; not token probabilities.',
-  }
-  if (source === 'api') return {
-    source, label: 'API LLM replay',
-    detail: 'Model-elicited action weights from synthetic text observations, normalized before sampling; not token probabilities.',
-  }
-  if (source === 'scenario_policy') return {
-    source, label: 'Authored policy replay',
-    detail: 'Authored scenario weights, not LLM probabilities.',
-  }
-  return { source, label: 'Source unverified', detail: 'The policy source has not been verified for this record.' }
-}
-
-export function constructionRunSummary(rows: (RecordedPolicyMetadata & { game_id?: string; task_type?: string })[]) {
-  const shifts = rows.filter((row) => CONSTRUCTION_CASES.some((sample) => sample.taskType === 'construction_ppe_shift'
-    && row.game_id === sample.gameId && row.task_type === sample.taskType))
-  const copies = [...new Map(shifts.map((row) => {
-    const copy = constructionPolicyCopy(row)
-    return [copy.source, copy] as const
-  })).values()]
-  const sourceNote = copies.length === 1 ? `Available duty-shift records: ${copies[0].label}. ${copies[0].detail}`
-    : copies.length > 1 ? `Available duty-shift sources: ${copies.map((copy) => copy.label).join('; ')}. Each replay identifies its action-weight source.`
-      : 'Each replay identifies its recorded policy source and action weights when available.'
-  return `${sourceNote} Controller faults and physical events are not watermark samples. The controlled fault is not evidence of a natural LLM failure.`
-}
-
 export const SITE = {
   brand: t('CSIRO Tech4HSE Project · CSIRO’s Data61 × UNSW'),
 
@@ -63,28 +20,28 @@ export const SITE = {
     hse: t('Why HSE'),
     scenarios: t('Scenarios'),
     how: t('How it works'),
-    guarantees: t('Properties'),
+    guarantees: t('Guarantees'),
     results: t('Results'),
     team: t('Team'),
-    demo: t('Interactive demo'),
+    demo: t('Live demo'),
   },
 
   hero: {
-    eyebrow: t('CSIRO Tech4HSE · Traceable records for AI agents'),
-    title1: t('AI agents leave a record.'),
-    title2: t('Trace where it came from.'),
+    eyebrow: t('CSIRO Tech4HSE · Trustworthy, tamper-evident records for AI agents'),
+    title1: t('Safety-critical work is moving to AI agents.'),
+    title2: t('Make every trajectory provable.'),
     lede: t(
-      'TRACE embeds two complementary watermarks in an agent’s action and observation records. Explore two construction sites in 3D through complete duty-shift demonstrations with explicit fault injection.'),
-    ctaDemo: t('Explore the demo'),
+      'When an AI agent runs Health, Safety & Environment work (approving a permit, documenting a spill, filing an incident report), its behaviour trajectory is the evidence for accountability. But that log can be altered in seconds and verified by no one. TRACE layers two complementary watermarks onto the trajectory, so even the party holding the log cannot delete or rewrite their way out of it: the record still proves which agent produced it.'),
+    ctaDemo: t('Try the live demo'),
     ctaPaper: t('Read the paper'),
-    tagline: t('Two channels. One trajectory. Statistical evidence of its source.'),
+    tagline: t('Two complementary channels. One trajectory. Provenance that can’t be laundered.'),
   },
 
   // slide 2: HSE domains
   domains: {
     eyebrow: t('Why HSE'),
     title: t('AI agents are entering the records that safety decisions rest on.'),
-    lede: t('Across Health, Safety & Environment, AI agents can help assemble records for human review. Traceable action logs help reviewers examine where a record came from. Its factual accuracy still depends on the underlying evidence.'),
+    lede: t('Across Health, Safety & Environment, agents already draft the evidence that regulators, auditors and courts rely on. Robust attribution makes that evidence certifiable and traceable, and cuts the risk of tampered or forged agent logs.'),
     items: [
       t('Incident reporting'),
       t('Risk assessment'),
@@ -99,120 +56,122 @@ export const SITE = {
   // slide 3: the problem
   problem: {
     eyebrow: t('The problem'),
-    title: t('An edited log can hide what the agent did.'),
-    lede: t('Evidence checks and incident summaries leave an action trail. If someone deletes a check or rewrites a finding, reviewers need a way to test the source of the remaining record.'),
+    title: t('The only record is the trajectory, and it can be altered in seconds.'),
+    lede: t('Inspections, permits and incident reports are now run by AI agents. When a critical HSE decision hinges on what the agent did, every trajectory must be attributable, not merely readable.'),
     rows: [
-      { a: t('Evidence-review agent'), d: t('source found / missing'), img: 'permit' },
-      { a: t('Inspection agent'), d: t('observed / uncertain'), img: 'inspection' },
-      { a: t('Incident-review agent'), d: t('verified / needs review'), img: 'incident' },
-      { a: t('Env-monitoring agent'), d: t('recorded / not established'), img: 'env' },
-      { a: t('Risk-assessment agent'), d: t('supported / unresolved'), img: 'risk' },
-      { a: t('Compliance-audit agent'), d: t('consistent / conflicting'), img: 'compliance' },
+      { a: t('Permit-to-work agent'), d: t('granted / refused'), img: 'permit' },
+      { a: t('Inspection agent'), d: t('shut down / clear'), img: 'inspection' },
+      { a: t('Incident-report agent'), d: t('claim paid / denied'), img: 'incident' },
+      { a: t('Env-monitoring agent'), d: t('fine / waiver'), img: 'env' },
+      { a: t('Risk-assessment agent'), d: t('rectify / pass'), img: 'risk' },
+      { a: t('Compliance-audit agent'), d: t('compliant / breach'), img: 'compliance' },
     ],
   },
 
-  // Two synthetic engineering samples, separate from the paper benchmarks.
+  // slides 4 & 5: the two real scenarios (with the infographics)
   scenarios: {
-    eyebrow: t('Two synthetic construction samples'),
-    title: t('Explore the scene.'),
-    lede: t('Follow inspections, an explicitly injected faulty admission, and the same robot’s patrol, discovery and incident report. Inspect the recorded action weights and their source in each replay.'),
+    eyebrow: t('Two real HSE scenarios'),
+    title: t('One watermark for deletion, one for rewriting.'),
+    lede: t('TRACE stamps two independent watermarks at every decision. Each scenario below shows one channel doing its job against one kind of tampering.'),
     sel: {
-      badge: t('Sample 01 · Scaffold'),
-      title: t('Scaffold duty shift'),
-      lead: t('Old clearance records do not match current PPE. The robot checks identity, qualifications and replacement equipment. A separately injected controller fault admits the worker; patrol then records the falling timber and foot injury.'),
-      workLabel: t('From decision to traceable record'),
+      badge: t('Use case 1 · Selection channel'),
+      title: t('Confined-space permit-to-work: survives deletion.'),
+      lead: t('Entering a tank, silo or sewer is one of the most dangerous jobs on any site: low oxygen, toxic gas and no easy exit. Before anyone goes in, a permit-to-work must certify that the space is safe, and increasingly that certification is drafted by an AI safety agent.'),
+      workLabel: t('What the agent checks, in order'),
       steps: [
-        t('Check current credentials'),
-        t('Verify PPE and rectification'),
-        t('Retain recommendation and fault receipt'),
-        t('Observe and report the incident'),
-        t('Check record attribution'),
+        t('Check worker competency'),
+        t('Verify gas-test reading'),
+        t('Confirm ventilation'),
+        t('Check isolation / lockout'),
+        t('Confirm rescue standby'),
+        t('Generate permit-to-work'),
       ],
-      how: t('Each replay identifies who supplied the weights over legal actions. TRACE retains the paper’s EXP and L2 methods. The controller fault is not a sampled choice and is excluded from detection. This is not a naturally occurring LLM failure.'),
-      attackLabel: t('Try deleting a record'),
-      attack: t('Remove a PPE-check record and recompute detection on the remaining log. The displayed statistics determine whether enough watermark evidence remains to support attribution.'),
-      takeaway: t('Separate what the agent decided from which candidate key matches its log.'),
-      caption: t('Controlled fault demo · the same robot inspects, patrols and reports.'),
+      how: t('At each of these decisions, TRACE hides a keyed watermark in which action the agent takes: the selection channel. It changes nothing the agent does; the permit is issued exactly as before. Without the secret key the mark cannot be read, reproduced or forged.'),
+      attackLabel: t('Under deletion'),
+      attack: t('Suppose someone later deletes an inconvenient step, say the gas-test that came back marginal. The watermark re-aligns on the remaining steps, so the trimmed log still provably traces to your agent. To erase the mark they would have to destroy the whole trajectory, which is exactly the evidence they wanted to keep.'),
+      takeaway: t('Deleting steps can’t launder the log out of your agent’s authorship.'),
+      caption: t('Scenario 1: the selection channel defends against deletion.'),
     },
     tally: {
-      badge: t('Sample 02 · Timber yard'),
-      title: t('Timber-yard duty shift'),
-      lead: t('An obscured footwear view, a limited authorization and an unsuitable equipment replacement need distinct checks. The controlled episode continues through the faulty admission, injury alert and the robot’s incident report.'),
-      workLabel: t('From uncertain evidence to a recorded response'),
+      badge: t('Use case 2 · Counting channel'),
+      title: t('Environmental compliance: survives rewriting.'),
+      lead: t('When a chemical spill happens, a stream of readings, samples and remediation records becomes the regulator’s evidence, and the basis for fines, permits and liability. An AI compliance agent documents the whole response, step by step.'),
+      workLabel: t('What the agent records, in order'),
       steps: [
-        t('Verify authorization scope'),
-        t('Inspect distinct current views'),
-        t('Keep the original recommendation'),
-        t('Observe the event and report'),
-        t('Check record attribution'),
+        t('Read calibrated sensor'),
+        t('Capture geotagged sample'),
+        t('Log containment'),
+        t('Compare to permit limits'),
+        t('Record remediation'),
+        t('File compliance report'),
       ],
-      how: t('Prerequisites require each check to use evidence already available. Source time and observation time remain separate. An extra L2 record is an inert copy: it does not inspect again, advance the site clock or manufacture another incident.'),
-      attackLabel: t('Try rewriting a finding'),
-      attack: t('Change a recorded PPE finding and recompute detection. The L2 statistic stays unchanged when only content is rewritten and group counts are preserved; whether attribution is supported still depends on the measured evidence and threshold.'),
-      takeaway: t('A source attribution result does not certify that an edited finding is true.'),
-      caption: t('Controlled fault demo · observed conditions and source evidence stay separate.'),
+      how: t('TRACE hides a second watermark in how many records the agent keeps per step: the counting channel. It reads only the log’s structure, never its content. The extra record it sometimes adds is an inert marker: no tool call, no data, no effect on the outcome.'),
+      attackLabel: t('Under rewriting'),
+      attack: t('Now suppose the holder rewrites the readings: an over-limit pH quietly edited to within-limit, wording and tool names all changed. Because rewriting words never changes how many records a step has, the counting channel is exactly unchanged. The doctored report still provably came from your agent and cannot be disowned or pinned on another source.'),
+      takeaway: t('Rewriting the words can’t touch a structural watermark.'),
+      caption: t('Scenario 2: the counting channel defends against rewriting.'),
     },
   },
 
   // slide 6: the key insight (why it's hard)
   insight: {
     eyebrow: t('Why it’s hard'),
-    title: t('Two ways to alter a log.'),
-    lede: t('Deleting records and rewriting their content disturb different parts of a trajectory. TRACE combines two channels with complementary dependencies.'),
+    title: t('No single watermark can resist both attacks.'),
+    lede: t('An adversary who holds the log has two moves. They defeat opposite kinds of key, which is exactly why TRACE needs two.'),
     cols: [
       {
         tag: t('Deletion · shifts positions'),
-        body: t('Deleting records shifts later positions. The selection channel uses content-based context to recover alignment where enough unchanged context remains.'),
+        body: t('Delete a span of records and every later record’s position is thrown off. To resist deletion, the key must come from content, so it can re-align automatically after a span is removed.'),
       },
       {
         tag: t('Rewriting · changes content'),
-        body: t('Rewording records changes their content. The counting channel uses group position and observation counts; content-only rewriting leaves those carriers unchanged.'),
+        body: t('Reword text and rename tools, changing the content of every record. To resist rewriting, the key must come from position, which no content change can move.'),
       },
     ],
-    resolve: t('Both channels contribute statistical evidence. After an attack, detection must be recomputed from the retained records; the result can weaken or fall below the threshold.'),
+    resolve: t('One trajectory has room for two watermarks: one bound to content, one bound to position, each guarding against one attack and complementing the other.'),
   },
 
   // slide 7: pipeline
   pipeline: {
     eyebrow: t('How it works'),
-    title: t('Keep the method. Constrain the workflow.'),
+    title: t('Stamp two watermarks at every decision point.'),
     steps: [
       {
         n: '1', k: t('Embed'),
-        body: t('First enforce the stage and causal prerequisites. Apply the paper’s EXP selection channel to the executable action distribution, and L2 to the observation count.'),
+        body: t('At each decision, stamp two watermarks at once: which action is chosen (selection channel) and how many records are kept (counting channel).'),
       },
       {
         n: '2', k: t('Produce'),
-        body: t('Record each choice, its action weights and score, and the observations available at that time. Compare the actual checks, judgments and admission decisions; the two runs need not reach the same outcome.'),
+        body: t('You get a watermarked trajectory log, delivered as usual, with zero impact on how the agent is used or on task outcomes.'),
       },
       {
         n: '3', k: t('Detect'),
-        body: t('Reconstruct both channel inputs from the available log and score them with the key. Report the measured evidence against the configured detection threshold.'),
+        body: t('Replay each channel with the key and score it. If either channel is strong enough, attribution succeeds: deletion is caught by one, rewriting by the other.'),
       },
     ],
-    note: t('These two samples demonstrate the engineering workflow. They do not replace the paper’s benchmark evaluation, and attribution does not establish factual accuracy.'),
+    note: t('Two watermarks, with independent keys, different carriers and non-overlapping weaknesses. Detection trusts no self-reported field the adversary might have tampered with.'),
   },
 
   // slide 11: guarantees
   guarantees: {
-    eyebrow: t('Method properties'),
-    title: t('What the comparison shows.'),
+    eyebrow: t('The guarantees'),
+    title: t('What TRACE promises.'),
     cards: [
       {
-        title: t('Same action policy'),
-        body: t('At the same observable state, both runs use the same executable action weights. The watermark changes the sampling choice, not those weights. Later states may differ.'),
+        title: t('No performance loss'),
+        body: t('The agent does exactly what it did before, with task success barely dropping, provably distortion-free.'),
       },
       {
-        title: t('Causal order, evaluated decisions'),
-        body: t('Both runs obey the same tool prerequisites. That does not guarantee safe judgments: omissions and admission decisions are evaluated against the supplied rules after execution.'),
+        title: t('Resists deletion'),
+        body: t('Even if most observation records are deleted, the selection channel still detects the watermark.'),
       },
       {
-        title: t('Complementary channels'),
-        body: t('EXP marks the action selection. L2 marks the observation count. Content-only rewriting preserves the L2 carrier when group counts and order remain intact.'),
+        title: t('Resists rewriting, exactly invariant'),
+        body: t('Under rewriting of any intensity, the counting channel is completely unchanged.'),
       },
       {
-        title: t('Measured attribution'),
-        body: t('Use the actual scores and threshold after deletion or rewriting. A positive result supports attribution under the detector’s assumptions; it does not prove every statement in the log.'),
+        title: t('Joint erasure is self-defeating'),
+        body: t('To erase both watermarks at once, the adversary can only destroy the very trajectory it wanted to resell or hand over. Laundering this log means destroying this log.'),
       },
     ],
   },
@@ -249,9 +208,9 @@ export const SITE = {
   },
 
   cta: {
-    eyebrow: t('Explore the demo'),
-    title: t('From scene to record.'),
-    body: t('Replay a complete construction duty shift, from inspection through a controlled fault and incident report. Compare the recorded actions with and without watermarks, and inspect their weights and scores. Each replay identifies its source and limitations.'),
+    eyebrow: t('See it live'),
+    title: t('Watch a watermarked agent run, then try to launder it.'),
+    body: t('An interactive dashboard runs a real agent through an ALFWorld room, shows both watermarks being stamped at every decision, then lets you delete or rewrite the log and watch detection hold or fall in real time.'),
     button: t('Open the interactive demo'),
   },
 
@@ -287,3 +246,46 @@ export const BIBTEX = `@article{gao2026trace,
   journal = {arXiv preprint arXiv:2607.08400},
   year    = {2026}
 }`
+
+
+// Current PPE demo catalogue. Kept separate from the restored homepage copy.
+export const CONSTRUCTION_CASES = [
+  { key: 'CS01', gameId: 'hse_ppe-CS01', title: 'Scaffold PPE check', taskType: 'construction_ppe_inspection' },
+  { key: 'CS02', gameId: 'hse_ppe-CS02', title: 'Timber-yard PPE check', taskType: 'construction_ppe_inspection' },
+] as const
+
+type RecordedPolicyMetadata = {
+  policy_source?: string
+  provenance?: { policy_source?: string; agent_source?: string; source?: string }
+}
+
+
+export function constructionPolicyCopy(record?: RecordedPolicyMetadata | null) {
+  const source = record?.provenance?.policy_source ?? record?.provenance?.agent_source
+    ?? record?.provenance?.source ?? record?.policy_source
+  if (source === 'codex_llm') return {
+    source, label: 'Codex LLM replay',
+    detail: 'Codex LLM-elicited action weights from synthetic text observations, normalized before sampling; not token probabilities.',
+  }
+  if (source === 'api') return {
+    source, label: 'API LLM replay',
+    detail: 'Model-elicited action weights from synthetic text observations, normalized before sampling; not token probabilities.',
+  }
+  if (source === 'scenario_policy') return {
+    source, label: 'Authored policy replay',
+    detail: 'Authored scenario weights, not LLM probabilities.',
+  }
+  return { source, label: 'Source unverified', detail: 'The policy source has not been verified for this record.' }
+}
+
+export function constructionRunSummary(rows: (RecordedPolicyMetadata & { game_id?: string; task_type?: string })[]) {
+  const shifts = rows.filter((row) => CONSTRUCTION_CASES.some((sample) => row.game_id === sample.gameId && row.task_type === sample.taskType))
+  const copies = [...new Map(shifts.map((row) => {
+    const copy = constructionPolicyCopy(row)
+    return [copy.source, copy] as const
+  })).values()]
+  const sourceNote = copies.length === 1 ? `Available PPE inspection records: ${copies[0].label}. ${copies[0].detail}`
+    : copies.length > 1 ? `Available inspection sources: ${copies.map((copy) => copy.label).join('; ')}. Each replay identifies its action-weight source.`
+      : 'Each replay identifies its recorded policy source and action weights when available.'
+  return `${sourceNote} The task covers current PPE, correction, reinspection and a saved conclusion. Source attribution is separate from judging whether that conclusion is correct.`
+}

@@ -1,9 +1,10 @@
 import { AlertCircle, FileSearch, Fingerprint, LockKeyhole } from 'lucide-react'
 import type { EntryAttribution, EntryAttributionScope, EntryViolation, IncidentReport, PairedTrajectoryStep, PairedWorkflowData } from './PairedWorkflowStrip'
 import { decisionLabel, displayFact, effectiveEntryDecision, entryDecisionLabel, isInjectedStep } from './PairedWorkflowStrip'
+import { PPE_TASK } from '../lib/ppeInspection'
 
-/** Only observations available before the questioned action, never the final
- * report's hindsight or the later site-event record. */
+
+
 export function violationContext(steps: PairedTrajectoryStep[], violation: EntryViolation, report?: IncidentReport) {
   const action = violation.action ?? effectiveEntryDecision(report)?.action
   const index = steps.findIndex((step) => step.action === action)
@@ -21,8 +22,8 @@ export function attributionSummary(attribution?: EntryAttribution): string {
   const supported = attribution.candidates.filter((candidate) =>
     (candidate.n1 > 0 && Number.isFinite(candidate.z1) && candidate.z1 > attribution.threshold && candidate.layer1_detected)
     || (candidate.n2 > 0 && Number.isFinite(candidate.z2) && candidate.z2 > attribution.threshold && candidate.layer2_detected))
-  // Do not choose the largest score. A candidate must pass the detector, and
-  // multiple supported keys remain ambiguous even if one scores more highly.
+
+
   if (supported.length > 1 || attribution.status === 'ambiguous') return 'Multiple candidate keys have support. The source remains ambiguous.'
   if (supported.length === 1 && attribution.status === 'candidate_match'
     && attribution.matched_agent_ids.length === 1 && attribution.matched_agent_ids[0] === supported[0].agent_id) {
@@ -78,7 +79,8 @@ function ScopeEvidence({ id, scope }: { id: 'admission' | 'full'; scope?: EntryA
 
 export default function EntryAttributionPanel({ pair, available }: { pair: PairedWorkflowData | null; available: boolean }) {
   const shift = pair?.task_type === 'construction_ppe_shift'
-  const entryCheck = shift || pair?.task_type === 'construction_ppe_entry_check'
+  const inspection = pair?.task_type === PPE_TASK
+  const entryCheck = shift || inspection || pair?.task_type === 'construction_ppe_entry_check'
   const report = entryCheck ? pair.trace.report : undefined
   const attribution = entryCheck && pair.attribution?.record_scope === 'trace_agent_actions' ? pair.attribution : undefined
   const violations = report?.safety?.violations ?? []
@@ -92,7 +94,7 @@ export default function EntryAttributionPanel({ pair, available }: { pair: Paire
       <span className="text-[9.5px] font-medium text-slate-400">{shift ? 'Controlled scenario · original log · read-only' : 'Original watermarked log · read-only'}</span>
     </div>
     {!available || !entryCheck ? <div className="flex items-start gap-2 px-4 py-4 text-[11px] leading-relaxed text-slate-500">
-      <LockKeyhole size={15} className="mt-0.5 shrink-0 text-indigo-400" /> Finish the replay to inspect the entry decision and test which candidate Agent’s keys match its original action log.
+      <LockKeyhole size={15} className="mt-0.5 shrink-0 text-indigo-400" /> Finish the replay to inspect the recorded conclusion and test which candidate Agent’s keys match its original action log.
     </div> : <div className="space-y-3 p-4">
       <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3">
         <h3 className="text-[11px] font-extrabold text-slate-700">{shift ? '1 · Recommendation vs. effective admission' : '1 · What did the Agent decide?'}</h3>
@@ -116,7 +118,7 @@ export default function EntryAttributionPanel({ pair, available }: { pair: Paire
           </div>
         </details>}
         {!report?.safety ? <p className="mt-2 text-[10px] text-slate-500">Safety-rule evaluation was not recorded.</p>
-          : !violations.length ? <p className="mt-2 text-[10px] text-slate-600">{report.safety.compliant ? 'No safety-rule violation was flagged in this record.' : 'The evaluator flagged non-compliance but did not include a detailed finding.'}</p>
+          : !violations.length ? <p className="mt-2 text-[10px] text-slate-600">{inspection ? `The agent’s conclusion matches the observed checklist. Current PPE ${report.safety.compliant ? 'meets' : 'does not meet'} the supplied requirements.` : report.safety.compliant ? 'No safety-rule violation was flagged in this record.' : 'The evaluator flagged non-compliance but did not include a detailed finding.'}</p>
             : <div className="mt-2 space-y-2">{violations.map((violation, index) => {
               const context = violationContext(pair.trace.steps, violation, report)
               return <details key={`${violation.code ?? 'issue'}-${index}`} className="rounded-lg border border-amber-100 bg-amber-50/60 px-2.5 py-2">
@@ -127,7 +129,7 @@ export default function EntryAttributionPanel({ pair, available }: { pair: Paire
                   <p className="font-semibold">Relevant observations already in the log</p>
                   {context.observations.length ? <ul className="space-y-1.5">{context.observations.map((observation, observationIndex) => <li key={observationIndex}><b>{observation.label}:</b> {observation.result}{!!observation.evidence.length && <span className="ml-1 text-slate-400">[{observation.evidence.join(', ')}]</span>}</li>)}</ul>
                     : <p>No matching earlier observation was recorded. A missing check is not evidence of a pass.</p>}
-                  <p className="text-slate-400">Rule findings use the synthetic scenario’s evaluator. Later site events are not observations the Agent had before this decision.{shift ? ' This finding concerns the effective controller transaction, not a naturally occurring LLM error.' : ''}</p>
+                  <p className="text-slate-400">{inspection ? 'The synthetic evaluator compares the recorded PPE conclusion with current evidence. Non-compliant equipment is not itself evidence of an incorrect agent judgment.' : <>Rule findings use the synthetic scenario’s evaluator. Later site events are not observations the Agent had before this decision.{shift ? ' This finding concerns the effective controller transaction, not a naturally occurring LLM error.' : ''}</>}</p>
                 </div>
               </details>
             })}</div>}

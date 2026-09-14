@@ -1,7 +1,7 @@
-// Static offline demo: when no live backend is reachable, the dashboard runs
-// entirely from JSON baked into the site (demo/web/public/static/*). Every number
-// here was produced by the real backend's frozen detectors at bake time; this
-// module only fetches and shape-matches it to what App.tsx already consumes.
+
+
+
+
 import { asset } from './asset'
 import type { Health, DetectResult, MatrixRow } from '../api'
 
@@ -23,7 +23,7 @@ export interface StaticManifest {
   window_mode: string
   scheme: string
   attacks: string[]
-  games: any[] // replay-picker rows (summarize() + a `slug`)
+  games: any[]
 }
 
 let _manifest: StaticManifest | null = null
@@ -60,7 +60,7 @@ function nearest<T extends { rate: number }>(list: T[] | undefined, rate: number
   return list.reduce((a, b) => (Math.abs(b.rate - rate) < Math.abs(a.rate - rate) ? b : a))
 }
 
-/** Mirror of POST /api/attack, served from the baked bundle. */
+
 export function staticAttack(g: StaticGame, kind: string, rate: number) {
   const before = g.detect.right
   const pick = nearest(g.attacks[kind], rate)
@@ -74,7 +74,7 @@ export function staticAttack(g: StaticGame, kind: string, rate: number) {
   }
 }
 
-/** Mirror of GET /api/matrix, served from the baked bundle. */
+
 export function staticMatrix(g: StaticGame, rate: number): MatrixRow[] {
   const pick = nearest(g.matrix, rate)
   if (!pick) throw new Error('No recorded attack matrix exists for this run.')

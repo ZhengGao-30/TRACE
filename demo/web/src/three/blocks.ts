@@ -1,27 +1,27 @@
-/**
- * Voxel furniture blueprints, Minecraft-style.
- *
- * Everything is axis-aligned boxes on a 1-unit block grid. Coordinates are
- * LOCAL to the furniture piece: x right, y up, z forward, origin at the centre
- * of its footprint on the floor.
- */
+
+
+
+
+
+
+
 import type { Kind } from '../lib/room'
 
 export interface Box {
-  p: [number, number, number]   // centre
-  s: [number, number, number]   // size
-  c: string                     // colour
-  door?: boolean                // this box swings open (cabinets, fridge, ...)
-  drawer?: boolean              // this box slides out
+  p: [number, number, number]
+  s: [number, number, number]
+  c: string
+  door?: boolean
+  drawer?: boolean
 }
 
 export interface Blueprint {
   boxes: Box[]
-  h: number                     // total height, for name tags / item anchors
+  h: number
   label: string
 }
 
-// --- Minecraft-ish palette -------------------------------------------------
+
 const OAK = '#b8894f'
 const OAK_D = '#9a7040'
 const OAK_L = '#cda06a'
@@ -42,7 +42,7 @@ const WOOL = '#d8d3c8'
 const b = (p: Box['p'], s: Box['s'], c: string, extra: Partial<Box> = {}): Box =>
   ({ p, s, c, ...extra })
 
-/** A closed storage box with a swinging front panel. */
+
 function cabinet(c = OAK, cd = OAK_D, w = 1.0, h = 1.0, d = 0.8): Box[] {
   return [
     b([0, h / 2, 0], [w, h, d], c),
@@ -264,7 +264,7 @@ export function blueprintOf(kind: Kind): Blueprint {
   return BLUEPRINTS[kind] ?? BLUEPRINTS.other
 }
 
-/** Held-item colours (a tiny cube in the player's hand). */
+
 export const ITEM_COLOR: Record<string, string> = {
   lettuce: '#6fbf4a', potato: '#c79a5b', tomato: '#c8402f', apple: '#c8402f',
   bread: '#c9a26a', egg: '#f0ead6', mug: '#dfe4e8', cup: '#dfe4e8',
@@ -287,14 +287,14 @@ export function itemColor(objId?: string): string {
   return ITEM_COLOR[objId.replace(/\s*\d+$/, '').toLowerCase()] ?? '#c9a26a'
 }
 
-// ---------------------------------------------------------------------------
-// Category accents.
-//
-// A real ALFWorld room has ~34 receptacles and, in wood/stone tones alone, they
-// all read the same. Each kind therefore gets a category colour used for its
-// base plate, its accent trim and its name tag, so the room can be scanned at a
-// glance and a command like "go to drawer 4" is findable.
-// ---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 export type Category = 'storage' | 'appliance' | 'surface' | 'water' | 'comfort' | 'misc'
 
 export const CATEGORY: Record<string, Category> = {

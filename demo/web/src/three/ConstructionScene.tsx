@@ -11,23 +11,30 @@ import {
   EVIDENCE_STATIONS, evidenceStation, inspectionTarget, recordedScenePose, reviewActionMode, reviewActionPlan, shiftScenePose,
 } from '../lib/constructionScene'
 import type { EvidenceStationId, RecordedWorldEvent, ScenePoint, ShiftWorldFrame } from '../lib/constructionScene'
+import type { PPEAppearance, PPESceneAction } from '../lib/ppeInspection'
 
 export type ConstructionCameraMode = 'overview' | 'follow' | 'detail' | 'free'
 
 interface ConstructionSceneProps {
+  inspection?: boolean
+  ppe?: PPEAppearance
+  actionSpec?: PPESceneAction
+  actionFinished?: boolean
+  paused?: boolean
   variant: ConstructionVariant
   mode: 'preview' | 'review' | 'reconstruction'
   stationId?: EvidenceStationId
   command?: string
-  /** Changes for a main decision only; appended L2 records must not change it. */
+
   actionToken: string
   replayEpoch?: number
+  robotResetKey?: string
   initialRobotPose?: { position: ScenePoint; yaw: number }
-  /** Shift site states are gated by the completed main-action prefix. */
+
   liveWorld?: ShiftWorldFrame
   shift?: boolean
   injectedAction?: boolean
-  /** v2 site events are supplied only after the complete decision replay. */
+
   worldEvent?: RecordedWorldEvent
   previousWorldEvent?: RecordedWorldEvent
   eventProgress?: number
@@ -63,7 +70,10 @@ function WebGLHealth({ onLost }: { onLost: () => void }) {
   return null
 }
 
-function RobotController({ stationId, command, actionToken, body, speed = 1, reducedMotion = false, injectedAction = false, targetOverride, initialPose, onComplete }: {
+function RobotController({ stationId, command, actionToken, body, speed = 1, reducedMotion = false, injectedAction = false, targetOverride, initialPose, onComplete, actionSpec, actionFinished = false, paused = false }: {
+  actionSpec?: PPESceneAction
+  actionFinished?: boolean
+  paused?: boolean
   stationId?: EvidenceStationId; command?: string; actionToken: string
   body: React.MutableRefObject<THREE.Vector3>; speed?: number; reducedMotion?: boolean
   injectedAction?: boolean; targetOverride?: ScenePoint
@@ -71,15 +81,15 @@ function RobotController({ stationId, command, actionToken, body, speed = 1, red
   onComplete?: (token: string) => void
 }) {
   const group = useRef<THREE.Group>(null)
-  // Freeze the restoration pose at mount; a growing completed prefix must
-  // never overwrite the controller's live position mid-action.
+
+
   const start = useRef(initialPose ?? { position: [-3.8, 0, 2.6] as ScenePoint, yaw: 0 })
   const route = useRef<ScenePoint[]>([])
   const inspectTime = useRef(0)
   const completed = useRef<string | null>(null)
   const preparedToken = useRef<string | null>(null)
   const station = evidenceStation(stationId)
-  const actionMode = reviewActionMode(command, injectedAction)
+  const actionMode = actionSpec ? actionSpec.mode === 'inspect' ? 'inspect' : 'tablet' : reviewActionMode(command, injectedAction)
   const target = useMemo(() => actionMode !== 'inspect' ? undefined : targetOverride ?? (station ? inspectionTarget(command, station) : undefined), [station, command, actionMode, targetOverride])
   const walkingRef = useRef(false)
   const inspectingRef = useRef(false)
@@ -94,18 +104,19 @@ function RobotController({ stationId, command, actionToken, body, speed = 1, red
     preparedToken.current = actionToken
     completed.current = null
     const position = group.current.position
-    const plan = reviewActionPlan([position.x, 0, position.z], command, station, injectedAction)
-    route.current = plan.route
-    inspectTime.current = plan.duration / Math.max(.5, speed)
+    const plan = reviewActionPlan([position.x, 0, position.z], command, station, injectedAction, actionSpec)
+    route.current = actionFinished ? [] : plan.route
+    inspectTime.current = actionFinished ? 0 : plan.duration / Math.max(.5, speed)
+    if (actionFinished) completed.current = actionToken
     if (reducedMotion && plan.mode === 'inspect' && station) {
       position.set(...station.position)
       route.current = []
     }
     body.current.copy(position)
-  }, [actionToken, stationId, reducedMotion, actionMode])
+  }, [actionToken, stationId, reducedMotion, actionMode, actionFinished])
 
   useFrame((_, dt) => {
-    if (!group.current) return
+    if (!group.current || paused) return
     const position = group.current.position
     let isWalking = route.current.length > 0
     if (isWalking) {
@@ -155,11 +166,11 @@ function RobotController({ stationId, command, actionToken, body, speed = 1, red
 
   return <>
     <group ref={group} position={start.current.position} rotation={[0, start.current.yaw, 0]}>
-      <ConstructionRobot walking={walking && !reducedMotion} inspecting={inspecting}
-        usingTablet={usingTablet}
+      <ConstructionRobot walking={walking && !reducedMotion && !paused} inspecting={inspecting && !paused}
+        usingTablet={usingTablet && !paused}
         inspectionPitch={target ? THREE.MathUtils.clamp(Math.atan2(.825 - target[1], Math.hypot(target[0] - beamFrom[0], target[2] - beamFrom[2])), -.4, .65) : .15} active />
     </group>
-    {inspecting && target && <group>
+    {inspecting && target && !paused && <group>
       <Line points={[beamFrom, target]} color="#8b7ad7" lineWidth={1.2} transparent opacity={.55} dashed dashSize={.1} gapSize={.07} />
       <mesh position={target}><sphereGeometry args={[.075, 20, 16]} /><meshBasicMaterial color="#a78bfa" transparent opacity={.75} /></mesh>
     </group>}
@@ -260,11 +271,12 @@ function CameraRig({ body, focus, eventFocus, alternateView, mode, revision, red
 export default function ConstructionScene(props: ConstructionSceneProps) {
   const body = useRef(new THREE.Vector3(...(props.initialRobotPose?.position ?? [-3.8, 0, 2.6] as ScenePoint)))
   const station = evidenceStation(props.stationId)
-  const actionMode = reviewActionMode(props.command, props.injectedAction)
+  const actionMode = props.actionSpec ? props.actionSpec.mode === 'inspect' ? 'inspect' : 'tablet' : reviewActionMode(props.command, props.injectedAction)
   const live = props.shift && props.mode !== 'reconstruction' ? props.liveWorld : undefined
   const livePose = shiftScenePose(live?.state)
-  const targetOverride: ScenePoint | undefined = live?.state && station?.id === 'timber'
-    ? [livePose.workerPosition[0], live.state.contact ? .2 : .75, livePose.workerPosition[2]] : undefined
+  const targetOverride: ScenePoint | undefined = props.actionSpec?.mode === 'inspect'
+    ? [-2.9, props.actionSpec.target === 'footwear' ? .12 : .9, 2.45]
+    : live?.state && station?.id === 'timber' ? [livePose.workerPosition[0], live.state.contact ? .2 : .75, livePose.workerPosition[2]] : undefined
   const cameraFocus = actionMode !== 'inspect' ? undefined : targetOverride ?? (station ? inspectionTarget(props.command, station) : undefined)
   const pose = live ? livePose : recordedScenePose(props.mode === 'reconstruction' ? props.worldEvent : undefined,
     props.mode === 'reconstruction' ? props.previousWorldEvent : undefined, props.eventProgress ?? 1)
@@ -288,19 +300,21 @@ export default function ConstructionScene(props: ConstructionSceneProps) {
         shadow-camera-left={-9} shadow-camera-right={9} shadow-camera-top={8} shadow-camera-bottom={-8} />
       <directionalLight position={[6, 5, -4]} intensity={.65} color="#dfe7ff" />
       <ConstructionSite variant={props.variant} />
-      {live ? <ShiftWorld frame={live} variant={props.variant} reducedMotion={props.reducedMotion} speed={props.speed} /> : <>
+      {props.inspection ? <ConstructionWorker variant={props.variant} phase="entry" progress={0} syncPosition inspection ppe={props.ppe}
+        adjusting={props.actionSpec?.mode === 'rectify' && !props.actionFinished && !props.paused} />
+        : live ? <ShiftWorld frame={live} variant={props.variant} reducedMotion={props.reducedMotion} speed={props.speed} /> : <>
         <group position={pose.offset}><ConstructionWorker key={props.mode === 'reconstruction' ? 'site-events' : 'entry-checks'} variant={props.variant}
           phase={pose.phase} progress={pose.progress} syncPosition /></group>
         <IncidentTimber progress={pose.timberProgress} />
       </>}
       <group visible={props.shift || props.mode !== 'reconstruction'}><RobotController
-        key={`${props.replayEpoch ?? 0}:${props.mode === 'preview' ? 'preview' : 'run'}`}
+        key={`${props.replayEpoch ?? 0}:${props.robotResetKey ?? 'continuous'}:${props.mode === 'preview' ? 'preview' : 'run'}`}
         stationId={props.stationId} command={props.command} actionToken={props.actionToken}
         body={body} speed={props.speed} reducedMotion={props.reducedMotion}
         initialPose={props.mode === 'preview' ? undefined : props.initialRobotPose}
-        injectedAction={props.injectedAction} targetOverride={targetOverride}
+        injectedAction={props.injectedAction} targetOverride={targetOverride} actionSpec={props.actionSpec} actionFinished={props.actionFinished} paused={props.paused}
         onComplete={props.mode === 'review' ? props.onActionComplete : undefined} /></group>
-      {props.mode !== 'reconstruction' && <StationMarkers active={actionMode === 'inspect' ? props.stationId : undefined}
+      {!props.inspection && props.mode !== 'reconstruction' && <StationMarkers active={actionMode === 'inspect' ? props.stationId : undefined}
         selectable={props.mode === 'preview'} onSelect={props.onStationSelect} shift={props.shift} />}
       <CameraRig body={body} focus={cameraFocus} eventFocus={pose.workerPosition}
         alternateView={props.variant === 'timber-yard' && ['read_footwear_alternate', 'inspect_footwear_detail'].includes(props.command?.split(/\s+/)[0] ?? '')}

@@ -18,7 +18,7 @@ interface ReviewGroup extends GroupView {
 
 interface ConstructionReviewSceneProps {
   pair: PairedWorkflowData | null
-  /** The executed replay prefix, not the full future trajectory. */
+
   groups: ReviewGroup[]
   running?: boolean
   caseId?: string
@@ -55,7 +55,7 @@ export default function ConstructionReviewScene({ pair, groups, running = false,
   const sectionRef = useRef<HTMLElement>(null)
   const expandButtonRef = useRef<HTMLButtonElement>(null)
   const eventPositionRef = useRef(0)
-  // Old investigation traces must never be relabelled as pre-entry decisions.
+
   const executedGroups = pairMatchesCase && (shift || pair?.task_type === 'construction_ppe_entry_check') ? groups : []
   const current = executedGroups[executedGroups.length - 1]
   const command = current?.chosen ?? current?.observations.find((observation) => !observation.confirm)?.command
@@ -132,8 +132,8 @@ export default function ConstructionReviewScene({ pair, groups, running = false,
     if (!hasRun) setArrivedToken(null)
   }, [id, hasRun])
 
-  // A real decision always takes priority. Added read-only observations leave
-  // this token unchanged, so they cannot trigger a new trip or inspection.
+
+
   useEffect(() => {
     if (!hasRun) return
     setMode('evidence')
@@ -153,7 +153,7 @@ export default function ConstructionReviewScene({ pair, groups, running = false,
     const tick = (now: number) => {
       const delta = Math.min(.1, (now - previous) / 1000)
       previous = now
-      // Playback pacing is illustrative; the cards retain the actual log times.
+
       eventPositionRef.current = Math.min(1, eventPositionRef.current + delta / (events.length * 3))
       setEventPosition(eventPositionRef.current)
       if (eventPositionRef.current >= 1) setEventPlaying(false)
@@ -184,7 +184,7 @@ export default function ConstructionReviewScene({ pair, groups, running = false,
   function seekEvent(index: number) {
     if (!canReplayEvents) return
     setMode('reconstruction'); setEventPlaying(false)
-    // Show the recorded end state of this event, without advancing to the next.
+
     const position = index >= events.length - 1 ? 1 : (index + .999999) / events.length
     eventPositionRef.current = position; setEventPosition(position)
     chooseView('detail')
@@ -200,8 +200,8 @@ export default function ConstructionReviewScene({ pair, groups, running = false,
     setEventPlaying(true)
   }
 
-  // Keep the same scene subtree when expanding: camera position, animation
-  // progress and replay completion tokens must survive a layout-only change.
+
+
   return <section ref={sectionRef} role={expanded ? 'dialog' : undefined} aria-modal={expanded || undefined}
     aria-label={expanded ? 'Expanded construction scene' : undefined}
     className={`flex flex-col bg-white ${expanded ? 'fixed inset-0 z-[100] h-[100dvh] min-h-0 overflow-y-auto overscroll-contain' : 'h-full min-h-[500px] overflow-hidden rounded-[1.15rem]'}`}>

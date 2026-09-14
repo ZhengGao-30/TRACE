@@ -3,11 +3,11 @@ import { ChevronRight, ChevronDown } from 'lucide-react'
 import type { Phase } from '../lib/guidedSteps'
 import { totalSteps } from '../lib/guidedSteps'
 
-/**
- * The guided-view workflow strip: the run's many small decisions grouped into
- * a few named phases. Each phase card is an accordion — click it to see the
- * small steps inside as chips (done ✓ / current ● / upcoming).
- */
+
+
+
+
+
 
 type StepState = 'done' | 'cur' | 'todo'
 
@@ -19,7 +19,7 @@ function phaseStatus(p: Phase, current: number): 'done' | 'now' | 'todo' {
   return 'todo'
 }
 
-/** Merge consecutive steps that share a merge key into one "plural ×N" chip. */
+
 function mergedChips(p: Phase, current: number, running: boolean) {
   const out: { chip: string; n: number; state: StepState; group?: string }[] = []
   for (const s of p.steps) {
@@ -40,7 +40,7 @@ export default function WorkflowStrip({
   phases, current, running, expanded, onToggle,
 }: {
   phases: Phase[]
-  /** index of the latest step that has arrived (-1 = nothing yet) */
+
   current: number
   running: boolean
   expanded: string | null
@@ -116,7 +116,7 @@ export default function WorkflowStrip({
         })}
       </div>
 
-      {/* micro-step chips of the expanded phase */}
+      {                                            }
       <AnimatePresence initial={false}>
         {expandedPhase && (
           <motion.div

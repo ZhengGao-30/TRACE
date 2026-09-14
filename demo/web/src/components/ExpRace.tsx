@@ -2,15 +2,15 @@ import { motion } from 'framer-motion'
 import type { RaceRow } from '../api'
 import { useI18n } from '../i18n'
 
-/**
- * Layer 1 (EXP / Gumbel-argmax) made visible.
- *
- *   r[b] = DRBG( SHA256("<window>::key1=<key1>"), nonce = b ).uniform()
- *   chosen = argmin_b  (-log r[b]) / p[b]
- *
- * So the LLM supplies p[b] and the secret key supplies r[b]; only both together
- * decide the action. Lower score wins -- shown as a race with the shortest bar first.
- */
+
+
+
+
+
+
+
+
+
 export default function ExpRace({
   rows, window: win, phi, nCandidates,
 }: { rows: RaceRow[]; window: string; phi: number | null; nCandidates: number }) {
@@ -38,7 +38,7 @@ export default function ExpRace({
               r.win ? 'font-semibold text-l1-700' : 'text-slate-500',
             ].join(' ')}>{r.cmd}</span>
 
-            {/* p[b] : what the LLM wanted */}
+            {                                }
             <div className="w-16 h-3 rounded bg-white ring-1 ring-slate-200 overflow-hidden">
               <motion.div className="h-full bg-slate-300"
                 initial={{ width: 0 }} animate={{ width: `${Math.min(r.p * 100, 100)}%` }} />
@@ -47,7 +47,7 @@ export default function ExpRace({
               {r.p > 0 && r.p < 0.001 ? '<0.001' : r.p.toFixed(3)}
             </span>
 
-            {/* r[b] : what the key rolled */}
+            {                                }
             <div className="relative w-14 h-3 rounded bg-white ring-1 ring-slate-200">
               <motion.span className="absolute top-1/2 -translate-y-1/2 w-1.5 h-2.5 rounded-sm bg-violet-400"
                 initial={{ left: 0 }} animate={{ left: `${r.r * 100}%` }} />
@@ -56,7 +56,7 @@ export default function ExpRace({
               {r.r.toFixed(3)}
             </span>
 
-            {/* score : lower wins */}
+            {                        }
             <div className="flex-1 h-3 rounded bg-white ring-1 ring-slate-200 overflow-hidden"
               title="Visual bar capped at score 40; the numeric label retains the recorded score.">
               <motion.div

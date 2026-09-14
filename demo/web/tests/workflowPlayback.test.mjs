@@ -13,9 +13,10 @@ async function load(relative, dependencies = {}) {
     module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX,
   } }).outputText
   const module = { exports: {} }
-  Function('require', 'module', 'exports', output)((name) => dependencies[name] ?? require(name), module, module.exports)
+  Function('require', 'module', 'exports', output)((name) => dependencies[name] ?? (name.endsWith('/ppeInspection') ? ppe : require(name)), module, module.exports)
   return module.exports
 }
+const ppe = await load('../src/lib/ppeInspection.ts')
 const guided = await load('../src/lib/guidedSteps.ts')
 const workflow = await load('../src/components/PairedWorkflowStrip.tsx', { '../lib/guidedSteps': guided })
 
@@ -69,8 +70,8 @@ function makePair({ traceCounts = [3, 3, 4, 4, 5, 2], standardCounts = [2, 4, 4,
   }
 }
 
-/** Exercise the real component callbacks and effects without introducing a
- * browser dependency. A new harness models React's key-triggered remount. */
+
+
 async function interactiveWorkflow(initial = {}) {
   let cursor = 0
   const slots = new Map()

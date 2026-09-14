@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   Play, KeyRound, Radio, ShieldCheck, Loader2, WifiOff, Gauge, ArrowDown,
-  Home, House, Factory, BookOpen,
+  Home, House, Factory, BookOpen, ChevronDown,
 } from 'lucide-react'
 import { navigate } from './Router'
 import { api, subscribe, API_BASE } from './api'
@@ -14,6 +14,11 @@ import type { StaticGame } from './lib/staticSource'
 import VoxelRoom from './three/VoxelRoom'
 import type { SceneState } from './three/VoxelRoom'
 import ConstructionReviewScene from './components/ConstructionReviewScene'
+import PPEInspectionScene from './components/PPEInspectionScene'
+import PPEWorkflowComparison from './components/PPEWorkflowComparison'
+import { usePPEPlayback } from './lib/usePPEPlayback'
+import type { PlaybackArm } from './lib/ppePlayback'
+import { PPE_TASK } from './lib/ppeInspection'
 import ConstructionWorkflowPending from './components/ConstructionWorkflowPending'
 import EntryAttributionPanel from './components/EntryAttributionPanel'
 import GroupCard from './components/GroupCard'
@@ -47,7 +52,7 @@ function syncDemoAddress(scenario: 'alfworld' | 'hse', gameId: string) {
     params.set('case', sample?.key ?? gameId)
   } else params.delete('case')
   url.hash = `/demo?${params.toString()}`
-  // Update refresh/share targets without firing hashchange or restarting a run.
+
   window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`)
 }
 
@@ -56,7 +61,7 @@ function replayOptions(rows: any[], scenario: 'alfworld' | 'hse'): any[] {
   return CONSTRUCTION_CASES.map((sample) => {
     const recorded = rows.find((row) => row.game_id === sample.gameId
       && row.task_type === sample.taskType && (['api', 'codex_llm'].includes(constructionPolicyCopy(row).source ?? '')
-        || (constructionPolicyCopy(row).source === 'scenario_policy' && row.run_kind === 'controlled_fault_demo')))
+        || (row.task_type === 'construction_ppe_shift' && constructionPolicyCopy(row).source === 'scenario_policy' && row.run_kind === 'controlled_fault_demo')))
     return recorded ? { ...recorded, case_title: recorded.case_title ?? sample.title, previewOnly: false } : {
       game_id: sample.gameId, case_title: sample.title, task_type: sample.taskType,
       scenario: 'hse', previewOnly: true,
@@ -66,6 +71,7 @@ function replayOptions(rows: any[], scenario: 'alfworld' | 'hse'): any[] {
 
 function replayOptionLabel(row: any, index: number): string {
   if (row.previewOnly) return `${row.case_title} · 3D preview · agent run pending`
+  if (row.task_type === PPE_TASK) return `${row.case_title} · ${row.groups} actions · ${constructionPolicyCopy(row).label}`
   if (row.task_type === 'construction_ppe_shift') return `${row.case_title} · ${row.groups} steps · Controlled fault · ${constructionPolicyCopy(row).label}`
   const title = row.task_type === 'construction_ppe_entry_check'
     ? row.case_title ?? `Entry check · Sample ${index + 1}` : row.task_type.replaceAll('_', ' ')
@@ -75,6 +81,7 @@ function replayOptionLabel(row: any, index: number): string {
 
 function constructionReplayNote(row: any): string {
   const policy = constructionPolicyCopy(row)
+  if (row?.task_type === PPE_TASK) return `PPE inspection · ${policy.label}. ${policy.detail} Recorded replay of checks and reporting; no worksite admission or incident.`
   return row?.task_type === 'construction_ppe_shift'
     ? `Controlled fault demo · ${policy.label}. ${policy.detail} Injected controller actions and physical events are excluded from watermark detection; the fault is not a natural LLM failure. Recorded replay, not a live session.`
     : `Recorded entry check · ${policy.label}. ${policy.detail} Recorded replay, not a live session.`
@@ -83,9 +90,9 @@ function constructionReplayNote(row: any): string {
 export default function App() {
   const { t } = useI18n()
 
-  // The dashboard is a wide, drag-and-drop, 3D layout. On phones/tablets we show
-  // a friendly gate instead of a broken 3-column squeeze. (Rendered below, after
-  // all hooks, so the Rules of Hooks are never broken.)
+
+
+
   const [narrow, setNarrow] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(max-width: 1023px)').matches)
   useEffect(() => {
@@ -98,9 +105,9 @@ export default function App() {
   const [health, setHealth] = useState<Health | null>(null)
   const [connErr, setConnErr] = useState(false)
   const [apiInput, setApiInput] = useState('')
-  // staticMode: the static offline bundle is available (offline runs from it,
-  // no backend needed). sessionStatic: whether the CURRENT run came from the
-  // bundle (so key-switch / attacks / matrix read the bundle, not the backend).
+
+
+
   const [staticMode, setStaticMode] = useState(false)
   const staticGame = useRef<StaticGame | null>(null)
   const sessionStatic = useRef(false)
@@ -109,12 +116,22 @@ export default function App() {
   const [mode, setMode] = useState<'live' | 'offline'>('offline')
   const [taskId, setTaskId] = useState(0)
   const [gameId, setGameId] = useState<string>('')
-  // HSE replays the on-duty entry agent, then the resulting site event log.
-  const [scenario, setScenario] = useState<'alfworld' | 'hse'>(() => demoOptions().get('scenario') === 'hse' ? 'hse' : 'alfworld')
+
+  const [scenario, setScenario] = useState<'alfworld' | 'hse'>(() => demoOptions().get('scenario') === 'alfworld' ? 'alfworld' : 'hse')
+  const scenarioMenuRef = useRef<HTMLDetailsElement>(null)
+  useEffect(() => {
+    const closeOutside = (event: PointerEvent) => {
+      const menu = scenarioMenuRef.current
+      if (menu?.open && !menu.contains(event.target as Node)) menu.open = false
+    }
+    document.addEventListener('pointerdown', closeOutside)
+    return () => document.removeEventListener('pointerdown', closeOutside)
+  }, [])
   const scenarioReplays = useMemo(() => replayOptions(replays, scenario), [replays, scenario])
   const selectedReplay = scenarioReplays.find((row) => row.game_id === gameId)
   const constructionPreview = scenario === 'hse' && (!selectedReplay || selectedReplay.previewOnly)
   const controlledShift = selectedReplay?.task_type === 'construction_ppe_shift'
+  const ppeInspection = selectedReplay?.task_type === PPE_TASK
   const constructionSourceNote = constructionReplayNote(selectedReplay)
   function chooseScenario(next: 'alfworld' | 'hse') {
     if (running) return
@@ -138,10 +155,9 @@ export default function App() {
     syncDemoAddress(scenario, id)
   }
   const [speed, setSpeed] = useState(1)
-  // presentation mode: collapse the timeline strip so the room fills the height
   const [roomFocus, setRoomFocus] = useState(false)
-  // The room panel is user-resizable (drag the handle under it); the page
-  // itself scrolls, so nothing has to be squeezed into one viewport.
+
+
   const [roomH, setRoomH] = useState(() => {
     const v = Number(localStorage.getItem('trace.roomH'))
     return v >= 280 ? v : Math.round(window.innerHeight * 0.62)
@@ -172,15 +188,15 @@ export default function App() {
   const [task, setTask] = useState<{ desc: string; type: string } | null>(null)
   const [hse, setHse] = useState({ taskType: '', done: false, success: false })
   const [detect, setDetect] = useState<DetectResult | null>(null)
-  // The detector can show clean-key calibration or an attacked record. Keep
-  // the attack card's last evaluated outcome independent of that selection.
+
+
   const [lastAttackResult, setLastAttackResult] = useState<DetectResult | null>(null)
   const [detectTarget, setDetectTarget] = useState<'original' | 'attacked'>('original')
   const [curve, setCurve] = useState<{ groups: number; z1: number; z2: number }[]>([])
 
-  // Key calibration is a two-way switch: the real key pair vs the wrong key
-  // pair (detection.wrong_key1 / wrong_key2). Mixing one right + one wrong key
-  // is deliberately not offered.
+
+
+
   const [keyMode, setKeyMode] = useState<'right' | 'wrong'>('right')
   const [rate, setRate] = useState(0.3)
   const [rows, setRows] = useState<MatrixRow[]>([])
@@ -188,21 +204,28 @@ export default function App() {
   const [instrumentError, setInstrumentError] = useState<string | null>(null)
   const feedRef = useRef<HTMLDivElement>(null)
 
-  // Guided view (default): workflow strip + plain-language panels for
-  // non-experts. Expert view: the original full dashboard. The toggle is in
-  // the header; all state and data flow are shared between the two.
+
+
+
   const [view, setView] = useState<'guided' | 'expert'>(() =>
     localStorage.getItem('trace.view') === 'expert' ? 'expert' : 'guided')
   useEffect(() => { localStorage.setItem('trace.view', view) }, [view])
-  // null = auto-follow the active phase; '' = user collapsed everything
+
   const [expandedPhase, setExpandedPhase] = useState<string | null>(null)
   const [showTech, setShowTech] = useState(false)
   const [showRace, setShowRace] = useState(false)
-  // bumped when the offline preview bundle loads, so the workflow strip recomputes
+
   const [previewTick, setPreviewTick] = useState(0)
-  // HSE replays have a real paired baseline run. It wraps the shared workflow
-  // with TRACE actions above and ordinary unwatermarked actions below.
+
+
   const [pairedWorkflow, setPairedWorkflow] = useState<PairedWorkflowData | null>(null)
+  const [reviewCompleted, setReviewCompleted] = useState(-1)
+  const [reviewError, setReviewError] = useState<string | null>(null)
+  const [pairRetry, setPairRetry] = useState(0)
+  const actionReplay = usePPEPlayback(gameId, narrow)
+  const [selectedPPECheck, setSelectedPPECheck] = useState<string>('worker_identity')
+  const ppeReady = !ppeInspection || pairedWorkflow?.task_type === PPE_TASK && pairedWorkflow?.game_id === gameId
+  const retryRecord = () => { setReviewError(null); setPairRetry(v => v + 1) }
 
   useEffect(() => {
     if (scenario !== 'hse' || !gameId || constructionPreview) {
@@ -216,14 +239,16 @@ export default function App() {
         if (!response.ok) throw new Error(`paired trajectory ${response.status}`)
         return response.json()
       })
-      .then((data: PairedWorkflowData) => { if (!dead) setPairedWorkflow(data) })
-      .catch(() => { if (!dead) setPairedWorkflow(null) })
+      .then((data: PairedWorkflowData) => {
+        if (ppeInspection && (data.game_id !== gameId || data.task_type !== PPE_TASK || !data.trace?.steps?.length || !data.standard?.steps?.length)) throw new Error('Mismatched PPE record')
+        if (!dead) setPairedWorkflow(data)
+      })
+      .catch(() => { if (!dead) { setPairedWorkflow(null); setReviewError('The paired record could not be loaded. Retry before starting the replay.') } })
     return () => { dead = true }
-  }, [scenario, gameId, constructionPreview])
+  }, [scenario, gameId, constructionPreview, pairRetry, ppeInspection])
 
-  // The workflow strip: offline replays know every action up front (the static
-  // bundle is loaded before the first event streams); live runs grow the strip
-  // as decisions arrive.
+
+
   const workflow = useMemo(() => {
     const g = staticGame.current
     const actions: WorkflowAction[] = g
@@ -249,8 +274,9 @@ export default function App() {
     ? workflow.flatMap((p) => p.steps).find((s) => s.i === current)
     : undefined
   const runFinished = !running && groups.length > 0 && !!(scene.done || hse.done)
+    && (!ppeInspection || reviewCompleted === groups.length - 1)
 
-  // the race card follows the latest group that actually has a candidate draw
+
   const raceGroup = useMemo(() => {
     const latest = groups[groups.length - 1]
     if (latest?.event_kind === 'injected_action') return latest
@@ -275,9 +301,9 @@ export default function App() {
     }
   }, [scenarioReplays, gameId])
 
-  // OFFLINE mode always runs from the static bundle baked into the site, so it
-  // never needs a backend and closing the backend can never break it. The
-  // backend is probed only to unlock LIVE (real-time LLM) mode.
+
+
+
   async function loadBackend() {
     let manifest = null
     try {
@@ -289,10 +315,10 @@ export default function App() {
       const requestedId = CONSTRUCTION_CASES.find((sample) => sample.key === requested)?.gameId
       const selected = requested ? available.find((row) => row.game_id === (requestedId ?? requested) || row.game_id.includes(`-${requested}-`)) : null
       setGameId((selected ?? available[0])?.game_id ?? '')
-    } catch { /* no bundle deployed */ }
+    } catch {                          }
 
-    // Probe with a timeout so a hung localhost:8000 (possible on a stranger's
-    // machine) still resolves quickly to the offline bundle.
+
+
     const timeout = new Promise<never>((_, rej) =>
       setTimeout(() => rej(new Error('probe timeout')), 3500))
     try {
@@ -309,15 +335,15 @@ export default function App() {
         setConnErr(false)
         setMode('offline')
       } else {
-        setConnErr(true) // no live backend AND no static bundle
+        setConnErr(true)
       }
     }
   }
   useEffect(() => { loadBackend() }, [])
 
-  // Guided view: pre-load the selected offline replay so the workflow strip
-  // and its phases are visible BEFORE the visitor presses start. This only
-  // fills staticGame (the preview source); start() still loads it again.
+
+
+
   useEffect(() => {
     if (mode !== 'offline' || !staticMode || !gameId || constructionPreview || running || groups.length > 0) return
     let dead = false
@@ -332,25 +358,27 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameId, staticMode, mode, constructionPreview])
 
-  // Remote viewer path: paste the presenter's public tunnel URL and reconnect.
-  // Writing ?api=<url> makes resolveApiBase pick it up and persist it.
+
+
   function connectTo(u: string) {
     const url = u.trim().replace(/\/+$/, '')
     if (!url) return
     const base = window.location.origin + window.location.pathname
-    window.location.href = `${base}?api=${encodeURIComponent(url)}#/demo`
+    const params = demoOptions()
+    params.set('scenario', scenario)
+    window.location.href = `${base}?api=${encodeURIComponent(url)}#/demo?${params.toString()}`
     window.location.reload()
   }
 
-  // Never drag the page while a run is in progress -- the room animation is the
-  // thing to watch. We only stick to the newest card if the reader is ALREADY at
-  // the bottom (terminal / chat convention); otherwise a badge offers the jump.
+
+
+
   const [follow, setFollow] = useState(false)
   const [unseen, setUnseen] = useState(0)
 
-  // "scrollable" guard: while the page still fits the viewport the reader is
-  // trivially "at the bottom", and auto-enabling follow there is exactly what
-  // yanked the page down mid-run. Follow must be a deliberate act.
+
+
+
   const scrollable = () =>
     document.documentElement.scrollHeight > window.innerHeight + 200
   const atBottom = () =>
@@ -381,6 +409,9 @@ export default function App() {
   }
 
   function reset() {
+    actionReplay.reset()
+    setSelectedPPECheck('worker_identity')
+    setReviewCompleted(-1); setReviewError(null)
     reviewGeneration.current += 1
     sessionUnsubscribe.current?.()
     sessionUnsubscribe.current = null
@@ -402,8 +433,8 @@ export default function App() {
     setHse((h) => ({ ...h, done: false, success: false }))
   }
 
-  // Offline replay arrives as one instant burst; pace it out so the room
-  // animation reads like a real run. Live events are already paced by the LLM.
+
+
   const queue = useRef<any[]>([])
   const timer = useRef<number | null>(null)
   const reviewGeneration = useRef(0)
@@ -420,27 +451,64 @@ export default function App() {
     if (reviewWatchdog.current != null) { window.clearTimeout(reviewWatchdog.current); reviewWatchdog.current = null }
   }
 
-  // Bind the callback to this run's generation. A late completion from a prior
-  // scene cannot release a same-numbered action in the newly selected run.
+  function stopPPEReplay(message: string | null, generation: number) {
+    if (generation !== reviewGeneration.current) return
+    reviewGeneration.current += 1
+    sessionUnsubscribe.current?.(); sessionUnsubscribe.current = null
+    queue.current = []; reviewPending.current = null
+    if (timer.current != null) { window.clearInterval(timer.current); timer.current = null }
+    if (reviewWatchdog.current != null) { window.clearTimeout(reviewWatchdog.current); reviewWatchdog.current = null }
+    setRunning(false); setReviewError(message)
+  }
+
+  function playPPEAction(source: PlaybackArm, index: number) {
+    if (!ppeInspection || !ppeReady || narrow || !pairedWorkflow?.[source].steps.some(step => step.i === index)) return
+    if (running) stopPPEReplay(null, reviewGeneration.current)
+    else setReviewError(null)
+    const scenePanel = document.getElementById('ppe-inspection-scene')
+    if (scenePanel && scenePanel.getAttribute('role') !== 'dialog') {
+      const top = scenePanel.getBoundingClientRect().top
+      if (top < 64 || top > 120) window.scrollTo({ top: Math.max(0, window.scrollY + top - 72), behavior: 'instant' })
+    }
+    actionReplay.play(source, index)
+  }
+
+  useEffect(() => {
+    if (narrow && running && ppeInspection) stopPPEReplay('Replay stopped because the 3D viewport is too narrow. Widen the window and restart; unfinished actions remain unverified.', reviewGeneration.current)
+  }, [narrow, running, ppeInspection])
+
+
+
   const onReviewActionComplete = useCallback((step: number) => {
-    releaseReviewStep(step, reviewEpoch)
-  }, [reviewEpoch])
+    if (reviewPending.current?.step !== step || reviewPending.current.generation !== reviewEpoch) return
+    setReviewCompleted(step)
+    if (ppeInspection) {
+      if (reviewWatchdog.current != null) window.clearTimeout(reviewWatchdog.current)
+      reviewWatchdog.current = window.setTimeout(() => releaseReviewStep(step, reviewEpoch), 1100 / Math.max(1, speed))
+    } else releaseReviewStep(step, reviewEpoch)
+  }, [reviewEpoch, ppeInspection, speed])
 
   function beginReviewStep(step: number) {
     const generation = reviewGeneration.current
     reviewPending.current = { step, generation }
     if (reviewWatchdog.current != null) window.clearTimeout(reviewWatchdog.current)
-    // Covers the longest cross-site walk at the slowest supported speed, even
-    // if the visitor reduces speed while the current action is in progress.
-    // The fallback also releases replay if requestAnimationFrame pauses in a
-    // background tab or the canvas is unavailable.
+
+
+
+
     reviewWatchdog.current = window.setTimeout(
-      () => releaseReviewStep(step, generation), 75000)
+      () => {
+        if (ppeInspection && generation === reviewGeneration.current) {
+          stopPPEReplay('The 3D action did not finish. Check WebGL and restart the replay; this step has not been marked complete.', generation)
+          return
+        }
+        releaseReviewStep(step, generation)
+      }, 75000)
   }
 
-  // The ROOM paces the demo, not a stopwatch: every executed command goes into
-  // this queue and the next one is only applied once the character has actually
-  // arrived and finished its beat. A watchdog releases it if a frame is lost.
+
+
+
   const moveQ = useRef<{ cmd: string; i: number; confirm: boolean; done: boolean }[]>([])
   const walking = useRef(false)
   const watchdog = useRef<number | null>(null)
@@ -458,7 +526,7 @@ export default function App() {
   function onArrive() {
     if (watchdog.current) { window.clearTimeout(watchdog.current); watchdog.current = null }
     walking.current = false
-    // a small dwell so the observation is readable before moving on
+
     window.setTimeout(pump, Math.max(60, 260 / speed))
   }
 
@@ -470,7 +538,7 @@ export default function App() {
   function drain() {
     if (timer.current != null) return
     timer.current = window.setInterval(() => {
-      // stay in step with the room: don't run more than a couple of groups ahead
+
       if (moveQ.current.length > 2) return
       const next = queue.current[0]
       if (reviewPending.current && next && ['group', 'task_done', 'eof'].includes(next.kind)) return
@@ -491,6 +559,7 @@ export default function App() {
   }, [])
 
   async function start() {
+    if (!ppeReady) return
     if (constructionPreview) return
     reset(); setRunning(true)
     const generation = reviewGeneration.current
@@ -499,9 +568,9 @@ export default function App() {
     if (timer.current != null) { window.clearInterval(timer.current); timer.current = null }
     if (watchdog.current != null) { window.clearTimeout(watchdog.current); watchdog.current = null }
 
-    // OFFLINE always replays from the baked bundle (no backend). Feed the events
-    // through the same pacing pipeline the SSE replay uses so the room and
-    // z-meters animate identically.
+
+
+
     if (mode === 'offline' && staticMode) {
       try {
         const g = await loadStaticGame(gameId)
@@ -518,7 +587,7 @@ export default function App() {
       return
     }
 
-    // LIVE (or offline with a backend but no bundle) goes through the backend.
+
     sessionStatic.current = false
     try {
       const { session_id } = await api.run(
@@ -541,7 +610,7 @@ export default function App() {
 
   function handle(e: any) {
     switch (e.kind) {
-      // ---- offline replay: one packed event per behaviour group ----
+
       case 'task_start':
         setTask({ desc: e.query, type: e.task_type })
         setScene((s) => ({ ...s, receptacles: e.receptacles ?? [] }))
@@ -557,12 +626,14 @@ export default function App() {
           policy_source: e.policy_source, station_id: e.station_id,
           world_state_before: e.world_state_before, world_state_after: e.world_state_after,
           world_events: e.world_events, fault: e.fault,
+          scene_action: e.scene_action, scene_state_before: e.scene_state_before, scene_state_after: e.scene_state_after,
+          checklist_before: e.checklist_before, checklist_after: e.checklist_after,
           observations: (e.observations ?? []).map((o: any) => ({
             command: o.cmd, text: o.text, confirm: o.confirm,
           })),
         }])
-        // Construction waits for one completed robot movement/inspection per
-        // main action. Its extra L2 observation never starts another movement.
+
+
         if (scenario !== 'hse') (e.observations ?? []).forEach((o: any) =>
           enqueueMove(o.cmd, e.i, o.confirm))
         break
@@ -620,7 +691,7 @@ export default function App() {
     }
   }
 
-  /** Drive the household 3D scene from one executed command. */
+
   function applyCommand(command: string, step: number, confirm: boolean, done = false) {
     if (scenario === 'hse') return
     const p = parseCommand(command)
@@ -767,11 +838,11 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
-      {/* ---------- header ---------- */}
+      {                                  }
       <header className="sticky top-0 z-30 h-14 flex items-center gap-3 px-4
                          bg-white/70 backdrop-blur-xl ring-1 ring-slate-900/[0.05]
                          shadow-[0_1px_0_rgba(255,255,255,.6),0_8px_24px_-18px_rgba(15,23,42,.25)]">
-        {/* logo tile — click to return to the project site */}
+        {                                                     }
         <a href="#/" title="← TRACE home" className="flex shrink-0 items-center gap-3 group">
           <div className="bezel p-1 group-hover:shadow-lift transition-shadow duration-500 ease-fluid">
             <div className="bezel-core grid place-items-center w-8 h-8
@@ -789,8 +860,8 @@ export default function App() {
           </div>
         </a>
 
-        {/* Global menu: product home, domain scenarios, and narrative attacks.
-            Internal benchmark names stay in the code; visitors see plain English. */}
+        {
+                                                                                     }
         <nav className="ml-4 flex items-center gap-1 rounded-xl bg-slate-100/80 p-1
                         ring-1 ring-slate-900/[0.05]" aria-label="Primary navigation">
           <button onClick={() => navigate('/')}
@@ -801,22 +872,9 @@ export default function App() {
           </button>
 
           <div className="mx-0.5 h-5 w-px bg-slate-200" />
-          <span className="px-1 text-[8.5px] font-bold uppercase tracking-[.14em] text-slate-400">
-            Scenarios
-          </span>
-          <button onClick={() => chooseScenario('alfworld')} disabled={running}
-            title="Everyday household tasks used in the paper benchmark"
-            className={[
-              'inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[10.5px]',
-              'font-semibold ring-1 transition-all disabled:cursor-not-allowed disabled:opacity-50',
-              scenario === 'alfworld'
-                ? 'bg-white text-l1-700 ring-l1-200 shadow-sm'
-                : 'bg-transparent text-slate-500 ring-transparent hover:bg-white hover:text-slate-800',
-            ].join(' ')}>
-            <House size={12} /> Household Tasks
-          </button>
           <button onClick={() => chooseScenario('hse')} disabled={running}
             title="Entry decisions, site replay and record attribution"
+            aria-current={scenario === 'hse' ? 'page' : undefined}
             className={[
               'inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[10.5px]',
               'font-semibold ring-1 transition-all disabled:cursor-not-allowed disabled:opacity-50',
@@ -827,13 +885,54 @@ export default function App() {
             <Factory size={12} /> Industrial Safety (HSE)
           </button>
 
-          <div className="mx-0.5 h-5 w-px bg-slate-200" />
-          <button onClick={() => navigate('/across-domains')}
-            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5
-                       text-[10.5px] font-semibold text-rose-600 transition-colors
-                       hover:bg-white hover:text-rose-700 hover:shadow-sm">
-            <BookOpen size={12} /> General Attack Scenarios
-          </button>
+          <details ref={scenarioMenuRef} className="group relative"
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget as Node | null)) event.currentTarget.open = false
+            }}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape' && event.currentTarget.open) {
+                event.preventDefault()
+                event.currentTarget.open = false
+                event.currentTarget.querySelector('summary')?.focus()
+              }
+            }}>
+            <summary className={[
+              'flex cursor-pointer list-none items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[10.5px]',
+              'font-semibold ring-1 transition-colors [&::-webkit-details-marker]:hidden',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-l1-400',
+              scenario === 'alfworld'
+                ? 'bg-white text-l1-700 ring-l1-200 shadow-sm'
+                : 'text-slate-500 ring-transparent hover:bg-white hover:text-slate-800 group-open:bg-white',
+            ].join(' ')}>
+              Scenarios
+              <ChevronDown size={12} className="transition-transform group-open:rotate-180" />
+            </summary>
+            <div className="absolute left-0 top-full z-40 mt-2 w-60 rounded-xl border border-slate-200/80
+                            bg-white p-1.5 shadow-[0_12px_36px_-8px_rgba(15,23,42,.2)]">
+              <button onClick={() => {
+                chooseScenario('alfworld')
+                const menu = scenarioMenuRef.current
+                if (menu) {
+                  menu.open = false
+                  menu.querySelector('summary')?.focus()
+                }
+              }} disabled={running}
+                aria-current={scenario === 'alfworld' ? 'page' : undefined}
+                title="Everyday household tasks used in the paper benchmark"
+                className={[
+                  'flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-[11px] font-semibold',
+                  'transition-colors disabled:cursor-not-allowed disabled:opacity-50',
+                  scenario === 'alfworld' ? 'bg-l1-50 text-l1-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900',
+                ].join(' ')}>
+                <House size={15} /> Household Tasks
+              </button>
+              <button onClick={() => navigate('/across-domains')}
+                className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-[11px]
+                           font-semibold text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900">
+                <BookOpen size={15} /> General Attack Scenarios
+              </button>
+            </div>
+          </details>
         </nav>
 
         <div className="flex-1 min-w-2" />
@@ -850,7 +949,7 @@ export default function App() {
             : <><WifiOff size={10} /> {t('offline')}</>}
         </span>
 
-        {/* guided view for partners / expert dashboard for engineers */}
+        {                                                               }
         <div className="flex rounded-full bg-slate-100/80 ring-1 ring-slate-900/[0.04] p-0.5">
           {(['guided', 'expert'] as const).map((v) => (
             <button key={v} onClick={() => setView(v)}
@@ -864,8 +963,8 @@ export default function App() {
           ))}
         </div>
 
-        {/* key calibration: real key pair vs wrong key pair, nothing in between
-            (expert dashboard only; guided view keeps it in technical details) */}
+        {
+                                                                                 }
         {view === 'expert' && (
         <div className="hidden 2xl:flex items-center gap-2.5">
           <KeyRound size={12} className="text-slate-400" />
@@ -894,8 +993,8 @@ export default function App() {
 
       {instrumentError && <div role="alert" className="mx-3 mt-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-[12px] text-amber-800">{instrumentError}</div>}
 
-      {/* backend unreachable: explain + let a remote viewer paste the presenter's
-          public URL, instead of showing a silent empty page */}
+      {
+                                                               }
       {connErr && !constructionPreview && (
         <div className="mx-3 mt-3 rounded-xl bg-amber-50 ring-1 ring-amber-200 px-4 py-3
                         flex items-start gap-3">
@@ -933,11 +1032,11 @@ export default function App() {
         </div>
       )}
 
-      {/* ---------- guided body: workflow strip + plain-language panels ---------- */}
+      {                                                                               }
       {view === 'guided' && (
         <div className="p-3 space-y-3 max-w-[1500px] mx-auto">
 
-          {/* run controls: everything needed to start a replay, in one bar */}
+          {                                                                   }
           <div className="card px-3.5 py-2.5 flex items-center gap-3 flex-wrap">
             <div className="flex rounded-lg bg-slate-100 p-0.5">
               <button onClick={() => setMode('live')} disabled={!health?.live || running || scenario === 'hse'}
@@ -990,7 +1089,7 @@ export default function App() {
             )}
 
             <button onClick={start}
-              disabled={running || constructionPreview || (mode === 'live' ? !health?.live : !gameId)}
+              disabled={running || constructionPreview || !ppeReady || (mode === 'live' ? !health?.live : !gameId)}
               title={constructionPreview ? 'A recorded LLM run is required before replaying agent actions.' : undefined}
               className="group flex items-center gap-2 rounded-full bg-l1-500 text-white
                          text-[12px] font-semibold pl-4 pr-3 py-1.5
@@ -998,7 +1097,7 @@ export default function App() {
                          transition-all duration-500 ease-fluid hover:bg-l1-700
                          active:scale-[0.98] disabled:opacity-40 disabled:shadow-none">
               {running ? <Loader2 size={13} className="animate-spin" /> : <Play size={13} />}
-              {running ? t('runningNow') : constructionReview ? 'Start replay' : mode === 'live' ? t('startLive') : t('startReplay')}
+              {running ? t('runningNow') : ppeInspection ? 'Replay full TRACE' : constructionReview ? 'Start replay' : mode === 'live' ? t('startLive') : t('startReplay')}
             </button>
 
             {task && (
@@ -1011,16 +1110,20 @@ export default function App() {
 
           {constructionPreview ? (
             <div className="rounded-2xl border border-indigo-200 bg-indigo-50/60 px-4 py-3 text-[12px] leading-relaxed text-indigo-800">
-              <span className="font-semibold">3D preview · agent run pending.</span> Explore the entry-check scene. Recorded inspections, admission decisions and watermark scores appear only after a new pre-entry LLM run is available. The previous post-incident investigation records are not reused here.
+              <span className="font-semibold">3D preview · agent run pending.</span> Explore the PPE checkpoint. Recorded workwear checks, footwear evidence, correction and reinspection appear once the verified model run is available.
             </div>
           ) : constructionReview && <div className="rounded-xl border border-indigo-100 bg-indigo-50/50 px-4 py-2 text-[11px] text-indigo-700">{constructionSourceNote}</div>}
+          {reviewError && <div role="alert" className="rounded-xl bg-amber-50 p-3 text-xs text-amber-800">{reviewError} <button onClick={retryRecord} className="ml-2 underline">Reload record</button></div>}
 
-          {/* workflow strip */}
+          {                    }
           {constructionPreview && <ConstructionWorkflowPending taskType={selectedReplay?.task_type} />}
-          {workflow.length > 0 && (
-            pairedWorkflow ? (
+          {(workflow.length > 0 || ppeInspection && pairedWorkflow) && (
+            pairedWorkflow && ppeInspection ? (
+              <PPEWorkflowComparison key={`${gameId}:${reviewEpoch}`} pair={pairedWorkflow} current={current}
+                completedIndex={reviewCompleted} running={running} fullReplayComplete={runFinished} playback={actionReplay.active} watched={actionReplay.watched} onPlay={playPPEAction} onSelectCheck={setSelectedPPECheck} />
+            ) : pairedWorkflow ? (
               <PairedWorkflowStrip key={`${gameId}:${reviewEpoch}`} phases={workflow} pair={pairedWorkflow}
-                current={current} running={running} expanded={expanded}
+                current={current} completedIndex={reviewCompleted} running={running} expanded={expanded}
                 followReplay={expandedPhase === null} onFollow={() => setExpandedPhase(null)}
                 onToggle={(id) => setExpandedPhase(id)} />
             ) : (
@@ -1030,20 +1133,20 @@ export default function App() {
             )
           )}
 
-          {/* status banner */}
+          {                   }
           {constructionPreview ? null : constructionReview ? (
             <div className="card flex items-center gap-3 px-5 py-3.5">
               <ShieldCheck size={23} className="shrink-0 text-indigo-500" />
               <div>
                 <div className="text-[13px] font-extrabold text-slate-700">
-                  {controlledShift
+                  {ppeInspection ? actionReplay.active ? 'Single-action comparison · shared inspection scene' : runFinished ? 'PPE inspection saved — compare the findings and source evidence below' : running ? 'Replaying the PPE inspection' : 'Ready to replay the PPE inspection' : controlledShift
                     ? runFinished ? 'Duty record complete — inspect the outcome and source evidence below' : running ? 'Replaying the same robot’s duty shift' : 'Ready to replay the controlled duty shift'
                     : runFinished ? 'Entry decision recorded — inspect the outcome below' : running ? 'Replaying the on-duty entry agent' : 'Ready to replay the entry check'}
                 </div>
                 <p className="mt-1 text-[11px] text-slate-500">
-                  {detect
+                  {ppeInspection && actionReplay.active ? 'The scene shows the selected run and action. Single-step playback does not change the full TRACE log or its detection results.' : detect
                     ? `${detectionContextText}: L1 z = ${detect.layer1.z.toFixed(2)} (n = ${detect.layer1.n}), L2 z = ${detect.layer2.z.toFixed(2)} (n = ${detect.layer2.n}); threshold ${health?.tau ?? 2}.`
-                    : controlledShift ? 'Inspect current evidence, retain the original recommendation, then follow the controller receipt and the robot’s observation/reporting duty. Unread evidence and future event details are withheld.'
+                    : ppeInspection ? 'Identify the worker, inspect current PPE, request correction, reinspect and save the finding. The worker remains at the checkpoint.' : controlledShift ? 'Inspect current evidence, retain the original recommendation, then follow the controller receipt and the robot’s observation/reporting duty. Unread evidence and future event details are withheld.'
                       : 'Register the worker, inspect available observations, then assess and decide access. Executable actions are not automatically safe decisions.'}
                 </p>
               </div>
@@ -1056,13 +1159,13 @@ export default function App() {
             z1={detect?.layer1.z ?? 0} z2={detect?.layer2.z ?? 0}
             tau={health?.tau ?? 2} attacked={detectTarget === 'attacked'} />}
 
-          {/* scene + plain-language panels */}
+          {                                   }
           <div className={constructionReview ? 'space-y-3' : 'grid grid-cols-[minmax(0,1fr)_21rem] gap-3 items-start'}>
             <div className="relative">
               <div className="bezel shadow-lift" style={{ height: constructionReview ? Math.max(520, roomH) : roomH }}>
                 <div className="bezel-core h-full overflow-hidden">
                   {scenario === 'hse' ? (
-                    <ConstructionReviewScene pair={pairedWorkflow} groups={groups} running={running} caseId={gameId} speed={speed} replayEpoch={reviewEpoch} onActionComplete={onReviewActionComplete} />
+                    ppeInspection ? <PPEInspectionScene pair={pairedWorkflow} groups={groups} completedIndex={reviewCompleted} running={running} caseId={gameId} speed={speed} replayEpoch={reviewEpoch} onActionComplete={onReviewActionComplete} playback={actionReplay.active} onPlaybackComplete={actionReplay.complete} selectedCheck={selectedPPECheck} onPlay={playPPEAction} /> : <ConstructionReviewScene pair={pairedWorkflow} groups={groups} running={running} caseId={gameId} speed={speed} replayEpoch={reviewEpoch} onActionComplete={onReviewActionComplete} />
                   ) : (
                     <VoxelRoom s={scene} expanded={roomFocus} onArrive={onArrive}
                                speed={mode === 'offline' ? speed : 1}
@@ -1071,7 +1174,7 @@ export default function App() {
                 </div>
               </div>
 
-              {/* overlays: current phase badge, mark-embedded pulse, caption */}
+              {                                                                 }
               {scenario !== 'hse' && workflow.length > 0 && current >= 0 && (
                 <div className="pointer-events-none absolute top-3 left-3 chip bg-white/90 backdrop-blur
                                 ring-1 ring-slate-200 text-slate-600">
@@ -1109,7 +1212,7 @@ export default function App() {
               )}
             </div>
 
-            {constructionReview && <EntryAttributionPanel pair={pairedWorkflow} available={runFinished} />}
+            {constructionReview && !ppeInspection && <EntryAttributionPanel pair={pairedWorkflow} available={runFinished} />}
             <div className={constructionReview ? 'grid grid-cols-2 gap-3 items-start' : 'sticky top-[3.75rem] space-y-2.5'}>
               <div className="space-y-2">
                 {detectionContext}
@@ -1126,12 +1229,12 @@ export default function App() {
             </div>
           </div>
 
-          {/* how each step is chosen: the keyed lottery, simplified */}
-          <GuidedRace g={raceGroup} prevLabel={racePrevLabel} scenario={scenario}
-                      open={showRace} onToggle={() => setShowRace((v) => !v)} />
+          {                                                            }
+          {scenario !== 'hse' && <GuidedRace g={raceGroup} prevLabel={racePrevLabel} scenario={scenario}
+                      open={showRace} onToggle={() => setShowRace((v) => !v)} />}
 
 
-          {/* technical details: the full expert instruments, collapsed */}
+          {                                                               }
           <button onClick={() => setShowTech((v) => !v)}
             className="w-full card px-4 py-2.5 flex items-center justify-between text-[12px]
                        text-slate-500 hover:text-slate-700 border border-dashed border-slate-300
@@ -1147,7 +1250,7 @@ export default function App() {
                      className="grid gap-2 [grid-template-columns:repeat(auto-fill,minmax(23rem,1fr))]">
                   <AnimatePresence initial={false}>
                     {groups.map((g) => (
-                      <GroupCard key={g.i} g={g}
+                      <GroupCard key={g.i} g={ppeInspection && g.i > reviewCompleted ? { ...g, result: '', observations: g.observations.filter(o => o.confirm) } : g}
                                  active={running && g.i === groups.length - 1} />
                     ))}
                   </AnimatePresence>
@@ -1158,15 +1261,15 @@ export default function App() {
         </div>
       )}
 
-      {/* ---------- body (expert dashboard) ---------- */}
+      {                                                   }
       {view === 'expert' && (
       <div className={`grid gap-3 p-3 items-start ${constructionReview ? 'grid-cols-[13rem_minmax(0,1fr)] max-w-[1500px] mx-auto' : 'grid-cols-[13rem_minmax(0,1fr)_20rem]'}`}>
 
-        {/* left: task picker (spans both rows) */}
+        {                                         }
         <div className="sticky top-[3.75rem] flex flex-col gap-3
                         max-h-[calc(100vh-4.5rem)] overflow-y-auto pr-0.5">
           <div className="card p-2.5">
-            {/* mode switch: live episode vs offline replay of a logged run */}
+            {                                                                 }
             <div className="flex rounded-lg bg-slate-100 p-0.5 mb-2">
               <button onClick={() => setMode('live')} disabled={!health?.live || running || scenario === 'hse'}
                 className={[
@@ -1239,9 +1342,9 @@ export default function App() {
               </>
             )}
 
-            {/* island CTA with a nested button-in-button icon */}
+            {                                                    }
             <button onClick={start}
-              disabled={running || constructionPreview || (mode === 'live' ? !health?.live : !gameId)}
+              disabled={running || constructionPreview || !ppeReady || (mode === 'live' ? !health?.live : !gameId)}
               title={constructionPreview ? 'A recorded LLM run is required before replaying agent actions.' : undefined}
               className="group mt-2.5 w-full flex items-center justify-between gap-1.5
                          rounded-full bg-l1-500 text-white text-[12px] font-semibold
@@ -1249,7 +1352,7 @@ export default function App() {
                          transition-all duration-500 ease-fluid
                          hover:bg-l1-700 active:scale-[0.98] disabled:opacity-40
                          disabled:shadow-none">
-              <span>{running ? t('runningNow') : constructionReview ? 'Start replay' : mode === 'live' ? t('startLive') : t('startReplay')}</span>
+              <span>{running ? t('runningNow') : ppeInspection ? 'Replay full TRACE' : constructionReview ? 'Start replay' : mode === 'live' ? t('startLive') : t('startReplay')}</span>
               <span className="grid place-items-center w-7 h-7 rounded-full bg-white/15
                                transition-transform duration-500 ease-fluid
                                group-hover:translate-x-0.5 group-hover:scale-105">
@@ -1265,13 +1368,13 @@ export default function App() {
             )}
           </div>
 
-          {/* the room legend describes kitchen receptacles -- ALFWorld only */}
+          {                                                                    }
           {scenario === 'alfworld' && <RoomLegend />}
 
           <div className="card p-2 flex items-start gap-1.5 text-[10px] text-slate-400">
             <ShieldCheck size={12} className="text-emerald-500 shrink-0 mt-0.5" />
             {constructionPreview
-              ? 'The robot represents the on-duty entry checker. Recorded decisions and their site consequences appear only after a new LLM run.'
+              ? 'The robot checks current workwear and footwear. Findings, correction and reinspection appear with a verified model record.'
               : scenario === 'hse'
               ? 'detection reads the executed stream · candidate sets come from the per-group record, which cannot be edited after the fact'
               : t('robustPath')}
@@ -1279,24 +1382,27 @@ export default function App() {
 
         </div>
 
-        {/* centre: the room, with a user-draggable height */}
+        {                                                    }
         <div className="space-y-3">
-          {constructionPreview ? <ConstructionWorkflowPending taskType={selectedReplay?.task_type} /> : constructionReview && workflow.length > 0 && (
+          {reviewError && <div role="alert" className="rounded-xl bg-amber-50 p-3 text-xs text-amber-800">{reviewError} <button onClick={retryRecord} className="ml-2 underline">Reload record</button></div>}
+          {constructionPreview ? <ConstructionWorkflowPending taskType={selectedReplay?.task_type} /> : constructionReview && (workflow.length > 0 || ppeInspection && pairedWorkflow) && (
             pairedWorkflow
-              ? <PairedWorkflowStrip key={`${gameId}:${reviewEpoch}`} phases={workflow} pair={pairedWorkflow}
-                  current={current} running={running} expanded={expanded}
+              ? ppeInspection ? <PPEWorkflowComparison key={`${gameId}:${reviewEpoch}`} pair={pairedWorkflow} current={current}
+                  completedIndex={reviewCompleted} running={running} fullReplayComplete={runFinished} playback={actionReplay.active} watched={actionReplay.watched} onPlay={playPPEAction} onSelectCheck={setSelectedPPECheck} />
+              : <PairedWorkflowStrip key={`${gameId}:${reviewEpoch}`} phases={workflow} pair={pairedWorkflow}
+                  current={current} completedIndex={reviewCompleted} running={running} expanded={expanded}
                   followReplay={expandedPhase === null} onFollow={() => setExpandedPhase(null)}
                   onToggle={(id) => setExpandedPhase(id)} />
               : <WorkflowStrip phases={workflow} current={current} running={running}
                   expanded={expanded} onToggle={(id) => setExpandedPhase(id === expanded ? '' : id)} />
           )}
           <div>
-            {/* the room sits inside a machined double-bezel tray */}
+            {                                                       }
             <div className="bezel shadow-lift"
                  style={{ height: roomFocus ? 'calc(100vh - 6rem)' : constructionReview ? Math.max(520, roomH) : roomH }}>
               <div className="bezel-core h-full overflow-hidden">
                 {scenario === 'hse' ? (
-                  <ConstructionReviewScene pair={pairedWorkflow} groups={groups} running={running} caseId={gameId} speed={speed} replayEpoch={reviewEpoch} onActionComplete={onReviewActionComplete} />
+                  ppeInspection ? <PPEInspectionScene pair={pairedWorkflow} groups={groups} completedIndex={reviewCompleted} running={running} caseId={gameId} speed={speed} replayEpoch={reviewEpoch} onActionComplete={onReviewActionComplete} playback={actionReplay.active} onPlaybackComplete={actionReplay.complete} selectedCheck={selectedPPECheck} onPlay={playPPEAction} /> : <ConstructionReviewScene pair={pairedWorkflow} groups={groups} running={running} caseId={gameId} speed={speed} replayEpoch={reviewEpoch} onActionComplete={onReviewActionComplete} />
                 ) : (
                   <VoxelRoom s={scene} expanded={roomFocus} onArrive={onArrive}
                              speed={mode === 'offline' ? speed : 1}
@@ -1315,10 +1421,8 @@ export default function App() {
           </div>
 
           {constructionReview && <>
-            <EntryAttributionPanel pair={pairedWorkflow} available={runFinished} />
+            {!ppeInspection && <EntryAttributionPanel pair={pairedWorkflow} available={runFinished} />}
             {renderInstruments(true)}
-            <GuidedRace g={raceGroup} prevLabel={racePrevLabel} scenario={scenario}
-              open={showRace} onToggle={() => setShowRace((v) => !v)} />
           </>}
 
           {constructionPreview ? (
@@ -1342,7 +1446,7 @@ export default function App() {
                  className="grid gap-2 [grid-template-columns:repeat(auto-fill,minmax(23rem,1fr))]">
               <AnimatePresence initial={false}>
                 {groups.map((g) => (
-                  <GroupCard key={g.i} g={g}
+                  <GroupCard key={g.i} g={ppeInspection && g.i > reviewCompleted ? { ...g, result: '', observations: g.observations.filter(o => o.confirm) } : g}
                              active={running && g.i === groups.length - 1} />
                 ))}
               </AnimatePresence>
@@ -1350,7 +1454,7 @@ export default function App() {
           )}
         </div>
 
-        {/* right: detection + attacks, pinned while the page scrolls */}
+        {                                                               }
         {!constructionReview && <div className="sticky top-[3.75rem] space-y-2
                         max-h-[calc(100vh-4.5rem)] overflow-y-auto pr-1">
           {renderInstruments(false)}
@@ -1358,7 +1462,7 @@ export default function App() {
       </div>
       )}
 
-      {/* jump-to-newest badge: appears only when the reader has scrolled away */}
+      {                                                                          }
       <AnimatePresence>
         {unseen > 0 && !follow && (
           <motion.button
@@ -1377,7 +1481,7 @@ export default function App() {
   )
 }
 
-/** Shown instead of the dashboard on phones/tablets. */
+
 function MobileGate() {
   const { t } = useI18n()
   return (

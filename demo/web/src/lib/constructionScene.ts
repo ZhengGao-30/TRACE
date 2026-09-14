@@ -1,3 +1,5 @@
+import type { PPESceneAction } from './ppeInspection'
+
 export type EvidenceStationId = 'entry' | 'ppe' | 'timber' | 'records' | 'report'
 export type ReconstructionPhase = 'entry' | 'work' | 'incident' | 'aftermath'
 export type ScenePoint = [number, number, number]
@@ -22,12 +24,13 @@ export interface RecordedWorldState {
   timestamp: string
 }
 
-/** Metadata belongs to the executed action interval, never to an L2 read. */
+
 export interface ShiftSceneStep {
   i: number
   action: string
   event_kind?: string
   station_id?: string
+  scene_action?: PPESceneAction
   world_state_before?: unknown
   world_state_after?: unknown
   world_events?: unknown
@@ -41,8 +44,8 @@ interface SceneReplayGroup {
   observations: { confirm?: boolean; command?: string; text: string }[]
 }
 
-/** The replay source buffers result text with its group. The scene releases
- * that text only once the main action's arrival/gesture callback has fired. */
+
+
 export function gateShiftSceneResults<T extends SceneReplayGroup>(groups: T[], currentArrived: boolean): T[] {
   if (currentArrived || !groups.length) return groups
   return groups.map((group, index) => index === groups.length - 1
@@ -92,9 +95,9 @@ function canFollowState(before: RecordedWorldState, after: RecordedWorldState) {
     && !(after.worker_state === 'injured' && !['working', 'injured'].includes(before.worker_state))
 }
 
-/** The action interval is indivisible until its result arrives. Unlike v2,
- * events may be spread over many intervals and need no approval prerequisite:
- * a controlled fault can admit the worker without an agent approval. */
+
+
+
 export function shiftIntervalEvents(before: RecordedWorldState, after: RecordedWorldState, raw: unknown): RecordedWorldEvent[] | undefined {
   if (!Array.isArray(raw) || !canFollowState(before, after)) return undefined
   const events: RecordedWorldEvent[] = []
@@ -116,7 +119,7 @@ export function shiftIntervalEvents(before: RecordedWorldState, after: RecordedW
     previous = state
   }
   if (!canFollowState(previous, after)) return undefined
-  // Admission and falling timber must be backed by the actual world event.
+
   if ((before.worker_state !== 'working' && after.worker_state === 'working'
     && !events.some((event) => event.kind === 'worker_entry'))
     || (before.timber_state !== after.timber_state && !events.some((event) => event.kind === 'falling_timber'))
@@ -124,8 +127,8 @@ export function shiftIntervalEvents(before: RecordedWorldState, after: RecordedW
   return events
 }
 
-/** Reconstruct only the matching executed prefix. A future report, pending
- * result, or appended confirmation cannot advance the world or agent knowledge. */
+
+
 export function shiftWorldFrame(steps: ShiftSceneStep[], groups: SceneReplayGroup[]): ShiftWorldFrame {
   const frame: ShiftWorldFrame = { transitionEvents: [], transitionToken: 'initial', events: [], incidentObserved: false }
   for (const [index, group] of groups.entries()) {
@@ -213,8 +216,8 @@ export function stationForReview(command?: string, stationId?: string) {
 
 export type ReviewActionMode = 'tablet' | 'inspect' | 'wait'
 
-// A logged information source is not necessarily a physical destination.
-// These tools access digital records from the robot's current safe position.
+
+
 const TABLET_ACTIONS = new Set([
   'read_shift_handover', 'read_work_plan', 'read_site_rules', 'check_ppe_requirements',
   'read_role_authorization', 'verify_authorization_addendum', 'verify_training_certificate',
@@ -226,24 +229,24 @@ const TABLET_ACTIONS = new Set([
 ])
 
 export function reviewActionMode(command?: string, injectedAction = false): ReviewActionMode {
-  // Neither a controller transaction nor an inert L2 read is a robot gesture.
+
   if (injectedAction || command?.trim() === 'review last_record') return 'wait'
   return TABLET_ACTIONS.has(command?.split(/\s+/)[0] ?? '') ? 'tablet' : 'inspect'
 }
 
-/** Presentation only: never changes action order, log timestamps or results. */
-export function reviewActionPlan(from: ScenePoint, command?: string, station?: EvidenceStation, injectedAction = false) {
-  const mode = reviewActionMode(command, injectedAction)
+
+export function reviewActionPlan(from: ScenePoint, command?: string, station?: EvidenceStation, injectedAction = false, spec?: PPESceneAction) {
+  const mode = spec ? spec.mode === 'inspect' ? 'inspect' : 'tablet' : reviewActionMode(command, injectedAction)
   if (mode !== 'inspect' || !station) return {
     mode: mode === 'inspect' ? 'wait' as const : mode,
-    route: [] as ScenePoint[], target: undefined, duration: mode === 'tablet' ? 2.2 : .8,
+    route: [] as ScenePoint[], target: undefined, duration: spec ? spec.duration_ms / 1000 : mode === 'tablet' ? 2.2 : .8,
   }
   const distance = Math.hypot(from[0] - station.position[0], from[2] - station.position[2])
-  return { mode, route: distance < .05 ? [] : reviewRoute(from, station), target: inspectionTarget(command, station), duration: 1.5 }
+  return { mode, route: distance < .05 ? [] : reviewRoute(from, station), target: inspectionTarget(command, station), duration: spec ? spec.duration_ms / 1000 : 1.5 }
 }
 
-/** Reconstruct a remounted robot from completed physical checks only. Digital
- * source locations and the buffered current result cannot move its body. */
+
+
 export function reviewResumePose(steps: ShiftSceneStep[], groups: SceneReplayGroup[]) {
   let position: ScenePoint = [-3.8, 0, 2.6]
   let yaw = 0
@@ -252,7 +255,7 @@ export function reviewResumePose(steps: ShiftSceneStep[], groups: SceneReplayGro
     const command = group.chosen ?? main?.command
     const step = steps[index]
     if (!step || step.i !== group.i || step.action !== command || !(group.result?.trim() || main?.text.trim())) break
-    if (reviewActionMode(command, step.event_kind === 'injected_action') !== 'inspect') continue
+    if ((step.scene_action ? step.scene_action.mode : reviewActionMode(command, step.event_kind === 'injected_action')) !== 'inspect') continue
     const station = stationForReview(command, step.station_id)
     if (!station) continue
     position = [...station.position]
@@ -270,8 +273,8 @@ export function inspectionTarget(command: string | undefined, station: EvidenceS
   return station.lookAt
 }
 
-/** All travel uses the open southern aisle and the western bypass. The building
- * occupies x=[.1,3], z=[-2.8,-.6]; no route crosses it or the waiting worker. */
+
+
 export function reviewRoute(from: ScenePoint, destination: EvidenceStation): ScenePoint[] {
   const south = 3.5
   const west = -4.8
@@ -295,16 +298,16 @@ export function reviewRoute(from: ScenePoint, destination: EvidenceStation): Sce
   })
 }
 
-/** Only completed entry-check records may supply events. Fail closed for old
- * investigation bundles or inconsistent world-state transitions. */
+
+
 export function recordedWorldEvents(report: unknown): RecordedWorldEvent[] {
   if (!report || typeof report !== 'object') return []
   const data = report as { world_events?: unknown; decision?: { action?: string; timestamp?: unknown } }
   const kinds = ['worker_entry', 'falling_timber', 'event_recorded']
   if (!Array.isArray(data.world_events) || data.world_events.length !== kinds.length) return []
   if (!['approve_entry', 'deny_entry', 'hold_for_review'].includes(data.decision?.action ?? '')) return []
-  // Python's isoformat() may omit the timezone. Treat such site-local stamps in
-  // one fixed zone for ordering, instead of depending on the viewer's timezone.
+
+
   const parseTimestamp = (value: unknown) => {
     if (typeof value !== 'string') return NaN
     const parts = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,6})?(Z|[+-]\d{2}:\d{2})?$/.exec(value)
@@ -355,8 +358,8 @@ export function siteEventAt(events: RecordedWorldEvent[], position: number) {
   }
 }
 
-/** Maps recorded states onto existing model poses, without changing geometry.
- * Waiting/held/clear remain at the entrance. Injury needs recorded exposure. */
+
+
 export function recordedScenePose(event?: RecordedWorldEvent, previous?: RecordedWorldEvent, progress = 1) {
   const t = Number.isFinite(progress) ? Math.max(0, Math.min(1, progress)) : 0
   const state = event?.worker_state ?? 'waiting'
@@ -371,7 +374,7 @@ export function recordedScenePose(event?: RecordedWorldEvent, previous?: Recorde
   return {
     phase,
     progress: outside ? 1 : t,
-    // ConstructionWorker entry(t=1) is [1.2, 0, .4]; move that standing pose to the checkpoint.
+
     offset: (outside ? [-4.1, 0, 2.05] : [0, 0, 0]) as ScenePoint,
     workerPosition: (outside ? [-2.9, .7, 2.45] : moving ? [-2.9 + 4.1 * t, .7, 2.45 - 2.05 * t] : [1.2, .7, .4]) as ScenePoint,
     timberProgress: event?.timber_state === 'fallen' ? timberFalling ? t : 1 : 0,

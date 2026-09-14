@@ -9,7 +9,7 @@ type Phase = 'entry' | 'work' | 'incident' | 'aftermath'
 type Point = [number, number, number]
 type Paints = ReturnType<typeof usePaints>
 
-/** Native, reusable geometry only: no network textures, GLTFs or font loading. */
+
 function usePaints() {
   const paints = useMemo(() => {
     const paint = (color: string, roughness = .75, metalness = 0) =>
@@ -122,7 +122,7 @@ function Scaffold({ paints }: { paints: Paints }) {
     <Rod from={[3.025, .34, -2.7]} to={[3.025, 1.92, -.85]} material={paints.darkSteel} radius={.022} />
     {[-2.52, -2.19, -1.86, -1.53, -1.2].map(z =>
       <Timber key={z} at={[1.42, 1.98, z]} length={3.48} width={.3} height={.12} paints={paints} />)}
-    {/* A grounded ladder with two rails and properly spaced rungs. */}
+    {                                                                 }
     {[-.78, -.36].map(x => <Rod key={x} from={[x, .07, -.04]} to={[x, 2.33, -1.18]}
       radius={.032} material={paints.steel} />)}
     {Array.from({ length: 8 }, (_, index) => {
@@ -149,13 +149,13 @@ function TimberRack({ paints }: { paints: Paints }) {
     </group>)}
     <Rod from={[-.12, .3, -2.72]} to={[2.98, 2.02, -2.72]} radius={.023} material={paints.steel} />
     <Rod from={[2.98, .3, -2.72]} to={[-.12, 2.02, -2.72]} radius={.023} material={paints.steel} />
-    {/* Low entry obstruction; the side view supplies genuinely new evidence. */}
+    {                                                                           }
     <Pallet at={[1.08, 0, 1.31]} paints={paints} loaded />
     <Pallet at={[-2.08, 0, -2.85]} paints={paints} />
   </group>
 }
 
-/** Grounded props leave z=3.5 and x=±4.8 clear for the robot's review route. */
+
 export function ConstructionSite({ variant }: { variant: ConstructionVariant }) {
   const paints = usePaints()
   return <group>
@@ -164,14 +164,14 @@ export function ConstructionSite({ variant }: { variant: ConstructionVariant }) 
     <Box at={[0, 0, 3.45]} size={[9.6, .012, 1]} radius={.025} material={paints.concrete} shadow={false} />
     {[-4, -2.9, -1.8, -.7, .4, 1.5, 2.6, 3.7].map(x => <Box key={x}
       at={[x, .005, 3.94]} size={[.6, .006, .026]} radius={.002} material={paints.white} shadow={false} />)}
-    {/* A few quiet mineral facets, concentrated away from the footpaths. */}
+    {                                                                       }
     {Array.from({ length: 14 }, (_, i) => <mesh key={i}
       position={[-5.42 + (i % 7) * 1.58, .024, i < 7 ? -4.02 : 4.22]}
       rotation={[.3 * i, i, .25]} scale={[.055 + (i % 3) * .02, .025, .045]}
       material={paints.gravel}><icosahedronGeometry args={[1, 0]} /></mesh>)}
     {variant === 'scaffold' ? <Scaffold paints={paints} /> : <TimberRack paints={paints} />}
 
-    {/* Short perimeter rails, not an exclusion barrier around the worker. */}
+    {                                                                        }
     {[-5.65, 5.65].map(x => <group key={x}>
       {[-3.68, -1.94, -.2].map(z => <Box key={z} at={[x, .44, z]}
         size={[.095, .88, .095]} radius={.015} material={paints.darkSteel} />)}
@@ -181,13 +181,13 @@ export function ConstructionSite({ variant }: { variant: ConstructionVariant }) 
     <Cone at={[-5.34, 0, 3.51]} paints={paints} />
     <Cone at={[5.32, 0, -3.47]} paints={paints} />
 
-    {/* Entry marker: a small sign outside the standing position. */}
+    {                                                               }
     <Rod from={[-5.25, 0, 1.85]} to={[-5.25, 1.47, 1.85]} radius={.035} material={paints.steel} />
     <Box at={[-5.25, 1.21, 1.86]} size={[.61, .47, .07]} radius={.05} material={paints.yellow} />
     <Box at={[-5.25, 1.23, 1.906]} size={[.29, .12, .016]} radius={.03} material={paints.charcoal} shadow={false} />
     <Box at={[-5.25, 1.11, 1.907]} size={[.19, .026, .015]} radius={.006} material={paints.charcoal} shadow={false} />
 
-    {/* Camera station points into the construction area. */}
+    {                                                       }
     <group position={[-4.33, 0, -2.48]}>
       <Box at={[0, .04, 0]} size={[.38, .08, .38]} material={paints.concrete} />
       <Rod from={[0, .06, 0]} to={[0, 2.22, 0]} radius={.043} material={paints.steel} />
@@ -212,7 +212,7 @@ export function ConstructionSite({ variant }: { variant: ConstructionVariant }) 
         radius={.008} material={paints.steel} />)}
     </group>
 
-    {/* Report desk sits beyond the south path; its docking point is [3.8,3]. */}
+    {                                                                           }
     <group position={[3.8, 0, 4.08]}>
       {[-.54, .54].flatMap(x => [-.14, .14].map(z => <Rod key={`${x}:${z}`}
         from={[x, .02, z]} to={[x, .78, z]} radius={.025} material={paints.darkSteel} />))}
@@ -229,8 +229,8 @@ export function ConstructionSite({ variant }: { variant: ConstructionVariant }) 
   </group>
 }
 
-function WorkerLeg({ paints, dark, side, legRef, kneeRef }:
-  { paints: Paints; dark: boolean; side: number; legRef: React.RefObject<Group | null>; kneeRef: React.RefObject<Group | null> }) {
+function WorkerLeg({ paints, dark, side, legRef, kneeRef, safetyBoots = false }:
+  { paints: Paints; dark: boolean; side: number; safetyBoots?: boolean; legRef: React.RefObject<Group | null>; kneeRef: React.RefObject<Group | null> }) {
   const cloth = dark ? paints.darkTrousers : paints.trousers
   return <group ref={legRef} position={[side * .115, 0, 0]}>
     <Capsule at={[0, -.17, 0]} radius={.085} length={.2} material={cloth} />
@@ -238,9 +238,10 @@ function WorkerLeg({ paints, dark, side, legRef, kneeRef }:
     <group ref={kneeRef} position={[0, -.35, 0]}>
       <Capsule at={[0, -.195, 0]} radius={.069} length={.28} material={cloth} />
       <group position={[0, -.405, .04]}>
+        {safetyBoots && <Box at={[0, .095, -.01]} size={[.16, .23, .16]} radius={.035} material={paints.charcoal} />}
         <Box at={[0, -.019, .045]} size={[.165, .058, .31]} radius={.025} material={paints.sole} />
         <Box at={[0, .033, .023]} size={[.15, .09, .265]} radius={.043}
-          material={dark ? paints.charcoal : paints.trousers} />
+          material={safetyBoots || dark ? paints.charcoal : paints.trousers} />
         <Box at={[0, .026, .139]} size={[.133, .05, .059]} radius={.024} material={paints.sole} />
         {[-.012, .035, .079].map(z => <Box key={z} at={[0, .082, z]} size={[.082, .009, .014]}
           radius={.004} material={paints.white} shadow={false} />)}
@@ -249,20 +250,21 @@ function WorkerLeg({ paints, dark, side, legRef, kneeRef }:
   </group>
 }
 
-function WorkerArm({ paints, shirt, side, armRef }:
-  { paints: Paints; shirt: MeshStandardMaterial; side: number; armRef: React.RefObject<Group | null> }) {
+function WorkerArm({ paints, shirt, side, armRef, longSleeves = false }:
+  { paints: Paints; shirt: MeshStandardMaterial; side: number; longSleeves?: boolean; armRef: React.RefObject<Group | null> }) {
   return <group ref={armRef} position={[side * .24, .4, 0]}>
     <Capsule at={[0, -.07, 0]} radius={.086} length={.085} material={shirt} />
-    <Capsule at={[0, -.205, 0]} radius={.056} length={.14} material={paints.skin} />
-    <Ball at={[0, -.307, 0]} radius={.056} material={paints.skin} />
-    <Capsule at={[0, -.422, .018]} radius={.049} length={.15} material={paints.skin} />
+    <Capsule at={[0, -.205, 0]} radius={.056} length={.14} material={longSleeves ? shirt : paints.skin} />
+    <Ball at={[0, -.307, 0]} radius={.056} material={longSleeves ? shirt : paints.skin} />
+    <Capsule at={[0, -.422, .018]} radius={.049} length={.15} material={longSleeves ? shirt : paints.skin} />
     <Ball at={[0, -.55, .03]} radius={.06} scale={[.78, 1.14, .72]} material={paints.skin} />
   </group>
 }
 
-/** Site-event poses are separate from the agent's inspection animations. */
-export function ConstructionWorker({ variant, phase = 'work', progress = 1, syncPosition = false }:
-  { variant: ConstructionVariant; phase?: Phase; progress?: number; syncPosition?: boolean }) {
+
+export function ConstructionWorker({ variant, phase = 'work', progress = 1, syncPosition = false, inspection = false, ppe, adjusting = false }:
+  { variant: ConstructionVariant; phase?: Phase; progress?: number; syncPosition?: boolean; inspection?: boolean; adjusting?: boolean;
+    ppe?: { workwear: 'casual' | 'approved_workwear'; footwear: 'trainers' | 'safety_boots' } }) {
   const paints = usePaints(), reduced = useReducedMotion()
   const root = useRef<Group>(null), hips = useRef<Group>(null), torso = useRef<Group>(null)
   const leftLeg = useRef<Group>(null), rightLeg = useRef<Group>(null)
@@ -275,22 +277,22 @@ export function ConstructionWorker({ variant, phase = 'work', progress = 1, sync
     if (!root.current || !hips.current || !torso.current || !head.current) return
     const t = MathUtils.clamp(progress, 0, 1), time = reduced ? 0 : state.clock.elapsedTime
     const blend = reduced ? 1 : 1 - Math.exp(-delta * 15)
-    const walking = phase === 'entry' && t < .99 && !reduced
+    const walking = !inspection && phase === 'entry' && t < .99 && !reduced
     const seated = phase === 'aftermath'
     const startled = phase === 'incident'
     const stride = walking ? Math.sin(time * 8) * .38 : 0
     destination.set(phase === 'entry' ? MathUtils.lerp(-2.9, 1.2, t) : 1.2,
       0, phase === 'entry' ? MathUtils.lerp(2.45, .4, t) : .4)
-    // Logged-event playback already interpolates position. A second position
-    // interpolation would briefly move a waiting worker into the work area.
+
+
     if (syncPosition) root.current.position.copy(destination)
     else root.current.position.lerp(destination, blend)
     const yaw = phase === 'entry' ? 2.035 : seated ? -.06 : phase === 'work' ? Math.PI : .18
     root.current.rotation.y = MathUtils.damp(root.current.rotation.y, yaw, reduced ? 1000 : 12, delta)
     hips.current.position.y = MathUtils.lerp(hips.current.position.y, seated ? .51 : startled ? .84 + Math.sin(t * Math.PI) * .08 : .81 + (walking ? Math.abs(Math.sin(time * 8)) * .025 : 0), blend)
-    torso.current.rotation.x = MathUtils.lerp(torso.current.rotation.x, seated ? .46 : startled ? -.18 : -.035, blend)
+    torso.current.rotation.x = MathUtils.lerp(torso.current.rotation.x, adjusting ? .13 : seated ? .46 : startled ? -.18 : -.035, blend)
     torso.current.rotation.z = MathUtils.lerp(torso.current.rotation.z, startled ? -.11 : 0, blend)
-    head.current.rotation.x = MathUtils.lerp(head.current.rotation.x, seated ? .38 : phase === 'work' ? -.2 : 0, blend)
+    head.current.rotation.x = MathUtils.lerp(head.current.rotation.x, adjusting ? .3 : seated ? .38 : phase === 'work' ? -.2 : 0, blend)
     if (leftLeg.current && rightLeg.current && leftKnee.current && rightKnee.current) {
       leftLeg.current.rotation.x = MathUtils.lerp(leftLeg.current.rotation.x, seated ? -1.24 : stride, blend)
       rightLeg.current.rotation.x = MathUtils.lerp(rightLeg.current.rotation.x, seated ? -1.10 : startled ? -.5 * Math.sin(t * Math.PI) : -stride, blend)
@@ -298,9 +300,9 @@ export function ConstructionWorker({ variant, phase = 'work', progress = 1, sync
       rightKnee.current.rotation.x = MathUtils.lerp(rightKnee.current.rotation.x, seated ? .48 : walking ? Math.max(0, stride) : startled ? .45 : 0, blend)
     }
     if (leftArm.current && rightArm.current) {
-      const reach = seated ? -1.14 : phase === 'work' ? -2.1 : startled ? -1.15 : -stride * .65
+      const reach = adjusting ? -.85 + Math.sin(time * 3) * .12 : seated ? -1.14 : phase === 'work' ? -2.1 : startled ? -1.15 : -stride * .65
       leftArm.current.rotation.x = MathUtils.lerp(leftArm.current.rotation.x, reach, blend)
-      rightArm.current.rotation.x = MathUtils.lerp(rightArm.current.rotation.x, seated ? -1.24 : phase === 'work' ? -1.91 : startled ? -.9 : stride * .65, blend)
+      rightArm.current.rotation.x = MathUtils.lerp(rightArm.current.rotation.x, adjusting ? -.9 - Math.sin(time * 3) * .12 : seated ? -1.24 : phase === 'work' ? -1.91 : startled ? -.9 : stride * .65, blend)
       leftArm.current.rotation.z = MathUtils.lerp(leftArm.current.rotation.z, seated ? -.2 : startled ? -.38 : -.08, blend)
       rightArm.current.rotation.z = MathUtils.lerp(rightArm.current.rotation.z, seated ? .19 : startled ? .34 : .08, blend)
     }
@@ -313,13 +315,14 @@ export function ConstructionWorker({ variant, phase = 'work', progress = 1, sync
   return <group ref={root} position={placement} scale={.98}>
     <group ref={hips} position={[0, .81, 0]}>
       <Box size={[.32, .18, .235]} radius={.065} material={dark ? paints.darkTrousers : paints.trousers} />
-      <WorkerLeg paints={paints} dark={dark} side={-1} legRef={leftLeg} kneeRef={leftKnee} />
-      <WorkerLeg paints={paints} dark={dark} side={1} legRef={rightLeg} kneeRef={rightKnee} />
+      <WorkerLeg paints={paints} dark={dark} side={-1} legRef={leftLeg} kneeRef={leftKnee} safetyBoots={ppe?.footwear === 'safety_boots'} />
+      <WorkerLeg paints={paints} dark={dark} side={1} legRef={rightLeg} kneeRef={rightKnee} safetyBoots={ppe?.footwear === 'safety_boots'} />
       <group ref={torso}>
         <Box at={[0, .225, 0]} size={[.41, .45, .26]} radius={.105} material={shirt} />
         <Capsule at={[0, .49, 0]} radius={.058} length={.065} material={paints.skin} />
-        <WorkerArm paints={paints} shirt={shirt} side={-1} armRef={leftArm} />
-        <WorkerArm paints={paints} shirt={shirt} side={1} armRef={rightArm} />
+        {ppe?.workwear === 'approved_workwear' && <Box at={[0, .225, .135]} size={[.015, .32, .012]} radius={.004} material={paints.darkSteel} />}
+        <WorkerArm paints={paints} shirt={shirt} side={-1} armRef={leftArm} longSleeves={ppe?.workwear === 'approved_workwear'} />
+        <WorkerArm paints={paints} shirt={shirt} side={1} armRef={rightArm} longSleeves={ppe?.workwear === 'approved_workwear'} />
         <group ref={head} position={[0, .61, 0]}>
           <Ball at={[0, 0, 0]} radius={.151} scale={[.9, 1.11, .94]} material={paints.skin} />
           {[-1, 1].map(side => <Ball key={side} at={[side * .134, -.002, 0]} radius={.035}
@@ -350,7 +353,7 @@ function RobotLimb({ side, leg = false, paints, limbRef, forearmRef, children }:
     <Ball at={[0, leg ? -.17 : -.18, 0]} radius={.048} material={paints.darkSteel} />
     {leg ? <Box at={[0, -.274, .041]} size={[.176, .098, .255]} radius={.04} material={paints.indigo} />
       : <group ref={forearmRef} position={[0, -.18, 0]}>
-        {/* The elbow pivot preserves the original straight-arm geometry at 0. */}
+        {                                                                        }
         <Capsule at={[0, -.061, .01]} radius={.049} length={.071} material={paints.white} />
         <group name={side < 0 ? 'robot-left-hand' : 'robot-right-hand'} position={[0, -.135, .027]}>
           <Ball at={[0, 0, 0]} radius={.057} scale={[.88, 1.03, .84]} material={paints.indigo} />
@@ -365,14 +368,14 @@ const TABLET_RIGHT_ARM: Point = [-.72, 0, -.52]
 const TABLET_LEFT_ELBOW = -.75
 const TABLET_RIGHT_ELBOW = -1.02
 
-/** A small local prop, attached to the gripping hand rather than the world. */
+
 function HandheldTablet({ paints }: { paints: Paints }) {
   return <group name="robot-handheld-tablet">
     <Box size={[.36, .245, .036]} radius={.027} material={paints.charcoal} />
     <Box at={[0, 0, -.018]} size={[.342, .227, .012]} radius={.024} material={paints.indigo} />
     <Box at={[0, -.002, -.026]} size={[.306, .19, .007]} radius={.013} material={paints.indigoDark} shadow={false} />
-    {/* The screen faces the robot: quiet header and two document cards, no
-        flashing decoration or invented on-screen model output. */}
+    {
+                                                                  }
     <Box at={[-.012, .066, -.031]} size={[.244, .014, .004]} radius={.003} material={paints.paper} shadow={false} />
     {[-.072, .065].map(x => <group key={x}>
       <Box at={[x, -.019, -.031]} size={[.113, .09, .004]} radius={.008} material={paints.paper} shadow={false} />
@@ -385,7 +388,7 @@ function HandheldTablet({ paints }: { paints: Paints }) {
   </group>
 }
 
-/** Local forward is +Z. The scene controller owns the robot's position and yaw. */
+
 export function ConstructionRobot({ walking = false, inspecting = false, active = true, usingTablet = false, inspectionPitch = .15 }:
   { walking?: boolean; inspecting?: boolean; active?: boolean; usingTablet?: boolean; inspectionPitch?: number }) {
   const paints = usePaints(), reduced = useReducedMotion()
@@ -395,9 +398,9 @@ export function ConstructionRobot({ walking = false, inspecting = false, active 
   const leftForearm = useRef<Group>(null), rightForearm = useRef<Group>(null)
   const tabletInUse = usingTablet && active && !walking
   const tabletGrip = useMemo(() => {
-    // Invert each final arm pose to express grip/touch offsets in the hand's
-    // own coordinates. All accessories then follow their anatomical parents
-    // throughout the lift, with no world-space floating tablet or finger.
+
+
+
     const handRotation = (arm: Point, elbow: number) => new Quaternion()
       .setFromEuler(new Euler(...arm)).multiply(new Quaternion().setFromEuler(new Euler(elbow, 0, 0)))
     const leftInverse = handRotation(TABLET_LEFT_ARM, TABLET_LEFT_ELBOW).invert()

@@ -2,15 +2,15 @@ import { motion } from 'framer-motion'
 import { Loader2, ShieldCheck, Lock } from 'lucide-react'
 import type { DetectResult } from '../api'
 
-/**
- * Guided-view right column and status banner: plain-language versions of the
- * detection gauges and the attack panel. All technical detail (z-scores,
- * candidate tables, key calibration) stays in the collapsible expert section.
- */
 
-// ---------------------------------------------------------------------------
-// status banner
-// ---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 export function GuidedBanner({
   idle, running, finished, detected, z1, z2, tau, attacked, hse = false,
@@ -18,7 +18,7 @@ export function GuidedBanner({
   idle: boolean; running: boolean; finished: boolean; detected: boolean
   z1: number; z2: number; tau: number; attacked: boolean; hse?: boolean
 }) {
-  // Current stronger-channel score (soft max at 12), not cumulative progress.
+
   const pct = Math.max(0, Math.min(1, Math.max(z1, z2) / 12))
 
   if (idle) {
@@ -108,9 +108,9 @@ export function GuidedBanner({
   )
 }
 
-// ---------------------------------------------------------------------------
-// plain-language detection meters
-// ---------------------------------------------------------------------------
+
+
+
 
 function Meter({
   name, sub, z, zWrong, n, tau, tone, running, notePast, noteBuilding,
@@ -142,7 +142,7 @@ function Meter({
         <motion.div className={`absolute inset-y-0 left-0 rounded-full ${bar}`}
           animate={{ width: `${fill * 100}%` }}
           transition={{ duration: 0.6, ease: [0.32, 0.72, 0, 1] }} />
-        {/* pass line */}
+        {               }
         <div className="absolute -top-1 -bottom-1 w-[2.5px] rounded bg-rose-500" style={{ left: `${line * 100}%` }}>
           <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 text-[8.5px] font-bold text-rose-500 whitespace-nowrap">
             pass line
@@ -192,9 +192,9 @@ export function GuidedDetect({ d, tau, running }: { d: DetectResult | null; tau:
   )
 }
 
-// ---------------------------------------------------------------------------
-// attack challenge card
-// ---------------------------------------------------------------------------
+
+
+
 
 const GUIDED_ATTACKS: { kind: string; label: string; labelHse: string; needsLLM: boolean }[] = [
   { kind: 'deletion', label: 'Delete part of the log', labelHse: 'Delete part of the record', needsLLM: false },

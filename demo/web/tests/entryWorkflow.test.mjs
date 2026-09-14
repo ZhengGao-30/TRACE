@@ -13,9 +13,10 @@ async function load(relative, dependencies = {}) {
     module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX,
   } }).outputText
   const module = { exports: {} }
-  Function('require', 'module', 'exports', output)((name) => dependencies[name] ?? require(name), module, module.exports)
+  Function('require', 'module', 'exports', output)((name) => dependencies[name] ?? (name.endsWith('/ppeInspection') ? ppe : require(name)), module, module.exports)
   return module.exports
 }
+const ppe = await load('../src/lib/ppeInspection.ts')
 const guided = await load('../src/lib/guidedSteps.ts')
 const workflow = await load('../src/components/PairedWorkflowStrip.tsx', { '../lib/guidedSteps': guided })
 const attribution = await load('../src/components/EntryAttributionPanel.tsx', { './PairedWorkflowStrip': workflow })
@@ -75,8 +76,8 @@ function buttonsIn(element) {
 
 for (const source of ['trace', 'standard']) {
   test(`${source} action window exposes earlier/later navigation and selects the adjacent hidden action`, () => {
-    // Non-consecutive positions ensure navigation uses this arm's stage indices,
-    // rather than assuming the other trajectory has the same step numbers.
+
+
     const indices = [2, 3, 5, 7, 8, 10, 12]
     const steps = Array.from({ length: 13 }, (_, i) => step(`action_${i}`, 'inspect', i))
     const calls = []
@@ -493,9 +494,9 @@ test('retained future inspector state and pagination cannot reveal v3 future pro
     state[1] = source
     for (const position of [{ current: -1, running: false }, { current: 5, running: true }, { current: 6, running: true }]) {
       const markup = renderToStaticMarkup(render(position))
-      // This panel compares recorded trajectories: both names are always
-      // readable. Playback controls result/distribution access and the single
-      // running TRACE marker, not whether recorded actions can be named.
+
+
+
       assert.doesNotMatch(markup, /SECRET_FUTURE_INJURY|SECRET_FUTURE_PROBABILITY|98\.8%|Result at that time|Keyed score/)
       assert.doesNotMatch(markup, /Not yet replayed|Stage not reached/)
       const traceButton = markup.match(/<button\b[^>]*aria-label="With watermark step 7: SECRET_FUTURE_ASSESSMENT"[^>]*>/)?.[0]
@@ -511,8 +512,8 @@ test('retained future inspector state and pagination cannot reveal v3 future pro
     const complete = renderToStaticMarkup(render({ current: 6, running: false }))
     assert.match(complete, /SECRET_FUTURE_INJURY/, 'details unlock after completed replay')
   }
-  // Window pagination repositions focus without treating it as permission to
-  // open that action's inspector. The render guard independently enforces it.
+
+
   function findWindow(element) {
     if (!React.isValidElement(element)) return null
     if (element.type === subject.ActionWindow && element.props.source === 'trace') return element

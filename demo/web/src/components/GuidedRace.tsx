@@ -4,17 +4,17 @@ import { ChevronDown, ChevronUp } from 'lucide-react'
 import type { GroupView } from './GroupCard'
 import { humanize } from '../lib/guidedSteps'
 
-/**
- * Guided view: "How was this step chosen?" — the per-step candidate draw,
- * simplified for non-experts. A three-beat flow explains the mechanism
- * (candidates → the key deals tickets → the winning ticket runs); the live
- * race shows real tickets (r values) for the current step. A 🔑/🚫 toggle
- * contrasts the keyed draw with what the agent would do with no watermark
- * (just follow its own preference p — nothing to replay, nothing to prove).
- *
- * Bars: with key, closeness to winning = min(score)/score (score = −log r / p,
- * lowest wins). Without key, bar = p / max(p) — the model's own preference.
- */
+
+
+
+
+
+
+
+
+
+
+
 
 const TOP_N = 5
 
@@ -35,9 +35,9 @@ export default function GuidedRace({
   const minScore = race.length ? Math.min(...race.map((r) => r.score || 1e-9)) : 1
   const maxP = race.length ? Math.max(...race.map((r) => r.p)) : 1
 
-  // Without the key there are no tickets — the baseline agent simply samples
-  // from its own distribution p (the paper's Base arm). Re-sample whenever the
-  // step changes.
+
+
+
   const sampled = useMemo(() => {
     if (construction || !race.length) return null
     const tot = race.reduce((s, r) => s + r.p, 0) || 1
@@ -47,8 +47,8 @@ export default function GuidedRace({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [g?.i, race.length, construction])
 
-  // with key: keep the draw's own order (winner first). without: rank by p,
-  // but keep the sampled pick visible even when it isn't in the top N.
+
+
   const rows = useMemo(() => {
     if (keyed) return race.slice(0, TOP_N)
     const sorted = [...race].sort((a, b) => b.p - a.p)
@@ -62,7 +62,7 @@ export default function GuidedRace({
 
   return (
     <div>
-      {/* the toggle device */}
+      {                       }
       <button onClick={onToggle}
         className={[
           'w-full card px-4 py-2.5 flex items-center gap-2.5 text-left transition-all duration-500 ease-fluid',
@@ -105,7 +105,7 @@ export default function GuidedRace({
                     {construction && race.length === 1 ? 'Only one action is legal here. Layer 1 cannot change this decision.' : 'The key gives each legal candidate a ticket; the lowest −ln(r) / p score wins.'}
                   </p>
 
-                  {/* the principle, in three beats */}
+                  {                                   }
                   <div className="flex items-stretch gap-0 mb-4">
                     {[
                       { ic: '🧾', t1: '① Candidates line up', t2: `${construction ? 'The environment allows only unfinished checks with satisfied prerequisites' : 'The agent lists every reasonable next action'} — ${g.nCandidates ?? race.length} here.`, key: false },
@@ -128,7 +128,7 @@ export default function GuidedRace({
                     ))}
                   </div>
 
-                  {/* context */}
+                  {             }
                   <div className="flex items-center gap-2 text-[11.5px] bg-slate-50 ring-1 ring-slate-100
                                   rounded-xl px-3.5 py-2 mb-3 flex-wrap">
                     {prevLabel && (
@@ -140,7 +140,7 @@ export default function GuidedRace({
                     <span className="font-bold text-slate-700">🤔 What next?</span>
                   </div>
 
-                  {/* keyed / no-key flip */}
+                  {                         }
                   <div className="flex items-center gap-2.5 mb-2.5">
                     <div className="flex rounded-full bg-slate-100 p-0.5">
                       <button onClick={() => setKeyed(true)}
@@ -163,7 +163,7 @@ export default function GuidedRace({
                     </span>
                   </div>
 
-                  {/* the race */}
+                  {              }
                   <div className="space-y-2">
                     {rows.map((r, idx) => {
                       const win = keyed ? r.win : r.cmd === sampled
@@ -188,7 +188,7 @@ export default function GuidedRace({
                             )}
                             {label}
                           </span>
-                          {/* the ticket stub */}
+                          {                     }
                           {keyed ? (
                             <span className={[
                               'shrink-0 w-[4.6rem] text-center mono text-[10.5px] px-1.5 py-0.5 rounded-md',
@@ -230,7 +230,7 @@ export default function GuidedRace({
                     full numbers live in Technical details below
                   </div>
 
-                  {/* takeaway */}
+                  {              }
                   <div className="grid grid-cols-2 gap-3 mt-4 pt-3.5 border-t border-dashed border-slate-200">
                     <div className="rounded-xl bg-slate-50 px-3.5 py-2.5 text-[11.5px] leading-relaxed text-slate-500">
                       <div className="font-extrabold text-slate-700 text-[12px] mb-0.5">👀 To an outsider</div>

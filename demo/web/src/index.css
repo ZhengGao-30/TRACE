@@ -11,7 +11,7 @@ html, body, #root { height: 100%; }
 
 body {
   @apply bg-canvas text-slate-800 antialiased font-sans;
-  /* a barely-there warm mesh so the canvas is not a flat white */
+
   background-image:
     radial-gradient(60rem 40rem at 12% -8%, rgba(99, 102, 241, 0.05), transparent 60%),
     radial-gradient(50rem 40rem at 108% 10%, rgba(139, 92, 246, 0.045), transparent 55%);
@@ -19,7 +19,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* film-grain overlay — fixed, pointer-events-none (per the skill's perf rule) */
+
 body::before {
   content: '';
   position: fixed;
@@ -38,7 +38,7 @@ body::before {
 *::-webkit-scrollbar-thumb:hover { @apply bg-slate-400/80; }
 
 @layer components {
-  /* --- Double-Bezel (Doppelrand): outer shell + inner core --- */
+
   .bezel {
     @apply rounded-shell bg-slate-500/[0.05] ring-1 ring-slate-900/[0.05] p-1.5;
   }
@@ -46,7 +46,7 @@ body::before {
     @apply rounded-core bg-white shadow-core;
   }
 
-  /* a plain card is the core surface with an ambient lift */
+
   .card {
     @apply bg-white rounded-2xl shadow-card ring-1 ring-slate-900/[0.04];
   }
@@ -56,7 +56,7 @@ body::before {
            text-[12px] font-semibold tracking-wide;
   }
 
-  /* eyebrow tag — microscopic uppercase pill before a heading */
+
   .eyebrow {
     @apply inline-flex items-center gap-1 rounded-full bg-slate-900/[0.04]
            px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em]
@@ -67,11 +67,11 @@ body::before {
 }
 
 @layer utilities {
-  /* the fluid-mass easing, as a utility */
+
   .ease-fluid { transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1); }
 }
 
-/* honour reduced-motion: freeze looping decorative animation */
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
@@ -80,8 +80,8 @@ body::before {
   }
 }
 
-/* General Attack Lab — cinematic chapter language, translated into TRACE's
-   indigo/violet system rather than borrowing the reference site's palette. */
+
+
 .general-attack-page {
   position: relative;
   isolation: isolate;

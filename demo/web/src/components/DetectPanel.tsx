@@ -12,7 +12,7 @@ function Gauge({
   const c = tone === 'l1'
     ? { fg: 'text-l1-700', bar: 'bg-l1-500', bg: 'bg-l1-50', ring: 'ring-indigo-100' }
     : { fg: 'text-l2-700', bar: 'bg-l2-500', bg: 'bg-l2-50', ring: 'ring-violet-100' }
-  // z is unbounded; map to a 0..1 fill with a soft knee at 20
+
   const fill = Math.max(0, Math.min(1, z / 20))
   const fillW = Math.max(0, Math.min(1, Math.abs(zWrong) / 20))
 
@@ -33,8 +33,8 @@ function Gauge({
             {z.toFixed(2)}
           </motion.div>
 
-          {/* What the step just added. The big number above is a LEVEL (no sign);
-              this is the increment, so it is the one place a '+' belongs. */}
+          {
+                                                                             }
           {delta != null && Math.abs(delta) > 1e-9 && (
             <motion.div
               key={`d${z.toFixed(3)}`}
@@ -103,12 +103,12 @@ export default function DetectPanel({
       </div>
     )
   }
-  // defensive: a missing field must not blank the whole dashboard
+
   const tau = d.tau ?? 2
   const cons = d.consistency ?? { total: 0, mismatch: 0, rate: 0 }
-  // Per-step gain, read off the curve the replay is already accumulating. Makes
-  // it legible that each completed step ADDS evidence, rather than the number
-  // just churning.
+
+
+
   const prev = curve.length > 1 ? curve[curve.length - 2] : null
   const last = curve.length > 0 ? curve[curve.length - 1] : null
   const dz1 = prev && last ? last.z1 - prev.z1 : null

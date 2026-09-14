@@ -26,18 +26,18 @@ export interface ReplayRow {
 
 const J = { 'Content-Type': 'application/json' }
 
-/**
- * Backend base URL. Resolution order:
- *   1. ?api=<url> in the page URL (the launcher's "Open demo" uses this to inject
- *      the public tunnel URL), persisted to localStorage so it survives navigation.
- *   2. a previously saved value in localStorage.
- *   3. VITE_API_BASE baked in at build time.
- *   4. http://localhost:8000 — the default. On the deployed site this makes the
- *      "Try the live demo" button just work whenever the local launcher backend
- *      is running on THIS machine (Chrome/Edge exempt http://localhost from
- *      mixed-content blocking). Remote visitors with no backend get a graceful
- *      "backend not reachable" banner instead of a silent blank page.
- */
+
+
+
+
+
+
+
+
+
+
+
+
 export const DEFAULT_API_BASE = 'http://localhost:8000'
 
 function resolveApiBase(): string {
@@ -46,7 +46,7 @@ function resolveApiBase(): string {
     if (q) { localStorage.setItem('trace.api', q); return q.replace(/\/+$/, '') }
     const saved = localStorage.getItem('trace.api')
     if (saved) return saved.replace(/\/+$/, '')
-  } catch { /* ignore */ }
+  } catch {              }
   const env = (import.meta as any).env?.VITE_API_BASE
   return env ? String(env).replace(/\/+$/, '') : DEFAULT_API_BASE
 }
@@ -83,11 +83,11 @@ export const api = {
   distortionFree: (n = 20000) => post<any>('/api/distortion_free', { n }),
 }
 
-/** Subscribe to a session's SSE event stream. Returns an unsubscribe fn. */
+
 export function subscribe(sid: string, onEvent: (e: any) => void): () => void {
   const es = new EventSource(U(`/api/stream/${sid}`))
   es.onmessage = (m) => {
-    try { onEvent(JSON.parse(m.data)) } catch { /* ignore */ }
+    try { onEvent(JSON.parse(m.data)) } catch {              }
   }
   es.onerror = () => es.close()
   return () => es.close()

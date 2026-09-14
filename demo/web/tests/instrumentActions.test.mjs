@@ -3,9 +3,9 @@ import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
 import ts from 'typescript'
 
-// Exercise App's actual handlers with small state/API doubles. Extracting the
-// AST keeps these tests independent of JSX layout and avoids copying the logic
-// under test into a second implementation.
+
+
+
 const source = await readFile(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const tree = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
 const app = tree.statements.find((node) => ts.isFunctionDeclaration(node) && node.name?.text === 'App')
@@ -19,7 +19,7 @@ const handlers = new Map(app.body.statements
 for (const name of handlerNames) assert.ok(handlers.has(name), `Missing App handler: ${name}`)
 
 function handler(name, scope) {
-  // `with` supplies App's lexical dependencies; no production source is changed.
+
   return Function('scope', `with (scope) { ${handlers.get(name)}; return ${name}; }`)(scope)
 }
 
@@ -62,6 +62,7 @@ function context(overrides = {}) {
     lastAttackResult: null, detectTarget: 'original', detect: right, keyMode: 'right',
     rows: [], curve: [], hse: { done: true, success: true },
     sessionUnsubscribe: { current: null }, moveQ: { current: [] }, walking: { current: false },
+    actionReplay: { reset: () => {} }, setSelectedPPECheck: () => {},
     queue: { current: [] }, timer: { current: null }, watchdog: { current: null },
     reviewWatchdog: { current: null }, reviewPending: { current: null },
     staticAttack: (...args) => { calls.push(['staticAttack', ...args]); return { before: right, after } },
@@ -82,7 +83,7 @@ function context(overrides = {}) {
     setDetect: 'detect', setRows: 'rows', setLastAttackResult: 'lastAttackResult',
     setDetectTarget: 'detectTarget', setGroups: 'groups', setCurve: 'curve', setSid: 'sid',
     setRunning: 'running', setFollow: 'follow', setUnseen: 'unseen', setExpandedPhase: 'expanded',
-    setReviewEpoch: 'epoch', setScene: 'scene', setHse: 'hse',
+    setReviewEpoch: 'epoch', setScene: 'scene', setHse: 'hse', setReviewCompleted: 'reviewCompleted', setReviewError: 'reviewError',
   })) {
     ctx[setter] = (value) => {
       ctx[key] = typeof value === 'function' ? value(ctx[key]) : value

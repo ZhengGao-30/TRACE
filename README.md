@@ -22,12 +22,22 @@ not part of this repository.
 
 ## The interactive demo
 
-The site includes Household Tasks, Industrial Safety (HSE), and General Attack
-Scenarios. Saved runs play directly from static files without a Python backend
-or model API. The two HSE duty-shift cases each contain 31 displayed steps,
-including one explicitly injected controller fault. Watermarked actions replay
-alongside the recorded unwatermarked comparison, with probabilities, selection
-scores, and attribution results available for inspection.
+Industrial Safety (HSE) is the default scenario. Household Tasks and General
+Attack Scenarios remain available in the Scenarios menu. Saved runs play
+directly from static files without a Python backend or model API.
+
+The two current HSE PPE cases each contain a 24-action inspection with and
+without watermarking. Both workflows share an interactive 3D scene. The
+What changed? box starts collapsed to leave room for the animation; expand it
+to compare illustrated choices, replay saved decisions with public demo keys,
+and view the reported task-success comparison. Collapsing it preserves the key
+and replay result. Key replay is available as soon as the case loads and does
+not require watching the full inspection first.
+
+Key replay uses the exported results of the original sampler at each recorded
+decision state. It is separate from statistical watermark detection and does
+not execute a new model or establish a unique identity. The HSE observations
+and 3D scene are synthetic, and the method illustrations are not site evidence.
 
 Live model execution still requires a separately configured backend. This
 repository publishes the website and saved demonstrations, not that service.

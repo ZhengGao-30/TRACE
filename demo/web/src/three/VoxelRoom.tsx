@@ -28,9 +28,9 @@ export interface SceneState {
 
 const WALL_H = 5.6
 
-// ---------------------------------------------------------------------------
-// Furniture
-// ---------------------------------------------------------------------------
+
+
+
 function Blocks({ boxes, open }: { boxes: Box[]; open: number }) {
   return (
     <>
@@ -69,8 +69,8 @@ function NameTag({ text, y, accent, active, visited, near }: {
   text: string; y: number; accent: string
   active: boolean; visited: boolean; near: boolean
 }) {
-  // Distance-compensated scale: the tag keeps a CONSTANT on-screen size, so a
-  // piece right in front of the camera no longer covers half the room.
+
+
   const grp = useRef<THREE.Group>(null)
   const world = useRef(new THREE.Vector3())
   useFrame(({ camera }) => {
@@ -81,7 +81,7 @@ function NameTag({ text, y, accent, active, visited, near }: {
     grp.current.scale.setScalar(k)
   })
 
-  if (!active && !near && !visited) return null      // declutter the far field
+  if (!active && !near && !visited) return null
 
   const w = 0.17 * text.length + 0.3
   const op = active ? 0.97 : near ? 0.8 : 0.55
@@ -128,13 +128,13 @@ function Furniture({ id, kind, pos, rot, opened, active, visited, near }: {
     }
   })
 
-  // footprint of the piece, so the base plate matches its size
+
   const fw = Math.max(...bp.boxes.map((b) => Math.abs(b.p[0]) + b.s[0] / 2)) * 2 + 0.28
   const fd = Math.max(...bp.boxes.map((b) => Math.abs(b.p[2]) + b.s[2] / 2)) * 2 + 0.28
 
   return (
     <group position={[pos[0], 0, pos[1]]} rotation={[0, rot, 0]}>
-      {/* category base plate -- the main "which kind is this" cue on the floor */}
+      {                                                                           }
       <mesh position={[0, 0.015, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[fw, fd]} />
         <meshBasicMaterial color={accent} transparent
@@ -143,7 +143,7 @@ function Furniture({ id, kind, pos, rot, opened, active, visited, near }: {
 
       <Blocks boxes={bp.boxes} open={anim.current} />
 
-      {/* accent trim across the front, colour-matched to the name tag */}
+      {                                                                  }
       <mesh position={[0, 0.08, fd / 2 - 0.16]}>
         <boxGeometry args={[fw * 0.72, 0.09, 0.09]} />
         <meshLambertMaterial color={accent} />
@@ -162,9 +162,9 @@ function Furniture({ id, kind, pos, rot, opened, active, visited, near }: {
   )
 }
 
-// ---------------------------------------------------------------------------
-// Player
-// ---------------------------------------------------------------------------
+
+
+
 type Act = 'idle' | 'open' | 'take' | 'put' | 'fx' | 'look'
 
 function Player({ target, action, carrying, posRef, onArrive, speed = 1 }: {
@@ -198,10 +198,10 @@ function Player({ target, action, carrying, posRef, onArrive, speed = 1 }: {
     if (dist > 0.07) {
       arrived.current = false
       beat.current = 0
-      // Constant-DURATION travel: speed scales with the remaining distance so a
-      // walk across the room takes about as long as a short hop. Without this
-      // the event pacer runs ahead of the character on long walks.
-      const walkTime = 0.85 / speed          // seconds, whatever the distance
+
+
+
+      const walkTime = 0.85 / speed
       const sp = Math.min(dist, THREE.MathUtils.clamp(dist / walkTime, 2.5, 26) * dt)
       p.x += (dx / dist) * sp
       p.z += (dz / dist) * sp
@@ -224,7 +224,7 @@ function Player({ target, action, carrying, posRef, onArrive, speed = 1 }: {
       p.y += (0 - p.y) * Math.min(1, dt * 8)
       t.current += dt
 
-      // a short beat on arrival so the reach / glance animation can be seen
+
       if (!arrived.current) {
         beat.current += dt
         if (beat.current > (action === 'idle' ? 0.12 : 0.42) / speed) {
@@ -238,7 +238,7 @@ function Player({ target, action, carrying, posRef, onArrive, speed = 1 }: {
         ease(armL.current, -0.25, 7)
         if (head.current) head.current.rotation.y += (0 - head.current.rotation.y) * Math.min(1, dt * 7)
       } else if (action === 'look') {
-        // tally-channel confirm: the agent only glances -- nothing is touched
+
         if (head.current) head.current.rotation.y = Math.sin(t.current * 3.2) * 0.75
         ease(armR.current); ease(armL.current)
       } else {
@@ -306,9 +306,9 @@ function Player({ target, action, carrying, posRef, onArrive, speed = 1 }: {
   )
 }
 
-// ---------------------------------------------------------------------------
-// FX
-// ---------------------------------------------------------------------------
+
+
+
 function Burst({ at, color, seed }: { at: [number, number]; color: string; seed: number }) {
   const t = useRef(0)
   const grp = useRef<THREE.Group>(null)
@@ -341,9 +341,9 @@ function Burst({ at, color, seed }: { at: [number, number]; color: string; seed:
   )
 }
 
-// ---------------------------------------------------------------------------
-// Room shell: floor, walls, skirting, window with a light shaft, ceiling lamp
-// ---------------------------------------------------------------------------
+
+
+
 function Shell({ ROOM }: { ROOM: number }) {
   const HALF = ROOM / 2
   const floor = useMemo(() => surfaceMaterial('floor', FLOOR(), Math.round(ROOM)), [ROOM])
@@ -364,7 +364,7 @@ function Shell({ ROOM }: { ROOM: number }) {
         <planeGeometry args={[ROOM, ROOM]} />
       </mesh>
 
-      {/* three walls (the fourth is open toward the camera) */}
+      {                                                        }
       {([[0, -HALF, 0], [-HALF, 0, Math.PI / 2], [HALF, 0, -Math.PI / 2]] as const).map(
         ([x, z, ry], i) => (
           <group key={i} position={[x, 0, z]} rotation={[0, ry, 0]}>
@@ -374,14 +374,14 @@ function Shell({ ROOM }: { ROOM: number }) {
             <mesh position={[0, 0.55, 0]} receiveShadow material={wallLo}>
               <boxGeometry args={[ROOM, 1.1, 0.38]} />
             </mesh>
-            {/* skirting board */}
+            {                    }
             <mesh position={[0, 0.12, 0.2]} material={blockMaterial('#cda06a')}>
               <boxGeometry args={[ROOM, 0.24, 0.06]} />
             </mesh>
           </group>
         ))}
 
-      {/* window on the back wall + a volumetric-ish light shaft */}
+      {                                                            }
       <group position={[-4.5, 3.1, -HALF + 0.2]}>
         <mesh material={blockMaterial('#cda06a')}>
           <boxGeometry args={[3.4, 2.6, 0.16]} />
@@ -403,7 +403,7 @@ function Shell({ ROOM }: { ROOM: number }) {
                            side={THREE.DoubleSide} depthWrite={false} />
       </mesh>
 
-      {/* ceiling lamp */}
+      {                  }
       <group position={[0, WALL_H - 0.02, 0]}>
         <mesh position={[0, -0.35, 0]} material={blockMaterial('#33383d')}>
           <boxGeometry args={[0.08, 0.7, 0.08]} />
@@ -419,7 +419,7 @@ function Shell({ ROOM }: { ROOM: number }) {
                     color="#fff0cd" castShadow />
       </group>
 
-      {/* a couple of potted plants for life */}
+      {                                        }
       {([[-HALF + 1.6, HALF - 1.6], [HALF - 1.6, HALF - 1.8]] as const).map(([x, z], i) => (
         <group key={i} position={[x, 0, z]}>
           <mesh position={[0, 0.28, 0]} material={blockMaterial('#a8422f')} castShadow>
@@ -439,17 +439,17 @@ function Shell({ ROOM }: { ROOM: number }) {
   )
 }
 
-// ---------------------------------------------------------------------------
-// Third-person chase camera with a gentle drift
-// ---------------------------------------------------------------------------
-/**
- * Critically damped chase camera.
- *
- * Two things make it feel smooth: it follows the player's ACTUAL body position
- * (which is itself easing toward the goal) rather than snapping between goal
- * points, and it uses a SmoothDamp spring -- velocity is carried across frames,
- * so there is no overshoot and no per-frame jerk when the goal jumps.
- */
+
+
+
+
+
+
+
+
+
+
+
 function smoothDamp(cur: THREE.Vector3, goal: THREE.Vector3, vel: THREE.Vector3,
                     smoothTime: number, dt: number) {
   const omega = 2 / Math.max(0.0001, smoothTime)
@@ -471,8 +471,8 @@ function Chase({ bodyRef, room }: { bodyRef: React.MutableRefObject<THREE.Vector
 
   useFrame(({ camera }, dt) => {
     const b = bodyRef.current
-    const d = Math.min(dt, 1 / 30)                 // clamp hitches
-    // stay behind and above the player, pulled slightly toward the room centre
+    const d = Math.min(dt, 1 / 30)
+
     const back = room * 0.52
     goal.current.set(b.x * 0.62, room * 0.36, b.z * 0.62 + back)
     lookGoal.current.set(b.x * 0.9, 1.35, b.z * 0.9)
@@ -484,7 +484,7 @@ function Chase({ bodyRef, room }: { bodyRef: React.MutableRefObject<THREE.Vector
   return null
 }
 
-// ---------------------------------------------------------------------------
+
 
 const FX_COLOR: Record<string, string> = {
   cool: '#8fd4f5', heat: '#ff9a45', clean: '#6fe0e6', take: '#ffd75e', put: '#7fd45f',
@@ -508,7 +508,7 @@ export default function VoxelRoom({ s, expanded, onToggleExpand, onArrive, speed
 
   const activeId = cmd?.target
   const spot = activeId ? world.get(activeId) : undefined
-  // stand just in front of the piece, on the room-centre side
+
   const stand: [number, number] = spot
     ? [spot.pos[0] * 0.86, spot.pos[1] * 0.86] : [0, 1.5]
 
@@ -567,7 +567,7 @@ export default function VoxelRoom({ s, expanded, onToggleExpand, onArrive, speed
         </EffectComposer>
       </Canvas>
 
-      {/* HUD */}
+      {         }
       <div className="pointer-events-none absolute left-2.5 bottom-2.5 right-2.5 flex items-center gap-2">
         <span className={[
           'chip shrink-0 shadow-sm',
