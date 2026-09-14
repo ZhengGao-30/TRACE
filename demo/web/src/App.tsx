@@ -79,6 +79,10 @@ function replayOptionLabel(row: any, index: number): string {
   return `${row.success ? '✓' : '✗'} ${title} · ${row.groups} steps${row.policy_source === 'codex_llm' ? ' · Codex LLM replay' : ''}`
 }
 
+function defaultReplay(options: any[], scenario: 'alfworld' | 'hse') {
+  return (scenario === 'hse' ? options.find(row => row.game_id === 'hse_ppe-CS02') : undefined) ?? options[0]
+}
+
 function constructionReplayNote(row: any): string {
   const policy = constructionPolicyCopy(row)
   if (row?.task_type === PPE_TASK) return `PPE inspection · ${policy.label}. ${policy.detail} Recorded replay of checks and reporting; no worksite admission or incident.`
@@ -136,7 +140,7 @@ export default function App() {
   function chooseScenario(next: 'alfworld' | 'hse') {
     if (running) return
     if (next === scenario) { syncDemoAddress(next, gameId); return }
-    const nextId = replayOptions(replays, next)[0]?.game_id ?? ''
+    const nextId = defaultReplay(replayOptions(replays, next), next)?.game_id ?? ''
     reset()
     staticGame.current = null
     setTask(null)
@@ -297,7 +301,7 @@ export default function App() {
       const requested = demoOptions().get('case')
       const requestedId = CONSTRUCTION_CASES.find((sample) => sample.key === requested)?.gameId
       const selected = requested ? scenarioReplays.find((r) => r.game_id === (requestedId ?? requested) || r.game_id.includes(`-${requested}-`)) : null
-      setGameId((selected ?? scenarioReplays[0]).game_id)
+      setGameId((selected ?? defaultReplay(scenarioReplays, scenario)).game_id)
     }
   }, [scenarioReplays, gameId])
 
@@ -314,7 +318,7 @@ export default function App() {
       const requested = demoOptions().get('case')
       const requestedId = CONSTRUCTION_CASES.find((sample) => sample.key === requested)?.gameId
       const selected = requested ? available.find((row) => row.game_id === (requestedId ?? requested) || row.game_id.includes(`-${requested}-`)) : null
-      setGameId((selected ?? available[0])?.game_id ?? '')
+      setGameId((selected ?? defaultReplay(available, scenario))?.game_id ?? '')
     } catch {                          }
 
 
