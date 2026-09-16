@@ -17,10 +17,11 @@ async function load(path, dependencies = {}) {
 const ppe = await load('../src/lib/ppeInspection.ts')
 const playback = await load('../src/lib/ppePlayback.ts', { './ppeInspection': ppe })
 const storyComponent = { __esModule: true, default: () => React.createElement('div', { 'data-watermark-story': '' }) }
+const photoComponent = await load('../src/components/PPEPhotoWatermark.tsx', { '../lib/ppeInspection': ppe, '../assets/ppe-inspection-photo.png': 'sample-photo.png', './PPEPhotoWatermark.css': {} })
 const scene = await load('../src/lib/constructionScene.ts')
 const guided = await load('../src/lib/guidedSteps.ts', { './ppeInspection': ppe })
 const workflow = await load('../src/components/PairedWorkflowStrip.tsx', { '../lib/ppeInspection': ppe, '../lib/guidedSteps': guided })
-const dependencies = { '../lib/ppePlayback': playback, '../lib/ppeInspection': ppe, './PairedWorkflowStrip': workflow, './PPEWatermarkStory': storyComponent }
+const dependencies = { '../lib/ppePlayback': playback, '../lib/ppeInspection': ppe, './PairedWorkflowStrip': workflow, './PPEWatermarkStory': storyComponent, './PPEPhotoWatermark': photoComponent }
 const comparison = await load('../src/components/PPEWorkflowComparison.tsx', dependencies)
 const pairs = await Promise.all(['CS01', 'CS02'].map(async id => JSON.parse(await readFile(new URL(`../public/static/compare/hse_ppe-${id}.json`, import.meta.url), 'utf8'))))
 const action = (pair, source, index, generation = 1) => ({ caseId: pair.game_id, source, index, token: `${pair.game_id}:${source}:${index}:${generation}`, status: 'restoring' })
@@ -83,8 +84,14 @@ for (const pair of pairs) {
     const props = { pair, current: -1, completedIndex: -1, running: false, playback: null, watched: { standard: [], trace: [] }, onPlay() {} }
     const html = renderToStaticMarkup(React.createElement(comparison.default, props))
     assert.deepEqual([...html.matchAll(/data-comparison-box="([^"]+)"/g)].map(match => match[1]), ['standard', 'trace', 'difference', 'photo'])
-    assert.match(html, /not connected/)
-    assert.match(html, /simulated observations, not captured image files/)
+    assert.match(html, /Illustrative demo/)
+    assert.match(html, /not being processed by an image-watermark detector/)
+    const captureNumber = pair.game_id === 'hse_ppe-CS02' ? 10 : 6
+    assert.ok(html.includes(`data-photo-capture-step="${captureNumber}"`), 'photo follows this case’s watermarked clothing-check step')
+    assert.ok(html.includes(`Open photo demo for step ${captureNumber}`), 'workflow links to its photo example')
+    assert.ok(html.includes(`Show photo capture step ${captureNumber} in workflow`), 'photo links back to the originating action')
+    assert.ok(html.includes('Show photo evidence step 22 in workflow'))
+    assert.match(html, /not photos from the original log/)
     assert.match(html, /data-watermark-story=""/)
     const one = renderToStaticMarkup(React.createElement(comparison.default, { ...props, watched: { standard: [0], trace: [] } }))
     const both = renderToStaticMarkup(React.createElement(comparison.default, { ...props, watched: { standard: [0], trace: [0] } }))

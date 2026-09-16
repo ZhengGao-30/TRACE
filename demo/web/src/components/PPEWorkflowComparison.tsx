@@ -6,6 +6,7 @@ import { PPE_PHASES, ppeActionMethodLabel } from '../lib/ppeInspection'
 import { inspectionLabel, matchedRequirement, requirementKey } from '../lib/ppePlayback'
 import type { ActionPlayback, PlaybackArm, PairedPlaybackState } from '../lib/ppePlayback'
 import PPEWatermarkStory from './PPEWatermarkStory'
+import PPEPhotoWatermark from './PPEPhotoWatermark'
 
 interface Props {
   pair: PairedWorkflowData
@@ -19,11 +20,12 @@ interface Props {
   onSelectCheck?: (key: string) => void
 }
 
-function ArmWorkflow({ source, steps, selected, next, playback, revealed, onSelect, onPlay, onDetails }: {
+function ArmWorkflow({ source, steps, selected, next, playback, revealed, onSelect, onPlay, onDetails, onPhoto }: {
   source: PlaybackArm; steps: PairedTrajectoryStep[]; selected?: PairedTrajectoryStep; playback: ActionPlayback | null;
   next?: PairedTrajectoryStep;
   revealed: (step: PairedTrajectoryStep) => boolean; onSelect: (step: PairedTrajectoryStep) => void;
   onPlay: () => void; onDetails: () => void;
+  onPhoto: (step: PairedTrajectoryStep) => void;
 }) {
   const trace = source === 'trace'
   const strip = useRef<HTMLDivElement>(null)
@@ -66,6 +68,11 @@ function ArmWorkflow({ source, steps, selected, next, playback, revealed, onSele
           </span>
           {revealed(step) && <Check size={12} className="ml-auto shrink-0 text-emerald-600" />}
         </button>
+        {trace && step.requirement_id === 'initial_workwear' && <button type="button" onClick={() => onPhoto(step)}
+          aria-label={`Open photo demo for step ${step.i + 1}`} title="Photo watermark demo linked to this check"
+          className="inline-flex shrink-0 items-center gap-1 rounded-md border border-indigo-200 bg-white px-2 py-2 text-[11px] font-medium text-indigo-600">
+          <Camera size={13} />Photo demo
+        </button>}
       </div>)}
       {!steps.length && <p className="py-2 text-sm text-slate-400">No recorded action in this stage.</p>}
     </div>
@@ -77,6 +84,7 @@ export default function PPEWorkflowComparison({ pair, current, completedIndex, r
   const [key, setKey] = useState(() => requirementKey(pair.standard.steps[0]))
   const [details, setDetails] = useState<PlaybackArm | null>(null)
   const [following, setFollowing] = useState(true)
+  const [photoOpenRequest, setPhotoOpenRequest] = useState(0)
   const lastPlaybackToken = useRef<string | null>(null)
   const fullComplete = fullReplayComplete && !running && completedIndex === pair.trace.steps.length - 1
   const selected = matchedRequirement(pair, key)
@@ -129,17 +137,16 @@ export default function PPEWorkflowComparison({ pair, current, completedIndex, r
           next={selected[source] ? pair[source].steps[pair[source].steps.findIndex(step => step.i === selected[source]!.i) + 1] : undefined}
           playback={playback} revealed={step => revealed(source, step)} onSelect={step => { select(step); if (revealed(source, step)) setDetails(source) }}
           onPlay={() => selected[source] && onPlay(source, selected[source]!.i)}
-          onDetails={() => setDetails(previous => previous === source ? null : source)} />
+          onDetails={() => setDetails(previous => previous === source ? null : source)}
+          onPhoto={step => { select(step); setPhotoOpenRequest(value => value + 1) }} />
         {details === source && inspected && revealed(source, inspected) && <DecisionInspector source={source} step={inspected} phaseTitle={phase.title} onClose={() => setDetails(null)} />}
       </div>)}
       <div className="flex flex-col gap-2.5">
         <section data-comparison-box="difference" className="rounded-2xl border border-indigo-100 bg-white p-3.5">
           <PPEWatermarkStory pair={pair} selected={selected} revealed={revealed} onSelect={select} />
         </section>
-        <section data-comparison-box="photo" className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 p-3.5">
-          <div className="flex flex-wrap items-center gap-2"><span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 text-xs font-bold text-slate-600">4</span><h3 className="text-sm font-bold text-slate-700">Photo watermark</h3><span className="text-xs font-medium text-slate-400">Digital Asset Watermark · not connected</span><Camera size={16} className="ml-auto text-slate-400" /></div>
-          <p className="mt-2 text-sm text-slate-500">Reserved for image watermarking. This record contains simulated observations, not captured image files.</p>
-        </section>
+        <PPEPhotoWatermark key={pair.game_id} steps={pair.trace.steps} openRequest={photoOpenRequest}
+          onShowStep={step => { select(step); document.getElementById('ppe-workflow-comparison')?.scrollIntoView({ block: 'start' }) }} />
       </div>
     </div>
     <details className="mt-3 text-xs leading-5 text-slate-400"><summary className="cursor-pointer">About these records · {trajectorySource(pair).label} · PPE-4B.2</summary>
