@@ -5,7 +5,7 @@ import type { PairedTrajectoryStep, PairedWorkflowData } from './PairedWorkflowS
 import { PPE_PHASES, ppeActionMethodLabel } from '../lib/ppeInspection'
 import { inspectionLabel, matchedRequirement, requirementKey } from '../lib/ppePlayback'
 import type { ActionPlayback, PlaybackArm, PairedPlaybackState } from '../lib/ppePlayback'
-import { choiceReplayCandidates, registeredChoiceReplayCandidate } from '../lib/ppeChoiceReplay'
+import { choiceReplayCandidates, ORIGINAL_COMPARISON_ID, registeredChoiceReplayCandidate } from '../lib/ppeChoiceReplay'
 import PPEWatermarkStory from './PPEWatermarkStory'
 import PPEPhotoWatermark from './PPEPhotoWatermark'
 import './PPEWorkflowComparison.css'
@@ -150,7 +150,7 @@ export default function PPEWorkflowComparison({ pair, current, completedIndex, r
   }, [pair.game_id, appliedCandidate?.agent_id])
 
   useEffect(() => {
-    if (!replayCandidates.some(candidate => candidate.agent_id === verificationCandidateId)) {
+    if (verificationCandidateId !== ORIGINAL_COMPARISON_ID && !replayCandidates.some(candidate => candidate.agent_id === verificationCandidateId)) {
       setVerificationCandidateId(appliedCandidate?.agent_id ?? replayCandidates[0]?.agent_id ?? '')
     }
   }, [pair, verificationCandidateId, appliedCandidate?.agent_id, replayCandidates[0]?.agent_id])

@@ -52,6 +52,23 @@ export interface ChoiceReplayData {
   total: number
 }
 
+export const ORIGINAL_COMPARISON_ID = '__original_standard_arm__'
+
+/** Compares the paired, unwatermarked arm with the fixed watermarked record. */
+export function buildOriginalComparison(choices: PPEStoryChoice[], available: boolean): ChoiceReplayData {
+  const selected = choices.filter(choice => choice.changed && choice.keyGuided && !choice.forced)
+  const empty = { rows: [], matches: null, total: selected.length }
+  if (!available) return { ...empty, status: 'pending' }
+  if (!selected.length) return { ...empty, status: 'unavailable' }
+  const rows = selected.map(choice => ({
+    choice,
+    chosen: choice.trace.action,
+    replayed: choice.standard.action,
+    match: choice.standard.action === choice.trace.action,
+  }))
+  return { status: 'ready', rows, matches: rows.filter(row => row.match).length, total: rows.length }
+}
+
 /** A replay of saved decisions, never a source detector or a new agent rollout. */
 export function buildChoiceReplay(pair: PairedWorkflowData, choices: PPEStoryChoice[], candidateId: string, available: boolean): ChoiceReplayData {
   const selected = choices.filter(choice => choice.changed && choice.keyGuided && !choice.forced)

@@ -190,30 +190,20 @@ function variableDifferences(pair) {
 
 for (const [caseIndex, expected] of [[0, 8], [1, 15]]) {
   const pair = pairs[caseIndex]
-  test(`${pair.game_id}: only differing key-guided choices appear in the replay while both pictures retain their own alternatives`, async () => {
+  test(`${pair.game_id}: the compact matrix replaces the duplicate arm cards and keeps the recorded choices fixed`, async () => {
     const original = JSON.stringify(pair), differences = variableDifferences(pair)
     assert.equal(differences.length, expected)
-    for (const difference of differences) {
-      const selected = { standard: difference.standard, trace: difference.trace }
-      const html = await render(pair, { selected })
-      assert.match(html, /data-watermark-story/)
-      const indices = [...html.matchAll(/data-replay-step="([^"]*)"/g)].map(match => Number(match[1]))
-      assert.deepEqual(indices, differences.map(choice => choice.trace.i))
-      assert.doesNotMatch(html, /data-story-log-step=|data-path-arm|pap-drawing/)
-      assertNoSourcePanel(html)
-      assert.doesNotMatch(html, /data-replay-match="true"|data-replay-match="false"/)
-      const expectedComparison = choices.buildPPEChoiceComparison(selected, hidden)
-      for (const arm of ['standard', 'trace']) {
-        const armHtml = html.match(new RegExp(`<section\\b[^>]*data-choice-arm="${arm}"[^>]*>([\\s\\S]*?)</section>`))?.[1]
-        assert.ok(armHtml, `the ${arm} illustration has its own group`)
-        const optionTags = [...armHtml.matchAll(/<li\b[^>]*data-story-choice="[^"]*"[^>]*>/g)].map(([tag]) => tag)
-        assert.deepEqual(optionTags.map(tag => attribute(tag, 'data-story-choice')), expectedComparison.arms[arm].options.map(option => option.action))
-        assert.deepEqual(optionTags.filter(tag => attribute(tag, 'data-selected') === 'true').map(tag => attribute(tag, 'data-story-choice')), [difference[arm].action])
-        for (const option of expectedComparison.arms[arm].options) {
-          assert.ok(decode(armHtml).includes(`/test-story-art/${option.art}.png`))
-        }
-      }
-    }
+    const html = await render(pair)
+    assert.match(html, /data-watermark-story/)
+    const replayTags = [...html.matchAll(/<button\b[^>]*data-replay-step="[^"]*"[^>]*>/g)].map(([tag]) => tag)
+    assert.deepEqual(replayTags.map(tag => Number(attribute(tag, 'data-replay-step'))), differences.map(choice => choice.trace.i))
+    assert.deepEqual(replayTags.map(tag => attribute(tag, 'data-recorded-action')), differences.map(choice => choice.trace.action))
+    assert.ok(replayTags.every(tag => attribute(tag, 'data-top-action') === '' && attribute(tag, 'data-replay-match') === 'pending'))
+    assert.doesNotMatch(html, /data-choice-arm=|data-story-choice=|Previous difference|Next difference/)
+    assert.doesNotMatch(html, /data-story-log-step=|data-path-arm|pap-drawing/)
+    for (const option of ['original', 'Key A', 'Key B', 'Key C']) assert.match(html, new RegExp(`data-replay-option="${option}"`))
+    assert.equal([...html.matchAll(/data-replay-option="[^"]*" aria-pressed="true"/g)].length, 1)
+    assertNoSourcePanel(html)
     assert.equal(JSON.stringify(pair), original)
   })
 
@@ -238,6 +228,12 @@ for (const [caseIndex, expected] of [[0, 8], [1, 15]]) {
     assert.ok(totals[1] > 0 && totals[1] < expected, 'a different key may still pick some of the same actions')
     assert.ok(totals[2] > 0 && totals[2] < expected, 'a different key must not be portrayed as universally mismatching')
     assert.deepEqual(totals, caseIndex === 0 ? [8, 4, 4] : [15, 7, 6])
+    const originalComparison = replay.buildOriginalComparison(differences, true)
+    assert.equal(originalComparison.status, 'ready')
+    assert.equal(originalComparison.matches, 0)
+    assert.deepEqual(originalComparison.rows.map(row => row.replayed), differences.map(choice => choice.standard.action))
+    assert.deepEqual(originalComparison.rows.map(row => row.chosen), differences.map(choice => choice.trace.action))
+    assert.ok(originalComparison.rows.every(row => row.match === (row.replayed === row.chosen)))
   })
 }
 
@@ -249,6 +245,7 @@ test('the generic replay helper honors unavailable data and the loaded compariso
       assert.equal(pending.matches, null)
       assert.ok(pending.rows.every(row => row.match == null && row.replayed == null), 'pending rows do not expose the saved answer')
     }
+    assert.equal(replay.buildOriginalComparison(variableDifferences(pair), false).status, 'pending')
     const html = await render(pair)
     assertNoSourcePanel(html)
     assert.doesNotMatch(html, /data-replay-match="true"|data-replay-match="false"/)
@@ -405,10 +402,10 @@ function replayButton(tree) {
   assert.equal(buttons.length, 1, 'one replay button exists')
   return buttons[0]
 }
-function selectedKeyLabel(tree) {
-  const selected = descendants(tree, element => element.type === 'button' && element.props['aria-pressed'] === true
-    && /^Key [A-Z]$/.test(React.Children.toArray(element.props.children).filter(child => typeof child === 'string').join('')))
-  assert.equal(selected.length, 1, 'one demo key is selected')
+function selectedComparisonLabel(tree) {
+  const selected = descendants(tree, element => element.type === 'button' && element.props['data-replay-option'] !== undefined
+    && element.props['aria-pressed'] === true)
+  assert.equal(selected.length, 1, 'one comparison option is selected')
   return React.Children.toArray(selected[0].props.children).filter(child => typeof child === 'string').join('')
 }
 function replayState(tree) {
@@ -457,43 +454,52 @@ test('the title-only comparison expands in place for key replay and preserves re
   assert.ok(harness.timers.size > 0)
   tree = finishAnimation(harness, props)
   assert.equal(replayState(tree), 'complete')
-  assert.equal(replayResult(tree), 'successful')
-  assert.match(renderToStaticMarkup(tree), /Verification successful/)
-  assert.match(renderToStaticMarkup(tree), /15 \/ 15 choices reproduced.*All displayed choices match\./)
+  assert.equal(replayResult(tree), 'match')
+  assert.match(renderToStaticMarkup(tree), /Key A matches the recorded workflow/)
+  assert.match(renderToStaticMarkup(tree), /15 of 15 choices match\. No differences found\./)
   assert.equal(replayRows(tree).length, 15)
   assert.equal(replayRows(tree).filter(row => row.props['data-replay-match'] === true || row.props['data-replay-match'] === 'true').length, 15)
+  assert.ok(replayRows(tree).every(row => row.props['data-top-action'] === row.props['data-recorded-action']))
+  assert.ok(replayRows(tree).every(row => row.props['data-mismatch-highlighted'] === 'false'))
   assertNoSourcePanel(renderToStaticMarkup(tree))
   assert.equal(story.sourceSummary(pair, true).status, 'ambiguous', '15/15 keyed replay does not overwrite the saved full-log detector result')
   assert.deepEqual(calls, [], 'the key animation does not change parent selection or execute actions')
   assert.equal(JSON.stringify(pair), original)
 
-  const savedKey = selectedKeyLabel(tree)
-  const savedSelection = replayRows(tree).find(row => row.props['aria-pressed'])?.props['data-replay-step']
+  const savedOption = selectedComparisonLabel(tree)
   buttonNamed(tree, 'Collapse comparison').props.onClick()
   tree = harness.render(props)
   assert.doesNotMatch(renderToStaticMarkup(tree), /data-replay-key-input|data-replay-step=|data-story-art|role="dialog"/)
   tree = expandComparison(harness, props, tree)
-  assert.equal(selectedKeyLabel(tree), savedKey)
-  assert.equal(replayResult(tree), 'successful', 'expanding does not discard the completed verification')
-  assert.equal(replayRows(tree).find(row => row.props['aria-pressed'])?.props['data-replay-step'], savedSelection)
+  assert.equal(selectedComparisonLabel(tree), savedOption)
+  assert.equal(replayResult(tree), 'match', 'expanding does not discard the completed comparison')
   assert.equal(replayRows(tree).filter(row => row.props['data-replay-match'] === 'true').length, 15)
 
-  for (const [key, expectedMatches] of [['Key B', 7], ['Key C', 6]]) {
-    buttonNamed(tree, key).props.onClick()
+  for (const [option, expectedMatches] of [['Key B', 7], ['Key C', 6], ['Original', 0]]) {
+    buttonNamed(tree, option).props.onClick()
     tree = harness.render(props)
     assert.equal(replayState(tree), 'idle')
-    assert.equal(replayResult(tree), 'pending', 'changing the key clears the previous verification verdict')
-    assert.ok(replayRows(tree).every(row => row.props['data-replay-match'] === 'pending'), 'changing keys clears the old answer')
+    assert.equal(selectedComparisonLabel(tree), option)
+    assert.equal(replayResult(tree), 'pending', 'changing the comparison clears the previous verdict')
+    assert.ok(replayRows(tree).every(row => row.props['data-replay-match'] === 'pending'), 'changing options clears the old answer')
     replayButton(tree).props.onClick()
     tree = harness.render(props)
     assert.equal(replayResult(tree), 'pending')
     tree = finishAnimation(harness, props)
-    assert.equal(replayResult(tree), 'failed')
+    assert.equal(replayResult(tree), 'different')
     const resultHtml = renderToStaticMarkup(tree)
-    assert.match(resultHtml, /Verification failed/)
-    assert.match(resultHtml, new RegExp(`${expectedMatches} / 15 choices reproduced.*Different choices are circled below\\.`))
+    assert.match(resultHtml, new RegExp(`${option} differs from the recorded workflow`))
+    assert.match(resultHtml, new RegExp(`${expectedMatches} of 15 choices match\\. ${15 - expectedMatches} differences are highlighted below\\.`))
     assert.equal(replayRows(tree).filter(row => row.props['data-replay-match'] === true || row.props['data-replay-match'] === 'true').length, expectedMatches)
     assert.equal(replayRows(tree).filter(row => row.props['data-replay-match'] === false || row.props['data-replay-match'] === 'false').length, 15 - expectedMatches)
+    const expectedRows = option === 'Original'
+      ? replay.buildOriginalComparison(variableDifferences(pair), true).rows
+      : replay.buildChoiceReplay(pair, variableDifferences(pair), replay.choiceReplayCandidates(pair)[option === 'Key B' ? 1 : 2].agent_id, true).rows
+    replayRows(tree).forEach((row, index) => {
+      assert.equal(row.props['data-top-action'], expectedRows[index].replayed)
+      assert.equal(row.props['data-recorded-action'], expectedRows[index].chosen)
+      assert.equal(row.props['data-mismatch-highlighted'], String(expectedRows[index].replayed !== expectedRows[index].chosen))
+    })
     assertNoSourcePanel(resultHtml)
     assert.equal(story.sourceSummary(pair, true).status, 'ambiguous', 'choice verification does not change the saved full-log detector result')
     assert.deepEqual(calls, [])
@@ -513,10 +519,10 @@ test('key, case and motion changes cancel timers while main-replay progress does
     assert.ok(harness.timers.size > 0)
   }
   start()
-  buttonNamed(tree, 'Key B').props.onClick()
+  buttonNamed(tree, 'Original').props.onClick()
   tree = harness.render(props)
   assert.equal(replayResult(tree), 'pending')
-  assert.equal(harness.timers.size, 0, 'choosing a different key cancels the old replay')
+  assert.equal(harness.timers.size, 0, 'choosing Original cancels the old keyed replay')
   assert.ok(replayRows(tree).every(row => row.props['data-replay-match'] === 'pending'))
 
   buttonNamed(tree, 'Key A').props.onClick()
@@ -546,7 +552,7 @@ test('key, case and motion changes cancel timers while main-replay progress does
   assert.equal(harness.timers.size, 0, 'changing motion preference clears outstanding animation updates')
   replayButton(tree).props.onClick()
   tree = harness.render(props)
-  assert.equal(replayResult(tree), 'successful')
+  assert.equal(replayResult(tree), 'match')
   assert.equal(harness.timers.size, 0, 'reduced-motion verification completes without animation timers')
   harness.setReducedMotion(false)
   tree = harness.render(props)
