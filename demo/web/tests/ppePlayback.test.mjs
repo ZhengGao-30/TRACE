@@ -16,12 +16,21 @@ async function load(path, dependencies = {}) {
 }
 const ppe = await load('../src/lib/ppeInspection.ts')
 const playback = await load('../src/lib/ppePlayback.ts', { './ppeInspection': ppe })
+const choiceReplay = await load('../src/lib/ppeChoiceReplay.ts')
 const storyComponent = { __esModule: true, default: () => React.createElement('div', { 'data-watermark-story': '' }) }
 const photoComponent = await load('../src/components/PPEPhotoWatermark.tsx', { '../lib/ppeInspection': ppe, '../assets/ppe-inspection-photo.png': 'sample-photo.png', './PPEPhotoWatermark.css': {} })
 const scene = await load('../src/lib/constructionScene.ts')
 const guided = await load('../src/lib/guidedSteps.ts', { './ppeInspection': ppe })
 const workflow = await load('../src/components/PairedWorkflowStrip.tsx', { '../lib/ppeInspection': ppe, '../lib/guidedSteps': guided })
-const dependencies = { '../lib/ppePlayback': playback, '../lib/ppeInspection': ppe, './PairedWorkflowStrip': workflow, './PPEWatermarkStory': storyComponent, './PPEPhotoWatermark': photoComponent }
+const dependencies = {
+  '../lib/ppePlayback': playback,
+  '../lib/ppeInspection': ppe,
+  '../lib/ppeChoiceReplay': choiceReplay,
+  './PairedWorkflowStrip': workflow,
+  './PPEWatermarkStory': storyComponent,
+  './PPEPhotoWatermark': photoComponent,
+  './PPEWorkflowComparison.css': {},
+}
 const comparison = await load('../src/components/PPEWorkflowComparison.tsx', dependencies)
 const pairs = await Promise.all(['CS01', 'CS02'].map(async id => JSON.parse(await readFile(new URL(`../public/static/compare/hse_ppe-${id}.json`, import.meta.url), 'utf8'))))
 const action = (pair, source, index, generation = 1) => ({ caseId: pair.game_id, source, index, token: `${pair.game_id}:${source}:${index}:${generation}`, status: 'restoring' })
@@ -84,6 +93,11 @@ for (const pair of pairs) {
     const props = { pair, current: -1, completedIndex: -1, running: false, playback: null, watched: { standard: [], trace: [] }, onPlay() {} }
     const html = renderToStaticMarkup(React.createElement(comparison.default, props))
     assert.deepEqual([...html.matchAll(/data-comparison-box="([^"]+)"/g)].map(match => match[1]), ['standard', 'trace', 'difference', 'photo'])
+    assert.match(html, /data-comparison-flow/)
+    assert.match(html, /data-applied-watermark-key="Key A"/)
+    assert.match(html, /Standard sampling · no key added/)
+    assert.doesNotMatch(html, /20250001|20250002/)
+    assert.equal(choiceReplay.registeredChoiceReplayCandidate(pair)?.agent_id, pair.provenance.registered_agent_id)
     assert.match(html, /Illustrative demo/)
     assert.match(html, /not being processed by an image-watermark detector/)
     const captureNumber = pair.game_id === 'hse_ppe-CS02' ? 10 : 6
@@ -326,6 +340,35 @@ function descendants(element, predicate) {
   if (!React.isValidElement(element)) return []
   return [...(predicate(element) ? [element] : []), ...React.Children.toArray(element.props.children).flatMap(child => descendants(child, predicate))]
 }
+
+test('the recorded Key A flows from the watermarked run into the key checker', async () => {
+  const harness = await hookHarness()
+  const subject = await load('../src/components/PPEWorkflowComparison.tsx', { ...dependencies, react: harness.hooks })
+  const pair = pairs[0]
+  const candidates = choiceReplay.choiceReplayCandidates(pair)
+  const applied = choiceReplay.registeredChoiceReplayCandidate(pair)
+  assert.equal(applied, candidates[0])
+  const props = { pair, current: -1, completedIndex: -1, running: false, playback: null, watched: { standard: [], trace: [] }, onPlay() {} }
+  const render = () => harness.settle(() => subject.default(props))
+  let tree = render()
+  const traceArm = () => descendants(tree, element => element.props.source === 'trace' && element.props.steps)[0]
+  const storyPanel = () => descendants(tree, element => element.type === storyComponent.default)[0]
+
+  assert.deepEqual(traceArm().props.watermarkKey, { id: applied.agent_id, label: 'Key A', selectedForCheck: true })
+  assert.equal(storyPanel().props.appliedCandidateId, applied.agent_id)
+  assert.equal(storyPanel().props.selectedCandidateId, applied.agent_id)
+
+  storyPanel().props.onCandidateChange(candidates[1].agent_id)
+  tree = render()
+  assert.equal(traceArm().props.watermarkKey.selectedForCheck, false)
+  assert.equal(storyPanel().props.selectedCandidateId, candidates[1].agent_id)
+
+  traceArm().props.onCheckWatermarkKey()
+  tree = render()
+  assert.equal(traceArm().props.watermarkKey.selectedForCheck, true)
+  assert.equal(storyPanel().props.selectedCandidateId, applied.agent_id)
+  harness.unmount()
+})
 
 test('scene mirror controls identify the selected requirement independently of the last played action', async () => {
   const subject = await load('../src/components/PPEInspectionScene.tsx', {

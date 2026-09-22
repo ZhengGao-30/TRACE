@@ -160,7 +160,15 @@ export interface PairedWorkflowData {
   case_title?: string
   synthetic?: boolean
   story_frames?: { id: string; title: string; caption: string; time?: string }[]
-  provenance?: { policy_source?: string; source?: string; agent_source?: string; input_disclosure?: string; [key: string]: unknown }
+  provenance?: {
+    policy_source?: string
+    source?: string
+    agent_source?: string
+    input_disclosure?: string
+    registered_agent_id?: string
+    keys?: { key1: number; key2: number }
+    [key: string]: unknown
+  }
   validation?: { same_facts: boolean; both_valid: boolean; same_outcome: boolean; issues?: string[] }
   attribution?: EntryAttribution
   attribution_scopes?: { admission?: EntryAttributionScope; full?: EntryAttributionScope }

@@ -6,7 +6,7 @@ import type { PlaybackArm } from '../lib/ppePlayback'
 import { ppeActionOptionLabel } from '../lib/ppeInspection'
 import { buildPPEWatermarkStory } from '../lib/ppeWatermarkStory'
 import { buildPPEChoiceComparison, optionArt } from '../lib/ppeChoiceComparison'
-import { buildChoiceReplay, choiceReplayCandidates, keyCandidate, TASK_SUCCESS } from '../lib/ppeChoiceReplay'
+import { buildChoiceReplay, choiceReplayCandidates, TASK_SUCCESS } from '../lib/ppeChoiceReplay'
 import { choiceArt } from '../lib/ppeChoiceArt'
 import './PPEWatermarkStory.css'
 
@@ -15,8 +15,16 @@ export interface PPEWatermarkStoryProps {
   selected: { standard?: PairedTrajectoryStep; trace?: PairedTrajectoryStep }
   revealed: (source: PlaybackArm, step?: PairedTrajectoryStep) => boolean
   onSelect: (step: PairedTrajectoryStep) => void
+  appliedCandidateId?: string
+  selectedCandidateId?: string
+  onCandidateChange?: (candidateId: string) => void
 }
 type ReplayState = { phase: 'idle' | 'running' | 'complete' | 'invalid'; candidateId: string; count: number }
+
+function publicKeyLabel(candidates: ReturnType<typeof choiceReplayCandidates>, candidateId?: string) {
+  const index = candidates.findIndex(candidate => candidate.agent_id === candidateId)
+  return index >= 0 ? `Key ${String.fromCharCode(65 + index)}` : 'Key unavailable'
+}
 
 function Illustration({ action, art }: { action?: string; art?: string }) {
   const image = choiceArt(art ?? optionArt(action ?? ''))
@@ -25,18 +33,19 @@ function Illustration({ action, art }: { action?: string; art?: string }) {
 }
 
 /** Plays exported sampler results; it never runs an agent or changes the detection log. */
-export default function PPEWatermarkStory({ pair, selected, revealed, onSelect }: PPEWatermarkStoryProps) {
-  const titleId = useId(), inputId = useId(), contentId = useId()
+export default function PPEWatermarkStory({ pair, selected, revealed, onSelect, appliedCandidateId, selectedCandidateId, onCandidateChange }: PPEWatermarkStoryProps) {
+  const titleId = useId(), contentId = useId()
   const reducedMotion = useReducedMotion()
   const candidates = choiceReplayCandidates(pair), first = candidates[0]
-  const [input, setInput] = useState(() => first ? `${first.key1} / ${first.key2}` : '')
+  const initialCandidate = candidates.find(candidate => candidate.agent_id === selectedCandidateId)
+    ?? candidates.find(candidate => candidate.agent_id === appliedCandidateId) ?? first
+  const [candidateId, setCandidateId] = useState(() => initialCandidate?.agent_id ?? '')
   const [check, setCheck] = useState<ReplayState>({ phase: 'idle', candidateId: '', count: 0 })
   const [expanded, setExpanded] = useState(false)
   const timers = useRef<ReturnType<typeof setTimeout>[]>([])
   const story = buildPPEWatermarkStory(pair, selected, revealed)
   const differences = story.differences.filter(choice => choice.keyGuided && !choice.forced)
   const current = differences.find(choice => choice.key === story.current?.key) ?? differences[0]
-  const typedCandidate = keyCandidate(pair, input)
   const replay = buildChoiceReplay(pair, differences, check.candidateId, true)
   const activeRow = check.phase === 'running' ? replay.rows[Math.max(0, check.count - 1)] : undefined
   const shownChoice = activeRow?.choice ?? current
@@ -45,23 +54,33 @@ export default function PPEWatermarkStory({ pair, selected, revealed, onSelect }
   const detailVisible = !!detailRow && (check.phase === 'complete' || check.phase === 'running' && check.count > 0)
   const selectedIndex = differences.findIndex(choice => choice.key === current?.key)
   const checkedCandidate = candidates.find(candidate => candidate.agent_id === check.candidateId)
+  const activeCandidate = candidates.find(candidate => candidate.agent_id === candidateId)
+  const appliedCandidate = appliedCandidateId === undefined ? first : candidates.find(candidate => candidate.agent_id === appliedCandidateId)
+  const activeKeyLabel = publicKeyLabel(candidates, activeCandidate?.agent_id)
+  const appliedKeyLabel = publicKeyLabel(candidates, appliedCandidate?.agent_id)
+  const checkedKeyLabel = publicKeyLabel(candidates, checkedCandidate?.agent_id)
   const matchesShown = replay.rows.slice(0, check.count).filter(row => row.match).length
 
   function cancel() { timers.current.forEach(clearTimeout); timers.current = [] }
   useEffect(() => {
     cancel()
-    const candidate = choiceReplayCandidates(pair)[0]
-    setInput(candidate ? `${candidate.key1} / ${candidate.key2}` : '')
+    const available = choiceReplayCandidates(pair)
+    const next = available.find(candidate => candidate.agent_id === selectedCandidateId)
+      ?? available.find(candidate => candidate.agent_id === appliedCandidateId) ?? available[0]
+    setCandidateId(next?.agent_id ?? '')
     setCheck({ phase: 'idle', candidateId: '', count: 0 })
     return cancel
-  }, [pair, reducedMotion])
+  }, [pair, reducedMotion, selectedCandidateId, appliedCandidateId])
 
-  function changeInput(value: string) {
-    cancel(); setInput(value); setCheck({ phase: 'idle', candidateId: '', count: 0 })
+  function changeCandidate(nextCandidateId: string) {
+    cancel()
+    setCandidateId(nextCandidateId)
+    setCheck({ phase: 'idle', candidateId: '', count: 0 })
+    onCandidateChange?.(nextCandidateId)
   }
   function verify() {
     cancel()
-    const candidate = keyCandidate(pair, input)
+    const candidate = candidates.find(item => item.agent_id === candidateId)
     const data = buildChoiceReplay(pair, differences, candidate?.agent_id ?? '', true)
     if (!candidate || data.status !== 'ready') { setCheck({ phase: 'invalid', candidateId: '', count: 0 }); return }
     if (reducedMotion) { setCheck({ phase: 'complete', candidateId: candidate.agent_id, count: data.rows.length }); return }
@@ -83,11 +102,12 @@ export default function PPEWatermarkStory({ pair, selected, revealed, onSelect }
         : verification === 'failed' ? 'Verification failed'
         : 'Can this key reproduce the choices?'
   const resultNote = check.phase === 'invalid' ? 'Use one of the registered demo key pairs.'
-    : verification !== 'pending' ? `${checkedCandidate?.label ?? 'This key'} · ${replay.matches} / ${replay.total} choices reproduced. ${verification === 'successful' ? 'All displayed choices match.' : 'Different choices are circled below.'}`
-      : check.phase === 'running' ? `${matchesShown} choices line up so far.` : 'The log stays the same. Change the key to compare.'
+    : verification !== 'pending' ? `${checkedKeyLabel} · ${replay.matches} / ${replay.total} choices reproduced. ${verification === 'successful' ? 'All displayed choices match.' : 'Different choices are circled below.'}`
+      : check.phase === 'running' ? `${matchesShown} choices line up so far.` : `${activeKeyLabel} is selected. The recorded log stays unchanged.`
 
   return <section className="ppe-watermark-story" data-watermark-story data-expanded={expanded} data-replay-state={check.phase} aria-labelledby={titleId}>
     <header className="pws-toolbar"><h3 id={titleId}><span className="pws-number">3</span>What changed?</h3>
+      <span className="pws-current-key"><KeyRound size={13} />{appliedCandidate ? `${appliedKeyLabel} applied` : 'Applied key not recorded'}</span>
       {expanded && <nav className="pws-differences" aria-label="Browse different choices">
         <button type="button" aria-label="Previous difference" disabled={!differences.length || check.phase === 'running'} onClick={() => move(-1)}><ChevronLeft size={16} /></button>
         <span>{differences.length ? `${selectedIndex + 1} of ${differences.length} different choices` : 'No different choices'}</span>
@@ -101,22 +121,25 @@ export default function PPEWatermarkStory({ pair, selected, revealed, onSelect }
     <div id={contentId} hidden={!expanded}>{expanded && <>
     {comparison && <div className="pws-choice-comparison"><p className="pws-task">{comparison.title}<span>Same task. Different choice.</span></p>
       <div className="pws-arms">{(['standard', 'trace'] as const).map(arm => <section key={arm} data-choice-arm={arm}>
-        <h4>{arm === 'trace' ? <><KeyRound size={15} />With watermark</> : 'Without watermark'}</h4>
+        <h4>{arm === 'trace' ? <><KeyRound size={15} />With watermark{appliedCandidate ? ` · ${appliedKeyLabel}` : ''}</> : 'Without watermark'}</h4>
         <ul className="pws-options" data-story-options style={{ gridTemplateColumns: `repeat(${comparison.arms[arm].options.length}, minmax(0, 1fr))` }}>
           {comparison.arms[arm].options.map(option => <li key={option.action} className="pws-option" data-story-choice={option.action} data-selected={option.selected}>
             <figure><div className="pws-image-frame"><Illustration art={option.art} /></div><figcaption>{option.label}<small>{option.selected ? <><Check size={12} />Chosen</> : 'Available'}</small></figcaption></figure>
           </li>)}
-        </ul><p className="pws-arm-note">{arm === 'trace' ? 'The key guides the selection.' : 'Standard selection.'}</p>
+        </ul><p className="pws-arm-note">{arm === 'trace' ? appliedCandidate ? `${appliedKeyLabel} guides the recorded selection.` : 'Applied key metadata is unavailable.' : 'Standard selection.'}</p>
       </section>)}</div>
     </div>}
-    <div className="pws-bridge"><ArrowDown size={15} /><span>Use a key to replay these choices.</span><small>Method illustrations</small></div>
+    <div className="pws-bridge"><ArrowDown size={15} /><span>{appliedCandidate ? `${appliedKeyLabel} was used above. Check it against the recorded choices.` : 'Choose a demo key to replay the recorded choices.'}</span><small>Same recorded log</small></div>
     <section className="pws-replay" aria-label="Reproduce different choices with a key">
-      <div className="pws-key-line"><label htmlFor={inputId}>Check the source<input id={inputId} aria-label="Verification key" data-replay-key-input value={input} placeholder="Key 1 / Key 2"
-        onChange={event => changeInput(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); verify() } }} /></label>
-        <button type="button" className="pws-verify" data-replay-verify onClick={verify} disabled={!differences.length || !candidates.length || check.phase === 'running'}><Play size={14} />Replay with this key</button>
+      <div className="pws-key-line">
+        <div className="pws-key-copy"><strong>Check the watermark key</strong><span>{appliedCandidate ? `Start with ${appliedKeyLabel}, or try another demo key.` : 'Choose one of the available demo keys.'}</span></div>
+        <div className="pws-key-presets" role="group" aria-label="Choose a demo key to check">{candidates.map((candidate, index) => {
+          const label = `Key ${String.fromCharCode(65 + index)}`
+          return <button key={candidate.agent_id} type="button" aria-pressed={activeCandidate?.agent_id === candidate.agent_id}
+            data-applied={candidate.agent_id === appliedCandidate?.agent_id} onClick={() => changeCandidate(candidate.agent_id)}>{label}</button>
+        })}</div>
+        <button type="button" className="pws-verify" data-replay-verify onClick={verify} disabled={!differences.length || !activeCandidate || check.phase === 'running'}><Play size={14} />Replay with {activeKeyLabel}</button>
       </div>
-      <div className="pws-key-presets" role="group" aria-label="Registered demo keys">{candidates.map((candidate, index) => <button key={candidate.agent_id} type="button" aria-pressed={typedCandidate?.agent_id === candidate.agent_id}
-        onClick={() => changeInput(`${candidate.key1} / ${candidate.key2}`)}>Key {String.fromCharCode(65 + index)}</button>)}<span>Public demo keys</span></div>
       <div className="pws-replay-result" data-replay-result={verification} role="status" aria-live="polite">
         {verification === 'successful' ? <CheckCircle2 size={24} /> : verification === 'failed' ? <XCircle size={24} /> : <KeyRound size={21} />}
         <div><strong>{resultTitle}</strong><p>{resultNote}</p></div>
@@ -137,7 +160,7 @@ export default function PPEWatermarkStory({ pair, selected, revealed, onSelect }
       {detailVisible && detailRow && <div className="pws-choice-detail" data-match={detailRow.match}><strong>Action {detailRow.choice.trace.i + 1} · {detailRow.choice.title}</strong>
         <div><span>Key chooses: <b>{ppeActionOptionLabel(detailRow.replayed, detailRow.replayed)}</b></span><ArrowRight size={15} /><span>Log records: <b>{ppeActionOptionLabel(detailRow.chosen, detailRow.chosen)}</b></span></div>
       </div>}
-      <details className="pws-replay-details"><summary>How this comparison works</summary><p>Only different choices with more than one available action are shown. The key replays each saved decision using its recorded probabilities and preceding history. It does not run a new inspection. Key 1 controls action selection; Key 2 belongs to the record-count watermark. Reproducing choices is separate from statistical watermark detection.</p></details>
+      <details className="pws-replay-details"><summary>How this comparison works</summary><p>Only different choices with more than one available action are shown. The selected demo key replays each saved decision using its recorded probabilities and preceding history. It does not run a new inspection or change the recorded log. Reproducing choices is separate from statistical watermark detection.</p></details>
     </section>
     <section className="pws-success" aria-label="Task success in our tests"><h4>Task success in our tests<span>Task success maintained</span></h4>
       <div className="pws-success-values"><div><span>Without watermark</span><strong>≈{TASK_SUCCESS.without.toFixed(1)}%</strong><div className="pws-success-track"><i style={{ width: `${TASK_SUCCESS.without}%` }} /></div></div>

@@ -31,6 +31,15 @@ export function choiceReplayCandidates(pair: PairedWorkflowData): ChoiceReplayCa
   return candidates
 }
 
+/** The candidate that actually generated the recorded TRACE arm, when provenance and replay metadata agree. */
+export function registeredChoiceReplayCandidate(pair: PairedWorkflowData): ChoiceReplayCandidate | undefined {
+  const registeredId = pair.provenance?.registered_agent_id
+  const keys = pair.provenance?.keys
+  if (!registeredId || !keys || !Number.isSafeInteger(keys.key1) || !Number.isSafeInteger(keys.key2)) return undefined
+  return choiceReplayCandidates(pair).find(candidate => candidate.agent_id === registeredId
+    && candidate.key1 === keys.key1 && candidate.key2 === keys.key2)
+}
+
 export function keyCandidate(pair: PairedWorkflowData, input: string): ChoiceReplayCandidate | undefined {
   const key = input.trim().replace(/\s/g, '')
   return choiceReplayCandidates(pair).find(candidate => key === `${candidate.key1}/${candidate.key2}`)

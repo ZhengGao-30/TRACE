@@ -43,7 +43,14 @@ function freezeRecord(value) {
   return value
 }
 function propsFor(pair, patch = {}) {
-  return { pair, selected: playback.matchedRequirement(pair, 'worker_identity'), revealed: hidden, onSelect() {}, ...patch }
+  return {
+    pair,
+    selected: playback.matchedRequirement(pair, 'worker_identity'),
+    revealed: hidden,
+    onSelect() {},
+    appliedCandidateId: replay.registeredChoiceReplayCandidate(pair)?.agent_id,
+    ...patch,
+  }
 }
 async function render(pair, patch) {
   const harness = await animationHarness(), props = propsFor(pair, patch)
@@ -250,6 +257,7 @@ test('the generic replay helper honors unavailable data and the loaded compariso
 
 test('key entry only resolves registered public keys; unknown and missing replay data cannot succeed', () => {
   const pair = pairs[0], differences = variableDifferences(pair)
+  assert.equal(replay.registeredChoiceReplayCandidate(pair)?.agent_id, pair.provenance.registered_agent_id)
   for (const candidate of replay.choiceReplayCandidates(pair)) {
     assert.equal(replay.keyCandidate(pair, `${candidate.key1}/${candidate.key2}`)?.agent_id, candidate.agent_id)
     assert.equal(replay.keyCandidate(pair, ` ${candidate.key1} / ${candidate.key2} `)?.agent_id, candidate.agent_id)
@@ -265,6 +273,9 @@ test('key entry only resolves registered public keys; unknown and missing replay
   const wrongScope = structuredClone(pair)
   wrongScope.choice_replay.scope = 'standard_recorded_decisions'
   assert.equal(replay.buildChoiceReplay(wrongScope, differences, 'gate-agent-01', true).status, 'unavailable')
+  const mismatchedProvenance = structuredClone(pair)
+  mismatchedProvenance.provenance.keys.key1 += 1
+  assert.equal(replay.registeredChoiceReplayCandidate(mismatchedProvenance), undefined)
 })
 
 test('replay rows must belong to the actual recorded decision and malformed rows cannot manufacture a match', () => {
@@ -389,10 +400,16 @@ function expandComparison(harness, props, tree = harness.render(props)) {
   buttonNamed(tree, 'Expand comparison').props.onClick()
   return harness.render(props)
 }
-function verificationInput(tree) {
-  const input = descendants(tree, element => element.type === 'input' && element.props['aria-label'] === 'Verification key')[0]
-  assert.ok(input, 'the key is editable')
-  return input
+function replayButton(tree) {
+  const buttons = descendants(tree, element => element.type === 'button' && element.props['data-replay-verify'] !== undefined)
+  assert.equal(buttons.length, 1, 'one replay button exists')
+  return buttons[0]
+}
+function selectedKeyLabel(tree) {
+  const selected = descendants(tree, element => element.type === 'button' && element.props['aria-pressed'] === true
+    && /^Key [A-Z]$/.test(React.Children.toArray(element.props.children).filter(child => typeof child === 'string').join('')))
+  assert.equal(selected.length, 1, 'one demo key is selected')
+  return React.Children.toArray(selected[0].props.children).filter(child => typeof child === 'string').join('')
 }
 function replayState(tree) {
   return descendants(tree, element => element.props['data-replay-state'] !== undefined)[0]?.props['data-replay-state']
@@ -424,15 +441,16 @@ test('the title-only comparison expands in place for key replay and preserves re
   assert.ok(buttonNamed(tree, 'Expand comparison'))
   tree = expandComparison(harness, props, tree)
   assert.doesNotMatch(renderToStaticMarkup(tree), /role="dialog"|aria-modal|pws-backdrop/)
+  assert.doesNotMatch(renderToStaticMarkup(tree), /20250001|20250002/, 'raw key values stay out of the interface')
   assertNoSourcePanel(renderToStaticMarkup(tree))
   assert.equal(replayResult(tree), 'pending')
-  assert.equal(buttonNamed(tree, 'Replay with this key').props.disabled, false, 'loaded records can be checked before watching the 3D replay')
+  assert.equal(replayButton(tree).props.disabled, false, 'loaded records can be checked before watching the 3D replay')
   assert.ok(replayRows(tree).every(row => row.props['data-replay-match'] === 'pending'))
   assert.equal(harness.timers.size, 0)
 
   buttonNamed(tree, 'Key A').props.onClick()
   tree = harness.render(props)
-  buttonNamed(tree, 'Replay with this key').props.onClick()
+  replayButton(tree).props.onClick()
   tree = harness.render(props)
   assert.equal(replayState(tree), 'running')
   assert.equal(replayResult(tree), 'pending', 'an unfinished comparison has no verification verdict')
@@ -449,13 +467,13 @@ test('the title-only comparison expands in place for key replay and preserves re
   assert.deepEqual(calls, [], 'the key animation does not change parent selection or execute actions')
   assert.equal(JSON.stringify(pair), original)
 
-  const savedKey = verificationInput(tree).props.value
+  const savedKey = selectedKeyLabel(tree)
   const savedSelection = replayRows(tree).find(row => row.props['aria-pressed'])?.props['data-replay-step']
   buttonNamed(tree, 'Collapse comparison').props.onClick()
   tree = harness.render(props)
   assert.doesNotMatch(renderToStaticMarkup(tree), /data-replay-key-input|data-replay-step=|data-story-art|role="dialog"/)
   tree = expandComparison(harness, props, tree)
-  assert.equal(verificationInput(tree).props.value, savedKey)
+  assert.equal(selectedKeyLabel(tree), savedKey)
   assert.equal(replayResult(tree), 'successful', 'expanding does not discard the completed verification')
   assert.equal(replayRows(tree).find(row => row.props['aria-pressed'])?.props['data-replay-step'], savedSelection)
   assert.equal(replayRows(tree).filter(row => row.props['data-replay-match'] === 'true').length, 15)
@@ -466,7 +484,7 @@ test('the title-only comparison expands in place for key replay and preserves re
     assert.equal(replayState(tree), 'idle')
     assert.equal(replayResult(tree), 'pending', 'changing the key clears the previous verification verdict')
     assert.ok(replayRows(tree).every(row => row.props['data-replay-match'] === 'pending'), 'changing keys clears the old answer')
-    buttonNamed(tree, 'Replay with this key').props.onClick()
+    replayButton(tree).props.onClick()
     tree = harness.render(props)
     assert.equal(replayResult(tree), 'pending')
     tree = finishAnimation(harness, props)
@@ -484,29 +502,21 @@ test('the title-only comparison expands in place for key replay and preserves re
   harness.unmount()
 })
 
-test('invalid key entry cannot reuse success; key, case and motion changes cancel timers while main-replay progress does not', async () => {
+test('key, case and motion changes cancel timers while main-replay progress does not', async () => {
   const harness = await animationHarness(), calls = []
   let props = propsFor(pairs[0], { onSelect: step => calls.push(step) })
   let tree = expandComparison(harness, props)
   const start = () => {
-    buttonNamed(tree, 'Replay with this key').props.onClick()
+    replayButton(tree).props.onClick()
     tree = harness.render(props)
     assert.equal(replayState(tree), 'running')
     assert.ok(harness.timers.size > 0)
   }
   start()
-  verificationInput(tree).props.onChange({ target: { value: '1234' } })
+  buttonNamed(tree, 'Key B').props.onClick()
   tree = harness.render(props)
   assert.equal(replayResult(tree), 'pending')
-  assert.equal(harness.timers.size, 0, 'typing a different key cancels the old replay')
-  assert.ok(replayRows(tree).every(row => row.props['data-replay-match'] === 'pending'))
-  buttonNamed(tree, 'Replay with this key').props.onClick()
-  tree = harness.render(props)
-  assert.notEqual(replayState(tree), 'complete')
-  assert.notEqual(replayState(tree), 'running')
-  assert.equal(replayResult(tree), 'pending', 'an unregistered key is unavailable, not a completed failed verification')
-  assert.doesNotMatch(renderToStaticMarkup(tree), /Verification successful|Verification failed/)
-  assert.equal(harness.timers.size, 0)
+  assert.equal(harness.timers.size, 0, 'choosing a different key cancels the old replay')
   assert.ok(replayRows(tree).every(row => row.props['data-replay-match'] === 'pending'))
 
   buttonNamed(tree, 'Key A').props.onClick()
@@ -534,7 +544,7 @@ test('invalid key entry cannot reuse success; key, case and motion changes cance
   tree = harness.render(props)
   assert.equal(replayState(tree), 'idle')
   assert.equal(harness.timers.size, 0, 'changing motion preference clears outstanding animation updates')
-  buttonNamed(tree, 'Replay with this key').props.onClick()
+  replayButton(tree).props.onClick()
   tree = harness.render(props)
   assert.equal(replayResult(tree), 'successful')
   assert.equal(harness.timers.size, 0, 'reduced-motion verification completes without animation timers')

@@ -1,0 +1,50 @@
+.pwc-flow {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #f8fafc;
+}
+
+.pwc-flow::before {
+  content: '';
+  position: absolute;
+  top: 28px;
+  bottom: 28px;
+  left: 32px;
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #cbd5e1 0%, #c7d2fe 45%, #ddd6fe 100%);
+}
+
+.pwc-flow-item {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+.pwc-flow-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  bottom: -9px;
+  left: 23px;
+  width: 2px;
+  height: 10px;
+  background: #cbd5e1;
+}
+
+@media (max-width: 520px) {
+  .pwc-flow {
+    padding: 6px;
+    border-radius: 15px;
+  }
+
+  .pwc-flow::before {
+    left: 30px;
+  }
+}
+

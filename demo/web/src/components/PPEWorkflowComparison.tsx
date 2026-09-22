@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
-import { BarChart3, Camera, Check, ChevronRight, Dices, Play, RotateCcw, ShieldCheck } from 'lucide-react'
+import { BarChart3, Camera, Check, ChevronRight, Dices, KeyRound, Play, RotateCcw, ShieldCheck } from 'lucide-react'
 import { DecisionInspector, trajectorySource } from './PairedWorkflowStrip'
 import type { PairedTrajectoryStep, PairedWorkflowData } from './PairedWorkflowStrip'
 import { PPE_PHASES, ppeActionMethodLabel } from '../lib/ppeInspection'
 import { inspectionLabel, matchedRequirement, requirementKey } from '../lib/ppePlayback'
 import type { ActionPlayback, PlaybackArm, PairedPlaybackState } from '../lib/ppePlayback'
+import { choiceReplayCandidates, registeredChoiceReplayCandidate } from '../lib/ppeChoiceReplay'
 import PPEWatermarkStory from './PPEWatermarkStory'
 import PPEPhotoWatermark from './PPEPhotoWatermark'
+import './PPEWorkflowComparison.css'
 
 interface Props {
   pair: PairedWorkflowData
@@ -20,12 +22,14 @@ interface Props {
   onSelectCheck?: (key: string) => void
 }
 
-function ArmWorkflow({ source, steps, selected, next, playback, revealed, onSelect, onPlay, onDetails, onPhoto }: {
+function ArmWorkflow({ source, steps, selected, next, playback, revealed, onSelect, onPlay, onDetails, onPhoto, watermarkKey, onCheckWatermarkKey }: {
   source: PlaybackArm; steps: PairedTrajectoryStep[]; selected?: PairedTrajectoryStep; playback: ActionPlayback | null;
   next?: PairedTrajectoryStep;
   revealed: (step: PairedTrajectoryStep) => boolean; onSelect: (step: PairedTrajectoryStep) => void;
   onPlay: () => void; onDetails: () => void;
   onPhoto: (step: PairedTrajectoryStep) => void;
+  watermarkKey?: { id: string; label: string; selectedForCheck: boolean };
+  onCheckWatermarkKey?: () => void;
 }) {
   const trace = source === 'trace'
   const strip = useRef<HTMLDivElement>(null)
@@ -54,6 +58,19 @@ function ArmWorkflow({ source, steps, selected, next, playback, revealed, onSele
           className="rounded-lg border border-slate-200 bg-white p-2 text-slate-500 hover:text-indigo-600 disabled:opacity-30"><ChevronRight size={16} /></button>
       </div>
     </div>
+    <div className={`mt-2 flex min-h-9 flex-wrap items-center gap-2 rounded-lg border px-2.5 py-1.5 text-[11px] ${trace ? 'border-indigo-100 bg-white/80 text-indigo-700' : 'border-slate-200 bg-white/65 text-slate-500'}`}>
+      <span className="inline-flex items-center gap-1.5 font-semibold">
+        {trace ? <KeyRound size={13} /> : <Dices size={13} />}
+        Watermark
+      </span>
+      {trace ? watermarkKey ? <button type="button" onClick={onCheckWatermarkKey}
+          data-applied-watermark-key={watermarkKey.label} aria-pressed={watermarkKey.selectedForCheck}
+          className="inline-flex items-center gap-1.5 rounded-md border border-indigo-200 bg-indigo-50 px-2.5 py-1 font-semibold text-indigo-700 transition hover:border-indigo-300 hover:bg-indigo-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
+          {watermarkKey.label}<Check size={12} /><span className="font-normal text-indigo-500">Applied</span>
+        </button> : <span className="rounded-md border border-amber-200 bg-amber-50 px-2.5 py-1 font-semibold text-amber-700">Unavailable</span>
+        : <span className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 font-semibold text-slate-600">Off</span>}
+      <span className="text-slate-400">{trace ? watermarkKey ? 'Used for this recorded run · click to check below' : 'Applied key was not recorded' : 'Standard sampling · no key added'}</span>
+    </div>
     <div ref={strip} className="relative mt-2 flex items-stretch gap-2 overflow-x-auto pb-1" aria-label={`${trace ? 'Watermarked' : 'Unwatermarked'} recorded workflow`}>
       {steps.map((step, index) => <div key={step.i} className="flex shrink-0 items-center gap-2">
         {index > 0 && <ChevronRight size={12} className="text-slate-300" aria-hidden="true" />}
@@ -81,37 +98,48 @@ function ArmWorkflow({ source, steps, selected, next, playback, revealed, onSele
 
 export default function PPEWorkflowComparison({ pair, current, completedIndex, running, fullReplayComplete = false, playback, watched, onPlay, onSelectCheck }: Props) {
   const [phaseId, setPhaseId] = useState(PPE_PHASES[0].id)
-  const [key, setKey] = useState(() => requirementKey(pair.standard.steps[0]))
+  const [selectedRequirementKey, setSelectedRequirementKey] = useState(() => requirementKey(pair.standard.steps[0]))
+  const replayCandidates = choiceReplayCandidates(pair)
+  const appliedCandidate = registeredChoiceReplayCandidate(pair)
+  const appliedCandidateIndex = replayCandidates.findIndex(candidate => candidate.agent_id === appliedCandidate?.agent_id)
+  const appliedCandidateLabel = appliedCandidateIndex >= 0 ? `Key ${String.fromCharCode(65 + appliedCandidateIndex)}` : ''
+  const [verificationCandidateId, setVerificationCandidateId] = useState(() => appliedCandidate?.agent_id ?? replayCandidates[0]?.agent_id ?? '')
   const [details, setDetails] = useState<PlaybackArm | null>(null)
   const [following, setFollowing] = useState(true)
   const [photoOpenRequest, setPhotoOpenRequest] = useState(0)
   const lastPlaybackToken = useRef<string | null>(null)
   const fullComplete = fullReplayComplete && !running && completedIndex === pair.trace.steps.length - 1
-  const selected = matchedRequirement(pair, key)
+  const selected = matchedRequirement(pair, selectedRequirementKey)
   const phase = PPE_PHASES.find(item => item.id === phaseId) ?? PPE_PHASES[0]
   const revealed = (source: PlaybackArm, step?: PairedTrajectoryStep) => !!step && (
     watched[source].includes(step.i) || fullComplete || source === 'trace' && step.i <= completedIndex
   )
   const inspected = details ? selected[details] : undefined
 
-  useEffect(() => { onSelectCheck?.(key) }, [key, onSelectCheck])
+  useEffect(() => {
+    if (!replayCandidates.some(candidate => candidate.agent_id === verificationCandidateId)) {
+      setVerificationCandidateId(appliedCandidate?.agent_id ?? replayCandidates[0]?.agent_id ?? '')
+    }
+  }, [pair, verificationCandidateId, appliedCandidate?.agent_id, replayCandidates[0]?.agent_id])
+
+  useEffect(() => { onSelectCheck?.(selectedRequirementKey) }, [selectedRequirementKey, onSelectCheck])
 
   useEffect(() => {
     if (!playback || playback.token === lastPlaybackToken.current) return
     lastPlaybackToken.current = playback.token
     const step = pair[playback.source].steps.find(step => step.i === playback.index)
-    if (step) { setPhaseId(step.stage_id ?? PPE_PHASES[0].id); setKey(requirementKey(step)); setDetails(null) }
+    if (step) { setPhaseId(step.stage_id ?? PPE_PHASES[0].id); setSelectedRequirementKey(requirementKey(step)); setDetails(null) }
   }, [playback, pair])
 
   useEffect(() => {
     if (playback || !running || !following) return
     const step = pair.trace.steps.find(step => step.i === current)
-    if (step) { setPhaseId(step.stage_id ?? PPE_PHASES[0].id); setKey(requirementKey(step)); setDetails(null) }
+    if (step) { setPhaseId(step.stage_id ?? PPE_PHASES[0].id); setSelectedRequirementKey(requirementKey(step)); setDetails(null) }
   }, [current, running, following, pair, !!playback])
 
   function select(step: PairedTrajectoryStep) {
     setFollowing(false)
-    setKey(requirementKey(step)); setPhaseId(step.stage_id ?? phaseId); setDetails(null)
+    setSelectedRequirementKey(requirementKey(step)); setPhaseId(step.stage_id ?? phaseId); setDetails(null)
   }
   function selectPhase(id: string) {
     const step = pair.standard.steps.find(step => step.stage_id === id) ?? pair.trace.steps.find(step => step.stage_id === id)
@@ -131,20 +159,30 @@ export default function PPEWorkflowComparison({ pair, current, completedIndex, r
         <span className="text-slate-400">{index + 1}</span>{item.title}
       </button>)}
     </nav>
-    <div className="space-y-2.5">
-      {(['standard', 'trace'] as const).map(source => <div key={source}>
+    <div className="pwc-flow" data-comparison-flow>
+      {(['standard', 'trace'] as const).map(source => <div key={source} className="pwc-flow-item" data-flow-item={source === 'standard' ? '1' : '2'}>
         <ArmWorkflow source={source} steps={pair[source].steps} selected={selected[source]}
           next={selected[source] ? pair[source].steps[pair[source].steps.findIndex(step => step.i === selected[source]!.i) + 1] : undefined}
           playback={playback} revealed={step => revealed(source, step)} onSelect={step => { select(step); if (revealed(source, step)) setDetails(source) }}
           onPlay={() => selected[source] && onPlay(source, selected[source]!.i)}
           onDetails={() => setDetails(previous => previous === source ? null : source)}
-          onPhoto={step => { select(step); setPhotoOpenRequest(value => value + 1) }} />
+          onPhoto={step => { select(step); setPhotoOpenRequest(value => value + 1) }}
+          watermarkKey={source === 'trace' && appliedCandidate ? {
+            id: appliedCandidate.agent_id,
+            label: appliedCandidateLabel,
+            selectedForCheck: verificationCandidateId === appliedCandidate.agent_id,
+          } : undefined}
+          onCheckWatermarkKey={source === 'trace' && appliedCandidate ? () => setVerificationCandidateId(appliedCandidate.agent_id) : undefined} />
         {details === source && inspected && revealed(source, inspected) && <DecisionInspector source={source} step={inspected} phaseTitle={phase.title} onClose={() => setDetails(null)} />}
       </div>)}
-      <div className="flex flex-col gap-2.5">
-        <section data-comparison-box="difference" className="rounded-2xl border border-indigo-100 bg-white p-3.5">
-          <PPEWatermarkStory pair={pair} selected={selected} revealed={revealed} onSelect={select} />
+      <div className="pwc-flow-item" data-flow-item="3">
+        <section data-comparison-box="difference" className="rounded-xl border border-indigo-100 bg-white p-3.5">
+          <PPEWatermarkStory pair={pair} selected={selected} revealed={revealed} onSelect={select}
+            appliedCandidateId={appliedCandidate?.agent_id ?? ''} selectedCandidateId={verificationCandidateId}
+            onCandidateChange={setVerificationCandidateId} />
         </section>
+      </div>
+      <div className="pwc-flow-item" data-flow-item="4">
         <PPEPhotoWatermark key={pair.game_id} steps={pair.trace.steps} openRequest={photoOpenRequest}
           onShowStep={step => { select(step); document.getElementById('ppe-workflow-comparison')?.scrollIntoView({ block: 'start' }) }} />
       </div>
