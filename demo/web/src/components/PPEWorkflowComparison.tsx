@@ -22,16 +22,46 @@ interface Props {
   onSelectCheck?: (key: string) => void
 }
 
-function ArmWorkflow({ source, steps, selected, next, playback, revealed, onSelect, onPlay, onDetails, onPhoto, watermarkKey, onCheckWatermarkKey }: {
+type WatermarkKey = { id: string; label: string }
+type InjectionPhase = 'setup' | 'injected'
+
+function WatermarkInjection({ watermarkKey, phase, onInject, onChange }: {
+  watermarkKey?: WatermarkKey
+  phase: InjectionPhase
+  onInject: () => void
+  onChange: () => void
+}) {
+  const injected = phase === 'injected' && !!watermarkKey
+  return <div className="pwc-key-injection" data-injection-state={injected ? 'injected' : 'setup'}>
+    <div className="pwc-key-injection-copy">
+      <span><KeyRound size={13} />Watermark key</span>
+      <strong>{injected ? `${watermarkKey.label} injected` : watermarkKey ? `Inject the watermark with ${watermarkKey.label}` : 'Recorded key unavailable'}</strong>
+      <small>{injected ? 'The complete recorded workflow is shown below.' : watermarkKey ? 'Apply the recorded demo key to reveal the complete workflow.' : 'This record has no valid key to inject.'}</small>
+    </div>
+    {watermarkKey && <span className="pwc-key-selection" data-selected-watermark-key={watermarkKey.label}>
+      {watermarkKey.label}{injected && <Check size={13} />}
+    </span>}
+    <button type="button" className={injected ? 'pwc-key-change' : 'pwc-key-inject'}
+      onClick={injected ? onChange : onInject} disabled={!watermarkKey}
+      data-inject-watermark-key={watermarkKey?.label ?? ''} aria-expanded={injected}>
+      {injected ? 'Change key' : <><KeyRound size={14} />Inject watermark</>}
+    </button>
+  </div>
+}
+
+function ArmWorkflow({ source, steps, selected, next, playback, revealed, onSelect, onPlay, onDetails, onPhoto, watermarkKey, injectionPhase = 'injected', onInjectWatermark, onChangeWatermark }: {
   source: PlaybackArm; steps: PairedTrajectoryStep[]; selected?: PairedTrajectoryStep; playback: ActionPlayback | null;
   next?: PairedTrajectoryStep;
   revealed: (step: PairedTrajectoryStep) => boolean; onSelect: (step: PairedTrajectoryStep) => void;
   onPlay: () => void; onDetails: () => void;
   onPhoto: (step: PairedTrajectoryStep) => void;
-  watermarkKey?: { id: string; label: string; selectedForCheck: boolean };
-  onCheckWatermarkKey?: () => void;
+  watermarkKey?: WatermarkKey;
+  injectionPhase?: InjectionPhase;
+  onInjectWatermark?: () => void;
+  onChangeWatermark?: () => void;
 }) {
   const trace = source === 'trace'
+  const workflowVisible = !trace || injectionPhase === 'injected'
   const strip = useRef<HTMLDivElement>(null)
   const active = playback?.source === source && playback.index === selected?.i
   const playing = active && ['restoring', 'playing'].includes(playback.status)
@@ -39,15 +69,16 @@ function ArmWorkflow({ source, steps, selected, next, playback, revealed, onSele
   useEffect(() => {
     const item = strip.current?.querySelector<HTMLElement>('[aria-current="step"]')
     if (item && strip.current) strip.current.scrollLeft = item.offsetLeft - strip.current.offsetLeft - 12
-  }, [selected?.i])
-  return <section aria-label={`${trace ? 'With' : 'Without'} watermark workflow`} data-comparison-box={source} className={`rounded-xl border p-3 ${trace ? 'border-indigo-200 bg-indigo-50/40' : 'border-slate-200 bg-slate-50/60'}`}>
+  }, [selected?.i, workflowVisible])
+  return <section aria-label={`${trace ? 'With' : 'Without'} watermark workflow`} data-comparison-box={source}
+    data-workflow-visible={workflowVisible} className={`rounded-xl border p-3 ${trace ? 'border-indigo-200 bg-indigo-50/40' : 'border-slate-200 bg-slate-50/60'}`}>
     <div className="flex flex-wrap items-center gap-2">
       <span className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${trace ? 'bg-indigo-600 text-white' : 'bg-slate-700 text-white'}`}>{trace ? 2 : 1}</span>
       <h3 className={`flex items-center gap-1.5 text-sm font-bold ${trace ? 'text-indigo-700' : 'text-slate-700'}`}>
         {trace ? <ShieldCheck size={15} /> : <Dices size={15} />}{trace ? 'With watermark' : 'Without watermark'}
       </h3>
-      <span className="text-xs text-slate-400">{selected ? `Step ${selected.i + 1} / ${steps.length}` : 'No matching action'}</span>
-      <div className="ml-auto flex items-center gap-1.5">
+      <span className="text-xs text-slate-400">{workflowVisible ? selected ? `Step ${selected.i + 1} / ${steps.length}` : 'No matching action' : watermarkKey ? `Inject ${watermarkKey.label} to begin` : 'Key unavailable'}</span>
+      {workflowVisible && <div className="ml-auto flex items-center gap-1.5">
         <button type="button" onClick={onDetails} disabled={!done} aria-label={`How the ${trace ? 'watermarked' : 'unwatermarked'} action was chosen`}
           title={done ? 'View probabilities and selection' : 'Play this action to reveal its decision'} className="rounded-lg border border-slate-200 bg-white p-2 text-slate-500 hover:text-indigo-600 disabled:opacity-35"><BarChart3 size={16} /></button>
         <button type="button" disabled={!selected} onClick={onPlay} aria-label={`Play ${trace ? 'with' : 'without'} watermark step ${selected ? selected.i + 1 : ''}`}
@@ -56,22 +87,17 @@ function ArmWorkflow({ source, steps, selected, next, playback, revealed, onSele
         </button>
         <button type="button" onClick={() => next && onSelect(next)} disabled={!next} aria-label={`Next ${trace ? 'watermarked' : 'unwatermarked'} action`}
           className="rounded-lg border border-slate-200 bg-white p-2 text-slate-500 hover:text-indigo-600 disabled:opacity-30"><ChevronRight size={16} /></button>
-      </div>
+      </div>}
     </div>
-    <div className={`mt-2 flex min-h-9 flex-wrap items-center gap-2 rounded-lg border px-2.5 py-1.5 text-[11px] ${trace ? 'border-indigo-100 bg-white/80 text-indigo-700' : 'border-slate-200 bg-white/65 text-slate-500'}`}>
-      <span className="inline-flex items-center gap-1.5 font-semibold">
-        {trace ? <KeyRound size={13} /> : <Dices size={13} />}
-        Watermark
-      </span>
-      {trace ? watermarkKey ? <button type="button" onClick={onCheckWatermarkKey}
-          data-applied-watermark-key={watermarkKey.label} aria-pressed={watermarkKey.selectedForCheck}
-          className="inline-flex items-center gap-1.5 rounded-md border border-indigo-200 bg-indigo-50 px-2.5 py-1 font-semibold text-indigo-700 transition hover:border-indigo-300 hover:bg-indigo-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
-          {watermarkKey.label}<Check size={12} /><span className="font-normal text-indigo-500">Applied</span>
-        </button> : <span className="rounded-md border border-amber-200 bg-amber-50 px-2.5 py-1 font-semibold text-amber-700">Unavailable</span>
-        : <span className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 font-semibold text-slate-600">Off</span>}
-      <span className="text-slate-400">{trace ? watermarkKey ? 'Used for this recorded run · click to check below' : 'Applied key was not recorded' : 'Standard sampling · no key added'}</span>
-    </div>
-    <div ref={strip} className="relative mt-2 flex items-stretch gap-2 overflow-x-auto pb-1" aria-label={`${trace ? 'Watermarked' : 'Unwatermarked'} recorded workflow`}>
+    {trace ? <WatermarkInjection watermarkKey={watermarkKey} phase={injectionPhase}
+      onInject={() => onInjectWatermark?.()} onChange={() => onChangeWatermark?.()} />
+      : <div className="mt-2 flex min-h-9 flex-wrap items-center gap-2 rounded-lg border border-slate-200 bg-white/65 px-2.5 py-1.5 text-[11px] text-slate-500">
+        <span className="inline-flex items-center gap-1.5 font-semibold"><Dices size={13} />Watermark</span>
+        <span className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 font-semibold text-slate-600">Off</span>
+        <span className="text-slate-400">Standard sampling · no key added</span>
+      </div>}
+    <div ref={strip} hidden={!workflowVisible} className={`relative mt-2 items-stretch gap-2 overflow-x-auto pb-1 ${workflowVisible ? `flex${trace ? ' pwc-injected-content' : ''}` : ''}`}
+      aria-label={`${trace ? 'Watermarked' : 'Unwatermarked'} recorded workflow`}>
       {steps.map((step, index) => <div key={step.i} className="flex shrink-0 items-center gap-2">
         {index > 0 && <ChevronRight size={12} className="text-slate-300" aria-hidden="true" />}
         <button type="button" onClick={() => onSelect(step)} aria-current={step.i === selected?.i ? 'step' : undefined}
@@ -103,6 +129,7 @@ export default function PPEWorkflowComparison({ pair, current, completedIndex, r
   const appliedCandidate = registeredChoiceReplayCandidate(pair)
   const appliedCandidateIndex = replayCandidates.findIndex(candidate => candidate.agent_id === appliedCandidate?.agent_id)
   const appliedCandidateLabel = appliedCandidateIndex >= 0 ? `Key ${String.fromCharCode(65 + appliedCandidateIndex)}` : ''
+  const [injectionPhase, setInjectionPhase] = useState<InjectionPhase>('setup')
   const [verificationCandidateId, setVerificationCandidateId] = useState(() => appliedCandidate?.agent_id ?? replayCandidates[0]?.agent_id ?? '')
   const [details, setDetails] = useState<PlaybackArm | null>(null)
   const [following, setFollowing] = useState(true)
@@ -115,6 +142,12 @@ export default function PPEWorkflowComparison({ pair, current, completedIndex, r
     watched[source].includes(step.i) || fullComplete || source === 'trace' && step.i <= completedIndex
   )
   const inspected = details ? selected[details] : undefined
+
+  useEffect(() => {
+    setInjectionPhase('setup')
+    setVerificationCandidateId(appliedCandidate?.agent_id ?? '')
+    setDetails(null)
+  }, [pair.game_id, appliedCandidate?.agent_id])
 
   useEffect(() => {
     if (!replayCandidates.some(candidate => candidate.agent_id === verificationCandidateId)) {
@@ -145,6 +178,17 @@ export default function PPEWorkflowComparison({ pair, current, completedIndex, r
     const step = pair.standard.steps.find(step => step.stage_id === id) ?? pair.trace.steps.find(step => step.stage_id === id)
     if (step) select(step)
   }
+  function injectWatermark() {
+    if (!appliedCandidate) return
+    setInjectionPhase('injected')
+    setVerificationCandidateId(appliedCandidate.agent_id)
+    setDetails(null)
+  }
+  function changeWatermark() {
+    setInjectionPhase('setup')
+    setVerificationCandidateId(appliedCandidate?.agent_id ?? '')
+    setDetails(null)
+  }
 
   return <section id="ppe-workflow-comparison" aria-label="Compare inspection workflows" className="scroll-mt-20 rounded-[1.4rem] border border-slate-200 bg-white/90 p-3.5 shadow-[0_16px_50px_-38px_rgba(15,23,42,.35)]">
     <div className="mb-3 flex flex-wrap items-center gap-2">
@@ -170,16 +214,21 @@ export default function PPEWorkflowComparison({ pair, current, completedIndex, r
           watermarkKey={source === 'trace' && appliedCandidate ? {
             id: appliedCandidate.agent_id,
             label: appliedCandidateLabel,
-            selectedForCheck: verificationCandidateId === appliedCandidate.agent_id,
           } : undefined}
-          onCheckWatermarkKey={source === 'trace' && appliedCandidate ? () => setVerificationCandidateId(appliedCandidate.agent_id) : undefined} />
-        {details === source && inspected && revealed(source, inspected) && <DecisionInspector source={source} step={inspected} phaseTitle={phase.title} onClose={() => setDetails(null)} />}
+          injectionPhase={source === 'trace' ? injectionPhase : 'injected'}
+          onInjectWatermark={source === 'trace' ? injectWatermark : undefined}
+          onChangeWatermark={source === 'trace' ? changeWatermark : undefined} />
+        {details === source && inspected && revealed(source, inspected) && (source !== 'trace' || injectionPhase === 'injected') && <DecisionInspector source={source} step={inspected} phaseTitle={phase.title} onClose={() => setDetails(null)} />}
       </div>)}
       <div className="pwc-flow-item" data-flow-item="3">
         <section data-comparison-box="difference" className="rounded-xl border border-indigo-100 bg-white p-3.5">
-          <PPEWatermarkStory pair={pair} selected={selected} revealed={revealed} onSelect={select}
-            appliedCandidateId={appliedCandidate?.agent_id ?? ''} selectedCandidateId={verificationCandidateId}
-            onCandidateChange={setVerificationCandidateId} />
+          {injectionPhase === 'injected' && appliedCandidate ? <PPEWatermarkStory pair={pair} selected={selected} revealed={revealed} onSelect={select}
+            appliedCandidateId={appliedCandidate.agent_id} selectedCandidateId={verificationCandidateId}
+            onCandidateChange={setVerificationCandidateId} /> : <div className="pwc-verification-waiting">
+              <span className="pwc-waiting-number">3</span>
+              <div><strong>What changed?</strong><small>Inject Key A in step 2 to compare the recorded choices.</small></div>
+              <span>Waiting for key</span>
+            </div>}
         </section>
       </div>
       <div className="pwc-flow-item" data-flow-item="4">

@@ -107,7 +107,7 @@ export default function PPEWatermarkStory({ pair, selected, revealed, onSelect, 
 
   return <section className="ppe-watermark-story" data-watermark-story data-expanded={expanded} data-replay-state={check.phase} aria-labelledby={titleId}>
     <header className="pws-toolbar"><h3 id={titleId}><span className="pws-number">3</span>What changed?</h3>
-      <span className="pws-current-key"><KeyRound size={13} />{appliedCandidate ? `${appliedKeyLabel} applied` : 'Applied key not recorded'}</span>
+      <span className="pws-current-key"><KeyRound size={13} />{appliedCandidate ? `${appliedKeyLabel} from step 2` : 'Injected key not available'}</span>
       {expanded && <nav className="pws-differences" aria-label="Browse different choices">
         <button type="button" aria-label="Previous difference" disabled={!differences.length || check.phase === 'running'} onClick={() => move(-1)}><ChevronLeft size={16} /></button>
         <span>{differences.length ? `${selectedIndex + 1} of ${differences.length} different choices` : 'No different choices'}</span>
@@ -129,7 +129,7 @@ export default function PPEWatermarkStory({ pair, selected, revealed, onSelect, 
         </ul><p className="pws-arm-note">{arm === 'trace' ? appliedCandidate ? `${appliedKeyLabel} guides the recorded selection.` : 'Applied key metadata is unavailable.' : 'Standard selection.'}</p>
       </section>)}</div>
     </div>}
-    <div className="pws-bridge"><ArrowDown size={15} /><span>{appliedCandidate ? `${appliedKeyLabel} was used above. Check it against the recorded choices.` : 'Choose a demo key to replay the recorded choices.'}</span><small>Same recorded log</small></div>
+    <div className="pws-bridge"><ArrowDown size={15} /><span>{appliedCandidate ? `${appliedKeyLabel} was injected in step 2. Check it against the recorded choices.` : 'Choose a demo key to replay the recorded choices.'}</span><small>Same recorded log</small></div>
     <section className="pws-replay" aria-label="Reproduce different choices with a key">
       <div className="pws-key-line">
         <div className="pws-key-copy"><strong>Check the watermark key</strong><span>{appliedCandidate ? `Start with ${appliedKeyLabel}, or try another demo key.` : 'Choose one of the available demo keys.'}</span></div>

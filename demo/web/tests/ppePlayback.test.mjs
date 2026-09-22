@@ -94,7 +94,9 @@ for (const pair of pairs) {
     const html = renderToStaticMarkup(React.createElement(comparison.default, props))
     assert.deepEqual([...html.matchAll(/data-comparison-box="([^"]+)"/g)].map(match => match[1]), ['standard', 'trace', 'difference', 'photo'])
     assert.match(html, /data-comparison-flow/)
-    assert.match(html, /data-applied-watermark-key="Key A"/)
+    assert.match(html, /data-selected-watermark-key="Key A"/)
+    assert.match(html, /data-injection-state="setup"/)
+    assert.match(html, /data-comparison-box="trace"[^>]*data-workflow-visible="false"/)
     assert.match(html, /Standard sampling · no key added/)
     assert.doesNotMatch(html, /20250001|20250002/)
     assert.equal(choiceReplay.registeredChoiceReplayCandidate(pair)?.agent_id, pair.provenance.registered_agent_id)
@@ -106,7 +108,8 @@ for (const pair of pairs) {
     assert.ok(html.includes(`Show photo capture step ${captureNumber} in workflow`), 'photo links back to the originating action')
     assert.ok(html.includes('Show photo evidence step 22 in workflow'))
     assert.match(html, /not photos from the original log/)
-    assert.match(html, /data-watermark-story=""/)
+    assert.doesNotMatch(html, /data-watermark-story=""/)
+    assert.match(html, /Inject Key A in step 2 to compare the recorded choices/)
     const one = renderToStaticMarkup(React.createElement(comparison.default, { ...props, watched: { standard: [0], trace: [] } }))
     const both = renderToStaticMarkup(React.createElement(comparison.default, { ...props, watched: { standard: [0], trace: [0] } }))
     const lastAction = renderToStaticMarkup(React.createElement(comparison.default, { ...props, current: 23, completedIndex: 23 }))
@@ -125,7 +128,8 @@ for (const pair of pairs) {
     assert.ok(armHtml(watchedConclusion, 'standard').includes(outcome), 'watching the conclusion itself still reveals that recorded result')
     for (const rendered of [html, one, both, lastAction, stillRunning, incomplete, finished]) {
       assert.doesNotMatch(rendered, /Recorded details|Methods and watermark details|Full inspection results|Both decisions used the same probabilities|Same recorded finding/)
-      assert.match(rendered, /data-watermark-story=""/)
+      assert.doesNotMatch(rendered, /data-watermark-story=""/)
+      assert.match(rendered, /data-injection-state="setup"/)
       assert.deepEqual([...rendered.matchAll(/data-comparison-box="([^"]+)"/g)].map(match => match[1]), ['standard', 'trace', 'difference', 'photo'])
     }
   })
@@ -341,33 +345,64 @@ function descendants(element, predicate) {
   return [...(predicate(element) ? [element] : []), ...React.Children.toArray(element.props.children).flatMap(child => descendants(child, predicate))]
 }
 
-test('the recorded Key A flows from the watermarked run into the key checker', async () => {
+test('Key A unlocks the watermarked workflow and then flows into the key checker', async () => {
   const harness = await hookHarness()
   const subject = await load('../src/components/PPEWorkflowComparison.tsx', { ...dependencies, react: harness.hooks })
   const pair = pairs[0]
+  const original = JSON.stringify(pair)
   const candidates = choiceReplay.choiceReplayCandidates(pair)
   const applied = choiceReplay.registeredChoiceReplayCandidate(pair)
   assert.equal(applied, candidates[0])
-  const props = { pair, current: -1, completedIndex: -1, running: false, playback: null, watched: { standard: [], trace: [] }, onPlay() {} }
+  const props = { pair, current: -1, completedIndex: -1, running: false, playback: null, watched: { standard: [], trace: [] }, onPlay() { assert.fail('injecting a key must not run the workflow') } }
   const render = () => harness.settle(() => subject.default(props))
   let tree = render()
   const traceArm = () => descendants(tree, element => element.props.source === 'trace' && element.props.steps)[0]
   const storyPanel = () => descendants(tree, element => element.type === storyComponent.default)[0]
 
-  assert.deepEqual(traceArm().props.watermarkKey, { id: applied.agent_id, label: 'Key A', selectedForCheck: true })
+  assert.deepEqual(traceArm().props.watermarkKey, { id: applied.agent_id, label: 'Key A' })
+  assert.equal(traceArm().props.injectionPhase, 'setup')
+  assert.equal(storyPanel(), undefined, 'the checker waits until a key has been injected')
+
+  traceArm().props.onInjectWatermark()
+  tree = render()
+  assert.equal(traceArm().props.injectionPhase, 'injected')
   assert.equal(storyPanel().props.appliedCandidateId, applied.agent_id)
   assert.equal(storyPanel().props.selectedCandidateId, applied.agent_id)
 
   storyPanel().props.onCandidateChange(candidates[1].agent_id)
   tree = render()
-  assert.equal(traceArm().props.watermarkKey.selectedForCheck, false)
+  assert.equal(traceArm().props.injectionPhase, 'injected', 'checking another key does not change the injected key')
+  assert.equal(traceArm().props.watermarkKey.id, applied.agent_id)
   assert.equal(storyPanel().props.selectedCandidateId, candidates[1].agent_id)
 
-  traceArm().props.onCheckWatermarkKey()
+  traceArm().props.onChangeWatermark()
   tree = render()
-  assert.equal(traceArm().props.watermarkKey.selectedForCheck, true)
+  assert.equal(traceArm().props.injectionPhase, 'setup')
+  assert.equal(storyPanel(), undefined)
+  traceArm().props.onInjectWatermark()
+  tree = render()
   assert.equal(storyPanel().props.selectedCandidateId, applied.agent_id)
+  assert.equal(JSON.stringify(pair), original)
   harness.unmount()
+})
+
+test('a missing registered key cannot unlock a borrowed watermarked workflow', () => {
+  const pair = structuredClone(pairs[0])
+  pair.provenance.registered_agent_id = 'not-a-candidate'
+  const html = renderToStaticMarkup(React.createElement(comparison.default, {
+    pair, current: -1, completedIndex: -1, running: false, playback: null,
+    watched: { standard: [], trace: [] }, onPlay() {},
+  }))
+  assert.match(html, /Recorded key unavailable/)
+  assert.match(html, /<button[^>]*disabled=""[^>]*data-inject-watermark-key=""/)
+  assert.match(html, /data-comparison-box="trace"[^>]*data-workflow-visible="false"/)
+  assert.doesNotMatch(html, /data-watermark-story=""/)
+})
+
+test('the comparison flow has no decorative vertical connector rail', async () => {
+  const css = await readFile(new URL('../src/components/PPEWorkflowComparison.css', import.meta.url), 'utf8')
+  assert.doesNotMatch(css, /\.pwc-flow::before/)
+  assert.doesNotMatch(css, /\.pwc-flow-item:not\(:last-child\)::after/)
 })
 
 test('scene mirror controls identify the selected requirement independently of the last played action', async () => {
@@ -404,7 +439,11 @@ test('after single-step playback the first stage or next-action click is not rev
     const arm = source => descendants(tree, el => el.props.source === source && el.props.steps)[0]
     assert.equal(arm('standard').props.steps.length, 24)
     if (choice === 'stage') descendants(tree, el => el.type === 'button' && React.Children.toArray(el.props.children).includes('Check clothes and shoes'))[0].props.onClick()
-    else if (choice === 'story') descendants(tree, el => el.type === storyComponent.default)[0].props.onSelect(pair.trace.steps[10])
+    else if (choice === 'story') {
+      arm('trace').props.onInjectWatermark()
+      tree = render()
+      descendants(tree, el => el.type === storyComponent.default)[0].props.onSelect(pair.trace.steps[10])
+    }
     else arm('standard').props.onSelect(choice === 'next' ? arm('standard').props.next : pair.standard.steps[9])
     tree = render()
     const expected = choice === 'stage' ? 4 : choice === 'next' ? 1 : choice === 'story' ? 5 : 9

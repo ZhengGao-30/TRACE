@@ -1,40 +1,196 @@
 .pwc-flow {
-  position: relative;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  overflow: hidden;
+  overflow: clip;
   padding: 8px;
   border: 1px solid #e2e8f0;
-  border-radius: 18px;
+  border-radius: 20px;
   background: #f8fafc;
-}
-
-.pwc-flow::before {
-  content: '';
-  position: absolute;
-  top: 28px;
-  bottom: 28px;
-  left: 32px;
-  width: 2px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, #cbd5e1 0%, #c7d2fe 45%, #ddd6fe 100%);
 }
 
 .pwc-flow-item {
   position: relative;
-  z-index: 1;
   min-width: 0;
 }
 
-.pwc-flow-item:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  bottom: -9px;
-  left: 23px;
-  width: 2px;
-  height: 10px;
-  background: #cbd5e1;
+.pwc-key-injection {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  margin-top: 8px;
+  padding: 9px 10px;
+  border: 1px solid #ddd6ee;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .86);
+}
+
+.pwc-key-injection-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pwc-key-injection-copy > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #6750b9;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.pwc-key-injection-copy strong {
+  color: #334155;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.pwc-key-injection-copy small {
+  color: #718096;
+  font-size: 11px;
+}
+
+.pwc-key-selection {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 34px;
+  padding: 6px 11px;
+  border: 1px solid #a991cf;
+  border-radius: 7px;
+  background: #f4f0fa;
+  color: #6750b9;
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.pwc-key-inject,
+.pwc-key-change {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 36px;
+  border-radius: 7px;
+  padding: 8px 13px;
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+  transition: border-color .2s, background .2s, color .2s, transform .2s;
+}
+
+.pwc-key-inject {
+  border: 1px solid #6750b9;
+  background: #6750b9;
+  color: #fff;
+}
+
+.pwc-key-inject:hover:not(:disabled) {
+  background: #57429f;
+}
+
+.pwc-key-change {
+  border: 1px solid #d9dce3;
+  background: #fff;
+  color: #566175;
+}
+
+.pwc-key-change:hover {
+  border-color: #b5a6d2;
+  color: #6750b9;
+}
+
+.pwc-key-inject:active:not(:disabled),
+.pwc-key-change:active {
+  transform: translateY(1px);
+}
+
+.pwc-key-inject:focus-visible,
+.pwc-key-change:focus-visible {
+  outline: 2px solid #6750b9;
+  outline-offset: 3px;
+}
+
+.pwc-key-inject:disabled {
+  cursor: default;
+  opacity: .45;
+}
+
+.pwc-verification-waiting {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 34px;
+  color: #334155;
+}
+
+.pwc-verification-waiting > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pwc-verification-waiting strong {
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.pwc-verification-waiting small {
+  color: #718096;
+  font-size: 11px;
+}
+
+.pwc-verification-waiting > span:last-child {
+  margin-left: auto;
+  border-radius: 6px;
+  background: #f1f3f6;
+  padding: 5px 8px;
+  color: #718096;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pwc-waiting-number {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  place-items: center;
+  border-radius: 50%;
+  background: #eef0f5;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.pwc-injected-content {
+  animation: pwc-reveal .18s ease-out;
+}
+
+@keyframes pwc-reveal {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 620px) {
+  .pwc-key-injection {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .pwc-key-selection,
+  .pwc-key-inject,
+  .pwc-key-change {
+    width: 100%;
+  }
 }
 
 @media (max-width: 520px) {
@@ -42,9 +198,8 @@
     padding: 6px;
     border-radius: 15px;
   }
-
-  .pwc-flow::before {
-    left: 30px;
-  }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .pwc-injected-content { animation: none; }
+}
