@@ -194,3 +194,10 @@ export function sourceSummary(pair: PairedWorkflowData | null, available: boolea
     message: 'The record does not provide enough consistent evidence for a source match.',
   }
 }
+
+// The key checker shows a validated snapshot that was saved with the public
+// demo fixture. This is deliberately separate from sourceSummary(..., false),
+// which keeps the live full-replay detector UI gated until that replay ends.
+export function savedExperimentSummary(pair: PairedWorkflowData | null): PPESourceSummary {
+  return sourceSummary(pair, true)
+}

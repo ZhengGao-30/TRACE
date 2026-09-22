@@ -152,6 +152,8 @@ test('source results remain unavailable before full completion, even when all in
 
 test('source evidence preserves the actual unique or ambiguous candidate result rather than always naming Agent A', () => {
   const first = story.sourceSummary(pairs[0], true), second = story.sourceSummary(pairs[1], true)
+  assert.deepEqual(story.savedExperimentSummary(pairs[0]), first, 'the saved demo snapshot reuses the same strict validation')
+  assert.deepEqual(story.savedExperimentSummary(pairs[1]), second, 'the saved demo snapshot preserves ambiguous evidence')
   assert.equal(first.status, 'candidate_match')
   assert.deepEqual(first.supportedIds, pairs[0].attribution.matched_agent_ids)
   assert.equal(second.status, 'ambiguous')
@@ -420,8 +422,11 @@ function replayRows(tree) {
 function alignmentScore(tree) {
   return descendants(tree, element => element.props['data-score-phase'] !== undefined)[0]
 }
-function detectionExplainer(tree) {
-  return descendants(tree, element => element.props['data-detection-explainer'] !== undefined)[0]
+function experimentMetric(tree) {
+  return descendants(tree, element => element.props['data-experiment-ready'] !== undefined)[0]
+}
+function verdict(tree) {
+  return descendants(tree, element => element.props['data-verdict'] !== undefined)[0]?.props['data-verdict']
 }
 function finishAnimation(harness, props) {
   let tree
@@ -458,19 +463,19 @@ test('the title-only comparison expands in place for key replay and preserves re
   assert.equal(replayState(tree), 'running')
   assert.equal(replayResult(tree), 'pending', 'an unfinished comparison has no verification verdict')
   assert.equal(alignmentScore(tree).props['data-score-phase'], 'running')
-  assert.equal(detectionExplainer(tree), undefined, 'the explanation waits for the comparison to finish')
+  assert.equal(experimentMetric(tree), undefined, 'saved experiment scores wait for the choice comparison to finish')
   assert.ok(harness.timers.size > 0)
   tree = finishAnimation(harness, props)
   assert.equal(replayState(tree), 'complete')
   assert.equal(replayResult(tree), 'match')
-  assert.equal(alignmentScore(tree).props['data-alignment-band'], 'exact')
+  assert.equal(verdict(tree), 'correct')
   const keyAHtml = renderToStaticMarkup(tree)
-  assert.match(keyAHtml, /Exact workflow match/)
-  assert.match(keyAHtml, /Key A reproduced all 15 compared choices\./)
-  assert.match(keyAHtml, /Replay agreement 100 percent; 15 of 15 choices match/)
-  assert.match(keyAHtml, /not detector confidence/)
-  assert.match(keyAHtml, /Not the final detector.*Layer 1 and Layer 2.*does not judge whether the inspection or its claims are correct/s)
-  assert.ok(detectionExplainer(tree))
+  assert.match(keyAHtml, /Correct demo key/)
+  assert.match(keyAHtml, /Key A was injected in step 2\./)
+  assert.match(keyAHtml, /Choice match 15 of 15; match rate 100 percent; saved experiment 2 of 2 checks passed; scores 3\.41 and 4\.49; pass above 2\.00/)
+  assert.match(keyAHtml, /Saved experiment checks.*2 of 2 passed.*3\.41.*4\.49.*Saved scores · pass above 2\.00/s)
+  assert.ok(experimentMetric(tree))
+  assert.doesNotMatch(keyAHtml, /Low workflow alignment|Partial workflow alignment|Replay agreement|detector confidence/)
   assert.equal(replayRows(tree).length, 15)
   assert.equal(replayRows(tree).filter(row => row.props['data-replay-match'] === true || row.props['data-replay-match'] === 'true').length, 15)
   assert.ok(replayRows(tree).every(row => row.props['data-top-action'] === row.props['data-recorded-action']))
@@ -489,7 +494,11 @@ test('the title-only comparison expands in place for key replay and preserves re
   assert.equal(replayResult(tree), 'match', 'expanding does not discard the completed comparison')
   assert.equal(replayRows(tree).filter(row => row.props['data-replay-match'] === 'true').length, 15)
 
-  for (const [option, expectedMatches, expectedScore, expectedBand] of [['Key B', 7, 47, 'low'], ['Key C', 6, 40, 'low'], ['Original', 0, 0, 'baseline']]) {
+  for (const [option, expectedMatches, expectedScore, expectedPasses, expectedScores, expectedVerdict] of [
+    ['Key B', 7, 47, 0, ['-0.67', '0.00'], 'incorrect'],
+    ['Key C', 6, 40, 1, ['0.29', '2.04'], 'incorrect'],
+    ['Original', 0, 0, null, [], 'no-key'],
+  ]) {
     buttonNamed(tree, option).props.onClick()
     tree = harness.render(props)
     assert.equal(replayState(tree), 'idle')
@@ -502,16 +511,24 @@ test('the title-only comparison expands in place for key replay and preserves re
     tree = finishAnimation(harness, props)
     assert.equal(replayResult(tree), 'different')
     const resultHtml = renderToStaticMarkup(tree)
-    assert.equal(alignmentScore(tree).props['data-alignment-band'], expectedBand)
-    assert.match(resultHtml, option === 'Original' ? /Original comparison complete/ : /Low workflow alignment/)
+    assert.equal(verdict(tree), expectedVerdict)
+    assert.match(resultHtml, option === 'Original' ? /Original — no key/ : /Not the injected key/)
     assert.match(resultHtml, option === 'Original'
-      ? new RegExp(`The no-watermark baseline matches ${expectedMatches} of 15 compared choices\\.`)
-      : new RegExp(`${option} reproduced ${expectedMatches} of 15 compared choices\\.`))
-    assert.match(resultHtml, new RegExp(`Replay agreement ${expectedScore} percent; ${expectedMatches} of 15 choices match`))
+      ? /Original is the no-watermark reference, so there are no key scores to test\./
+      : option === 'Key C'
+        ? /Mixed test result — step 2 recorded Key A, not Key C\./
+        : /Step 2 recorded Key A, not Key B\./)
+    assert.match(resultHtml, option === 'Original'
+      ? new RegExp(`Choice match ${expectedMatches} of 15; match rate ${expectedScore} percent; no key scores to test`)
+      : new RegExp(`Choice match ${expectedMatches} of 15; match rate ${expectedScore} percent; saved experiment ${expectedPasses} of 2 checks passed; scores ${expectedScores[0].replace('.', '\\.')} and ${expectedScores[1].replace('.', '\\.')}\\; pass above 2\\.00`))
     assert.match(resultHtml, new RegExp(`${15 - expectedMatches} differences`))
-    assert.match(resultHtml, /not detector confidence/)
-    assert.match(resultHtml, /Not the final detector.*complete action log/s)
-    if (option === 'Original') assert.match(resultHtml, /Original is not a key/)
+    if (option === 'Original') {
+      assert.match(resultHtml, /Saved experiment checks.*Not tested.*Original has no watermark key\./s)
+      assert.doesNotMatch(resultHtml, /0\.29|2\.04|-0\.67/)
+    } else {
+      assert.match(resultHtml, new RegExp(`Saved experiment checks.*${expectedPasses} of 2 passed.*${expectedScores[0].replace('.', '\\.')}.*${expectedScores[1].replace('.', '\\.')}`, 's'))
+    }
+    assert.doesNotMatch(resultHtml, /Low workflow alignment|Partial workflow alignment|Replay agreement|detector confidence/)
     assert.equal(replayRows(tree).filter(row => row.props['data-replay-match'] === true || row.props['data-replay-match'] === 'true').length, expectedMatches)
     assert.equal(replayRows(tree).filter(row => row.props['data-replay-match'] === false || row.props['data-replay-match'] === 'false').length, 15 - expectedMatches)
     const expectedRows = option === 'Original'
@@ -527,6 +544,39 @@ test('the title-only comparison expands in place for key replay and preserves re
     assert.deepEqual(calls, [])
     assert.equal(JSON.stringify(pair), original)
   }
+  harness.unmount()
+})
+
+test('saved experiment scores and the key verdict fail closed when fixture evidence is damaged', async () => {
+  for (const damage of [
+    pair => { delete pair.attribution },
+    pair => { pair.attribution.record_scope = 'controlled_codex_llm_actions_admission' },
+    pair => { pair.attribution.threshold = Number.NaN },
+    pair => { pair.attribution.candidates[0].n1 = 0 },
+  ]) {
+    const pair = structuredClone(pairs[0])
+    damage(pair)
+    const harness = await animationHarness(), props = propsFor(pair)
+    let tree = expandComparison(harness, props)
+    replayButton(tree).props.onClick()
+    tree = finishAnimation(harness, props)
+    const metric = experimentMetric(tree), metricHtml = renderToStaticMarkup(metric)
+    assert.equal(metric.props['data-experiment-ready'], false)
+    assert.match(metricHtml, /Unavailable.*No valid saved scores for this key\./s)
+    assert.doesNotMatch(metricHtml, /2\.17|4\.49/, 'invalid saved evidence never leaks score values')
+    harness.unmount()
+  }
+
+  const pair = structuredClone(pairs[0])
+  pair.provenance.keys.key1 = 0
+  const harness = await animationHarness(), props = propsFor(pair)
+  let tree = expandComparison(harness, props)
+  replayButton(tree).props.onClick()
+  tree = finishAnimation(harness, props)
+  const html = renderToStaticMarkup(tree)
+  assert.equal(verdict(tree), 'unavailable', 'an exact replay cannot replace missing validated injection provenance')
+  assert.match(html, /Result unavailable/)
+  assert.doesNotMatch(html, /Correct demo key/)
   harness.unmount()
 })
 
