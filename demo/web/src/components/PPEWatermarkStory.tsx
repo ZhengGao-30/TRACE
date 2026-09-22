@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState, type CSSProperties } from 'react'
 import { useReducedMotion } from 'framer-motion'
-import { ArrowRight, Check, CheckCircle2, ChevronDown, ChevronUp, CircleOff, GitCompareArrows, KeyRound, Play } from 'lucide-react'
+import { ArrowRight, Check, CheckCircle2, ChevronDown, ChevronUp, CircleOff, GitCompareArrows, KeyRound, Play, ScanSearch } from 'lucide-react'
 import type { PairedTrajectoryStep, PairedWorkflowData } from './PairedWorkflowStrip'
 import type { PlaybackArm } from '../lib/ppePlayback'
 import { ppeActionOptionLabel } from '../lib/ppeInspection'
@@ -48,6 +48,7 @@ export default function PPEWatermarkStory({ pair, selected, revealed, onSelect, 
       ?? candidates.find(candidate => candidate.agent_id === appliedCandidateId)?.agent_id ?? first?.agent_id ?? ''
   const [candidateId, setCandidateId] = useState(initialCandidateId)
   const [check, setCheck] = useState<ReplayState>({ phase: 'idle', candidateId: '', count: 0 })
+  const [focusedChoiceKey, setFocusedChoiceKey] = useState('')
   const [expanded, setExpanded] = useState(false)
   const timers = useRef<ReturnType<typeof setTimeout>[]>([])
   const story = buildPPEWatermarkStory(pair, selected, revealed)
@@ -57,7 +58,9 @@ export default function PPEWatermarkStory({ pair, selected, revealed, onSelect, 
     ? buildOriginalComparison(differences, true)
     : buildChoiceReplay(pair, differences, check.candidateId, true)
   const activeRow = check.phase === 'running' ? replay.rows[Math.max(0, check.count - 1)] : undefined
-  const detailRow = activeRow ?? replay.rows.find(row => row.choice.key === current?.key)
+  const focusedRow = replay.rows.find(row => row.choice.key === focusedChoiceKey)
+  const firstDifferentRow = check.phase === 'complete' ? replay.rows.find(row => !row.match) : undefined
+  const detailRow = activeRow ?? focusedRow ?? firstDifferentRow
   const detailVisible = !!detailRow && (check.phase === 'complete' || check.phase === 'running' && check.count > 0)
   const activeCandidate = candidates.find(candidate => candidate.agent_id === candidateId)
   const appliedCandidate = appliedCandidateId === undefined ? first : candidates.find(candidate => candidate.agent_id === appliedCandidateId)
@@ -68,6 +71,11 @@ export default function PPEWatermarkStory({ pair, selected, revealed, onSelect, 
   const appliedKeyLabel = publicKeyLabel(candidates, appliedCandidate?.agent_id)
   const checkedSelectionLabel = comparisonLabel(candidates, check.candidateId)
   const matchesShown = replay.rows.slice(0, check.count).filter(row => row.match).length
+  const comparedCount = Math.min(check.count, differences.length)
+  const scoreMatches = check.phase === 'complete' && replay.matches !== null ? replay.matches : matchesShown
+  const scorePercent = differences.length ? Math.round(scoreMatches / differences.length * 100) : 0
+  const alignmentBand = checkedIsOriginal ? 'baseline' : scorePercent === 100 ? 'exact' : scorePercent < 50 ? 'low' : 'partial'
+  const alignmentBandLabel = alignmentBand === 'baseline' ? 'No-key baseline' : alignmentBand === 'exact' ? 'Exact match' : alignmentBand === 'low' ? 'Low alignment' : 'Partial alignment'
 
   function cancel() { timers.current.forEach(clearTimeout); timers.current = [] }
   useEffect(() => {
@@ -79,6 +87,7 @@ export default function PPEWatermarkStory({ pair, selected, revealed, onSelect, 
         ?? available.find(candidate => candidate.agent_id === appliedCandidateId)?.agent_id ?? available[0]?.agent_id ?? ''
     setCandidateId(nextId)
     setCheck({ phase: 'idle', candidateId: '', count: 0 })
+    setFocusedChoiceKey('')
     return cancel
   }, [pair, reducedMotion, selectedCandidateId, appliedCandidateId])
 
@@ -86,6 +95,7 @@ export default function PPEWatermarkStory({ pair, selected, revealed, onSelect, 
     cancel()
     setCandidateId(nextCandidateId)
     setCheck({ phase: 'idle', candidateId: '', count: 0 })
+    setFocusedChoiceKey('')
     onCandidateChange?.(nextCandidateId)
   }
 
@@ -103,7 +113,7 @@ export default function PPEWatermarkStory({ pair, selected, revealed, onSelect, 
       return
     }
     setCheck({ phase: 'running', candidateId, count: 0 })
-    const delay = Math.max(180, Math.min(420, 4000 / data.rows.length))
+    const delay = Math.max(110, Math.min(250, 2000 / data.rows.length))
     data.rows.forEach((_, index) => timers.current.push(setTimeout(() => {
       setCheck({ phase: index === data.rows.length - 1 ? 'complete' : 'running', candidateId, count: index + 1 })
     }, delay * (index + 1))))
@@ -113,19 +123,35 @@ export default function PPEWatermarkStory({ pair, selected, revealed, onSelect, 
     : check.phase === 'complete' && replay.status === 'ready' && replay.total > 0
       ? replay.matches === replay.total ? 'match' : 'different'
       : 'pending'
-  const resultTitle = check.phase === 'invalid' ? 'Comparison unavailable'
-    : check.phase === 'running' ? `Comparing choice ${check.count} / ${differences.length}`
-      : resultState === 'match' ? `${checkedSelectionLabel} matches the recorded workflow`
-        : resultState === 'different' ? `${checkedSelectionLabel} differs from the recorded workflow`
-          : `Compare ${activeSelectionLabel} with the recorded workflow`
   const differentCount = replay.status === 'ready' && replay.matches !== null ? replay.total - replay.matches : 0
+  const resultTitle = check.phase === 'invalid' ? 'Comparison unavailable'
+    : check.phase === 'running' ? `Comparing ${checkedSelectionLabel} with the recorded workflow`
+      : resultState === 'match' ? 'Exact workflow match'
+        : resultState === 'different' && checkedIsOriginal ? 'Original comparison complete'
+          : resultState === 'different' && alignmentBand === 'low' ? 'Low workflow alignment'
+            : resultState === 'different' ? 'Partial workflow alignment'
+              : `Ready to compare ${activeSelectionLabel}`
   const resultNote = check.phase === 'invalid' ? 'Choose Original or one of the registered demo keys.'
-    : resultState === 'match' ? `${replay.matches} of ${replay.total} choices match. No differences found.`
-      : resultState === 'different' ? `${replay.matches} of ${replay.total} choices match. ${differentCount} ${differentCount === 1 ? 'difference is' : 'differences are'} highlighted below.`
-        : check.phase === 'running' ? `${matchesShown} choices match so far.`
-          : activeIsOriginal
-            ? `The unwatermarked Original will appear on top. The recorded ${appliedKeyLabel} workflow stays fixed below.`
-            : `${activeSelectionLabel} will replay on top. The recorded ${appliedKeyLabel} workflow stays fixed below.`
+    : check.phase === 'running' ? `${comparedCount} of ${differences.length} choices checked.`
+      : resultState === 'match' ? `${checkedSelectionLabel} reproduced all ${replay.total} compared choices.`
+        : resultState === 'different' && checkedIsOriginal ? `The no-watermark baseline matches ${replay.matches} of ${replay.total} compared choices.`
+          : resultState === 'different' ? `${checkedSelectionLabel} reproduced ${replay.matches} of ${replay.total} compared choices.`
+            : `${differences.length} comparable choices will be checked against the fixed ${appliedKeyLabel} record.`
+  const gridStatus = check.phase === 'invalid' ? 'Unavailable'
+    : check.phase === 'running' ? `Checking ${comparedCount}/${differences.length}`
+      : resultState === 'match' ? 'No differences'
+        : resultState === 'different' ? `${differentCount} ${differentCount === 1 ? 'difference' : 'differences'}`
+          : 'Ready'
+  const liveMessage = check.phase === 'running' ? `Comparison started for ${checkedSelectionLabel}.`
+    : check.phase === 'complete' || check.phase === 'invalid' ? `${resultTitle}. ${resultNote}`
+      : `Ready to compare ${activeSelectionLabel}.`
+  const replayMeaning = checkedIsOriginal
+    ? `Original is the no-key reference. It shows the ${differentCount} displayed choices that differ from the recorded watermarked workflow.`
+    : alignmentBand === 'exact'
+      ? `${checkedSelectionLabel} reproduces every displayed choice in this saved sequence.`
+      : alignmentBand === 'low'
+        ? `${checkedSelectionLabel} does not reproduce most of the displayed choices in this saved sequence.`
+        : `${checkedSelectionLabel} reproduces some, but not all, of the displayed choices in this saved sequence.`
 
   return <section className="ppe-watermark-story" data-watermark-story data-expanded={expanded} data-replay-state={check.phase} aria-labelledby={titleId}>
     <header className="pws-toolbar">
@@ -154,16 +180,29 @@ export default function PPEWatermarkStory({ pair, selected, revealed, onSelect, 
             <Play size={14} />{activeIsOriginal ? 'Compare Original' : `Replay with ${activeSelectionLabel}`}
           </button>
         </div>
-        <div className="pws-replay-result" data-replay-result={resultState} role="status" aria-live="polite">
-          {resultState === 'match' ? <CheckCircle2 size={24} /> : resultState === 'different' ? <GitCompareArrows size={24} /> : activeIsOriginal ? <CircleOff size={21} /> : <KeyRound size={21} />}
-          <div><strong>{resultTitle}</strong><p>{resultNote}</p></div>
+        <div className="pws-replay-result" data-replay-result={resultState}>
+          <div className="pws-result-summary">
+            {resultState === 'match' ? <CheckCircle2 size={24} /> : resultState === 'different' ? <GitCompareArrows size={24} /> : activeIsOriginal ? <CircleOff size={21} /> : <KeyRound size={21} />}
+            <div><strong>{resultTitle}</strong><p>{resultNote}</p></div>
+          </div>
+          {(check.phase === 'running' || check.phase === 'complete') && <div className="pws-alignment-score"
+            data-score-phase={check.phase} data-alignment-band={alignmentBand}
+            aria-label={check.phase === 'running' ? `${comparedCount} of ${differences.length} choices checked` : `Replay agreement ${scorePercent} percent; ${scoreMatches} of ${differences.length} choices match`}
+            style={{ '--pws-score': scorePercent / 100, '--pws-progress': differences.length ? comparedCount / differences.length : 0 } as CSSProperties}>
+            <div className="pws-score-heading"><span>{check.phase === 'running' ? 'Scanning choices' : 'Replay agreement'}</span><strong>{check.phase === 'running' ? `${comparedCount}/${differences.length}` : `${scorePercent}%`}</strong></div>
+            <div className="pws-score-track" aria-hidden="true"><i className="pws-score-progress" /><i className="pws-score-fill" /></div>
+            <div className="pws-score-meta"><span>{check.phase === 'running' ? `${matchesShown} match so far` : `${scoreMatches} of ${differences.length} match`}</span><b>{check.phase === 'running' ? 'Checking…' : alignmentBandLabel}</b></div>
+            {check.phase === 'complete' && <small>Matching choices ÷ compared choices · not detector confidence</small>}
+          </div>}
+          <span className="pws-sr-only" role="status" aria-live="polite">{liveMessage}</span>
         </div>
         <div className="pws-grid-caption">
           <span>{differences.length} comparable choices · {pair.trace.steps.length - differences.length} unchanged steps hidden</span>
-          <span><i />Differences</span>
+          <span data-grid-state={resultState}><i />{gridStatus}</span>
         </div>
         <div className="pws-action-matrix-wrap">
           <div className="pws-action-matrix" role="group" aria-label={`${activeSelectionLabel} on top compared with the recorded ${appliedKeyLabel} workflow below`}
+            aria-busy={check.phase === 'running'}
             style={{ '--pws-choice-count': differences.length } as CSSProperties}>
             <span className="pws-matrix-corner">Action</span>
             {differences.map(choice => <span key={`step-${choice.key}`} className="pws-matrix-step">{String(choice.trace.i + 1).padStart(2, '0')}</span>)}
@@ -178,8 +217,10 @@ export default function PPEWatermarkStory({ pair, selected, revealed, onSelect, 
                 data-mismatch-highlighted={visible && row && !row.match ? 'true' : 'false'}
                 data-active={check.phase === 'running' && index === check.count - 1}
                 aria-pressed={choice.key === current?.key} disabled={check.phase === 'running'}
-                aria-label={`Action ${choice.trace.i + 1}: ${choice.title}${visible && row ? row.match ? ' · Match' : ' · Different' : ''}`}
-                onClick={() => onSelect(choice.trace)}>
+                aria-label={visible && row
+                  ? `Action ${choice.trace.i + 1}: ${choice.title}. ${activeSelectionLabel}: ${ppeActionOptionLabel(row.replayed, row.replayed)}. Recorded: ${ppeActionOptionLabel(row.chosen, row.chosen)}. ${row.match ? 'Match' : 'Different'}.`
+                  : `Action ${choice.trace.i + 1}: ${choice.title}. Waiting for comparison.`}
+                onClick={() => { setFocusedChoiceKey(choice.key); onSelect(choice.trace) }}>
                 <span className="pws-replayed-art" data-visible={visible}>{visible && row
                   ? <Illustration action={row.replayed} />
                   : activeIsOriginal ? <CircleOff size={19} /> : <KeyRound size={19} />}</span>
@@ -188,11 +229,17 @@ export default function PPEWatermarkStory({ pair, selected, revealed, onSelect, 
             })}
             <div className="pws-row-label pws-recorded-label"><span>Bottom</span><strong>Recorded · {appliedKeyLabel}</strong><small>Fixed reference</small></div>
             {differences.map(choice => <div key={`recorded-${choice.key}`} className="pws-matrix-cell pws-recorded-cell"
-              data-recorded-step={choice.trace.i} data-recorded-action={choice.trace.action}>
+              data-recorded-step={choice.trace.i} data-recorded-action={choice.trace.action} role="img"
+              aria-label={`Action ${choice.trace.i + 1} recorded choice: ${ppeActionOptionLabel(choice.trace.action, choice.trace.action)}`}>
               <Illustration action={choice.trace.action} />
             </div>)}
           </div>
         </div>
+        {check.phase === 'complete' && replay.status === 'ready' && <aside className="pws-detection-explainer" data-detection-explainer data-alignment-band={alignmentBand}>
+          <div className="pws-explainer-label"><ScanSearch size={18} /><span><strong>{checkedIsOriginal ? 'Visual baseline' : `${scorePercent}% replay agreement`}</strong><small>{checkedIsOriginal ? 'Original is not a key' : alignmentBandLabel}</small></span></div>
+          <div className="pws-explainer-copy"><strong>What this tells you</strong><p>{replayMeaning}</p></div>
+          <div className="pws-explainer-copy pws-explainer-limit"><strong>Not the final detector</strong><p>The picture replay explains choice similarity. The TRACE detector below checks Layer 1 and Layer 2 across the complete action log. It supports source attribution; it does not judge whether the inspection or its claims are correct.</p></div>
+        </aside>}
         {detailVisible && detailRow && <div className="pws-choice-detail" data-match={detailRow.match}>
           <strong>Action {detailRow.choice.trace.i + 1} · {detailRow.choice.title}</strong>
           <div><span>{checkedIsOriginal ? 'Original chose' : `${checkedSelectionLabel} replays`}: <b>{ppeActionOptionLabel(detailRow.replayed, detailRow.replayed)}</b></span><ArrowRight size={15} /><span>Recorded workflow: <b>{ppeActionOptionLabel(detailRow.chosen, detailRow.chosen)}</b></span></div>

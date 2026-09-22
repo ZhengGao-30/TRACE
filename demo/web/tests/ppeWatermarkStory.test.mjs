@@ -417,6 +417,12 @@ function replayResult(tree) {
 function replayRows(tree) {
   return descendants(tree, element => element.props['data-replay-step'] !== undefined)
 }
+function alignmentScore(tree) {
+  return descendants(tree, element => element.props['data-score-phase'] !== undefined)[0]
+}
+function detectionExplainer(tree) {
+  return descendants(tree, element => element.props['data-detection-explainer'] !== undefined)[0]
+}
 function finishAnimation(harness, props) {
   let tree
   for (let tick = 0; tick < 100 && harness.timers.size; tick++) {
@@ -451,12 +457,20 @@ test('the title-only comparison expands in place for key replay and preserves re
   tree = harness.render(props)
   assert.equal(replayState(tree), 'running')
   assert.equal(replayResult(tree), 'pending', 'an unfinished comparison has no verification verdict')
+  assert.equal(alignmentScore(tree).props['data-score-phase'], 'running')
+  assert.equal(detectionExplainer(tree), undefined, 'the explanation waits for the comparison to finish')
   assert.ok(harness.timers.size > 0)
   tree = finishAnimation(harness, props)
   assert.equal(replayState(tree), 'complete')
   assert.equal(replayResult(tree), 'match')
-  assert.match(renderToStaticMarkup(tree), /Key A matches the recorded workflow/)
-  assert.match(renderToStaticMarkup(tree), /15 of 15 choices match\. No differences found\./)
+  assert.equal(alignmentScore(tree).props['data-alignment-band'], 'exact')
+  const keyAHtml = renderToStaticMarkup(tree)
+  assert.match(keyAHtml, /Exact workflow match/)
+  assert.match(keyAHtml, /Key A reproduced all 15 compared choices\./)
+  assert.match(keyAHtml, /Replay agreement 100 percent; 15 of 15 choices match/)
+  assert.match(keyAHtml, /not detector confidence/)
+  assert.match(keyAHtml, /Not the final detector.*Layer 1 and Layer 2.*does not judge whether the inspection or its claims are correct/s)
+  assert.ok(detectionExplainer(tree))
   assert.equal(replayRows(tree).length, 15)
   assert.equal(replayRows(tree).filter(row => row.props['data-replay-match'] === true || row.props['data-replay-match'] === 'true').length, 15)
   assert.ok(replayRows(tree).every(row => row.props['data-top-action'] === row.props['data-recorded-action']))
@@ -475,7 +489,7 @@ test('the title-only comparison expands in place for key replay and preserves re
   assert.equal(replayResult(tree), 'match', 'expanding does not discard the completed comparison')
   assert.equal(replayRows(tree).filter(row => row.props['data-replay-match'] === 'true').length, 15)
 
-  for (const [option, expectedMatches] of [['Key B', 7], ['Key C', 6], ['Original', 0]]) {
+  for (const [option, expectedMatches, expectedScore, expectedBand] of [['Key B', 7, 47, 'low'], ['Key C', 6, 40, 'low'], ['Original', 0, 0, 'baseline']]) {
     buttonNamed(tree, option).props.onClick()
     tree = harness.render(props)
     assert.equal(replayState(tree), 'idle')
@@ -488,8 +502,16 @@ test('the title-only comparison expands in place for key replay and preserves re
     tree = finishAnimation(harness, props)
     assert.equal(replayResult(tree), 'different')
     const resultHtml = renderToStaticMarkup(tree)
-    assert.match(resultHtml, new RegExp(`${option} differs from the recorded workflow`))
-    assert.match(resultHtml, new RegExp(`${expectedMatches} of 15 choices match\\. ${15 - expectedMatches} differences are highlighted below\\.`))
+    assert.equal(alignmentScore(tree).props['data-alignment-band'], expectedBand)
+    assert.match(resultHtml, option === 'Original' ? /Original comparison complete/ : /Low workflow alignment/)
+    assert.match(resultHtml, option === 'Original'
+      ? new RegExp(`The no-watermark baseline matches ${expectedMatches} of 15 compared choices\\.`)
+      : new RegExp(`${option} reproduced ${expectedMatches} of 15 compared choices\\.`))
+    assert.match(resultHtml, new RegExp(`Replay agreement ${expectedScore} percent; ${expectedMatches} of 15 choices match`))
+    assert.match(resultHtml, new RegExp(`${15 - expectedMatches} differences`))
+    assert.match(resultHtml, /not detector confidence/)
+    assert.match(resultHtml, /Not the final detector.*complete action log/s)
+    if (option === 'Original') assert.match(resultHtml, /Original is not a key/)
     assert.equal(replayRows(tree).filter(row => row.props['data-replay-match'] === true || row.props['data-replay-match'] === 'true').length, expectedMatches)
     assert.equal(replayRows(tree).filter(row => row.props['data-replay-match'] === false || row.props['data-replay-match'] === 'false').length, 15 - expectedMatches)
     const expectedRows = option === 'Original'
